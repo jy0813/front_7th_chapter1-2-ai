@@ -4,7 +4,7 @@
 **방법론**: TDD (Test-Driven Development) + 명세 기반 개발 (SDD)
 **구현 방식**: 6개 Agent 시스템 활용
 **총 소요 시간**: 8-9시간
-**총 커밋 수**: 20개
+**총 커밋 수**: 21개 (명세 1 + 설계 1 + 기능 6×3 + 문서 1)
 
 ---
 
@@ -210,10 +210,6 @@
 2. 훅 테스트 구조 설계
    - medium.useRecurringEvents.spec.ts
    - API 호출 및 상태 관리 테스트
-
-3. 통합 테스트 구조 설계
-   - recurring.integration.spec.tsx
-   - 사용자 시나리오 기반 E2E 테스트
 
 [3단계] 테스트 데이터 준비:
 1. src/__tests__/__fixtures__/mockRecurringEvents.ts 생성
@@ -477,15 +473,15 @@ git commit -m 'refactor: [REFACTOR] 반복 일정 생성 로직 개선'
 - **전체 워크플로우 조율 및 품질 관리**
 - Agent 1-5 순차 실행 관리
 - 코드 리뷰 및 품질 검증
-- 최종 통합 테스트
-- PR 생성
+- 문서 업데이트
+- 최종 리포트 생성
 
 **도구**: TodoWrite, Task, Bash, Read, Write
 
 **출력물**:
 - 전체 진행 상황 리포트
 - 품질 검증 리포트 (테스트 커버리지, 린트 결과)
-- Pull Request
+- TDD 워크플로우 최종 리포트
 
 **⚠️ 중요한 TIP**:
 
@@ -493,11 +489,12 @@ git commit -m 'refactor: [REFACTOR] 반복 일정 생성 로직 개선'
 - Red Phase Agent → 테스트 파일 커밋 필수
 - Green Phase Agent → 구현 파일 커밋 필수
 - Refactor Agent → 개선된 파일 커밋 필수
-- **커밋 누락 시 ccundo 도구를 활용하여 이전 단계로 되돌리세요**
+- **커밋 누락 시 `git reset` 또는 `git revert`를 활용하여 이전 단계로 되돌리세요**
 
-✅ **ccundo 도구 활용법**
+✅ **Git 되돌리기 활용법**
 - Agent가 커밋을 깜빡한 경우 즉시 지적
-- "ccundo로 이전 단계로 되돌린 후 커밋하세요" 명령
+- `git reset --soft HEAD~1` 로 마지막 커밋을 취소한 후 수정하고 재커밋
+- 또는 `git revert <commit-hash>` 로 특정 커밋을 되돌리기
 - 커밋 메시지 컨벤션 준수 확인 (test: [RED], feat: [GREEN], refactor: [REFACTOR])
 
 ✅ **품질 검증 체크리스트**
@@ -512,10 +509,10 @@ git commit -m 'refactor: [REFACTOR] 반복 일정 생성 로직 개선'
 - 총 20개 커밋 생성 확인 (6기능 × 3 + 명세 + 통합테스트)
 - 커밋 메시지가 규칙을 따르는지 검증
 
-✅ **최종 통합 검증**
-- E2E 테스트 추가 및 실행
-- 실제 사용자 시나리오 검증
+✅ **최종 품질 검증**
+- 품질 게이트 통과 확인 (test, coverage, lint, tsc)
 - 문서 업데이트 (CLAUDE.md, README.md)
+- 최종 리포트 생성
 
 **실행 명령**:
 ```
@@ -529,7 +526,7 @@ git commit -m 'refactor: [REFACTOR] 반복 일정 생성 로직 개선'
 [2단계] 커밋 누락 확인 및 강제:
 1. Red-Green-Refactor 각 단계별 커밋 확인
 2. 커밋이 누락된 경우 해당 Agent에게 재실행 요청
-3. 필요 시 ccundo 도구로 이전 단계로 되돌리기
+3. 필요 시 `git reset --soft HEAD~1` 또는 `git revert` 로 이전 단계로 되돌리기
 
 [3단계] 품질 검증:
 1. pnpm test → 모든 테스트 통과
@@ -537,34 +534,20 @@ git commit -m 'refactor: [REFACTOR] 반복 일정 생성 로직 개선'
 3. pnpm lint → ESLint 통과
 4. pnpm lint:tsc → TypeScript 컴파일 성공
 
-[4단계] 통합 테스트 추가:
-1. src/__tests__/e2e/recurring.e2e.spec.tsx 생성
-2. 실제 사용자 시나리오 테스트
-   - 반복 일정 생성
-   - 반복 일정 수정 (단일/전체)
-   - 반복 일정 삭제 (단일/전체)
-3. pnpm test 실행하여 통과 확인
-
-[5단계] 문서 업데이트:
+[4단계] 문서 업데이트:
 1. CLAUDE.md 업데이트 (반복 일정 기능 설명 추가)
 2. README.md 업데이트 (기능 목록 업데이트)
 3. 커밋: docs: 반복 일정 기능 문서 업데이트
 
-[6단계] PR 생성:
-1. git push origin feature/recurring-events
-2. gh pr create 명령 실행
-   --title 'feat: 반복 일정 기능 구현 (TDD)'
-   --body '반복 일정 기능을 TDD 사이클로 구현. Red-Green-Refactor 각 단계마다 커밋 생성.'
-
-[7단계] 최종 리포트 생성:
-1. 총 커밋 수: 20개
+[5단계] 최종 리포트 생성:
+1. 총 커밋 수: 21개 (명세 + 설계 + 기능 6×3 + 문서)
 2. 테스트 커버리지: 85%+
 3. TDD 사이클 준수 여부
 4. 품질 검증 결과
 
 [주의사항]:
 - 각 Agent가 반드시 커밋하도록 강제하세요!
-- 커밋 누락 시 ccundo 도구를 활용하세요
+- 커밋 누락 시 `git reset` 또는 `git revert`를 활용하세요
 - 품질 검증 체크리스트를 모두 통과해야 합니다
 - TDD 사이클이 올바르게 지켜졌는지 검증하세요"
 ```
@@ -574,15 +557,11 @@ git commit -m 'refactor: [REFACTOR] 반복 일정 생성 로직 개선'
 ## 전체 워크플로우
 
 ### Phase 0: 준비 단계 (10분)
-```bash
-git checkout -b feature/recurring-events
-```
 
 **TodoWrite 작업 목록**:
 - [ ] 명세 작성
 - [ ] 테스트 설계
 - [ ] 기능 1-6 구현 (각 R-G-R)
-- [ ] 통합 테스트
 - [ ] 문서 업데이트
 
 ---
@@ -611,8 +590,18 @@ git commit -m "docs: 반복 일정 명세 문서 작성"
 1. Read `specs/09-recurring-events.md`
 2. Design 테스트 구조
 3. Write `src/__tests__/__fixtures__/mockRecurringEvents.ts`
+4. Write 테스트 구조 파일 (describe/it 블록)
 
-**커밋**: 없음 (설계 단계)
+**커밋**:
+```bash
+git add src/__tests__/__fixtures__/
+git add src/__tests__/unit/easy.*.spec.ts
+git commit -m "test: [DESIGN] 반복 일정 테스트 구조 설계
+
+- mockRecurringEvents fixtures 생성
+- 테스트 케이스 구조 정의
+- describe/it 블록 구조화"
+```
 
 ---
 
@@ -731,27 +720,7 @@ refactor: [REFACTOR] 반복 API 통합 개선
 
 ---
 
-### Phase 9: 통합 테스트 (30분)
-**Agent**: Orchestrator Agent
-
-```bash
-# E2E 테스트 추가
-src/__tests__/e2e/recurring.e2e.spec.tsx
-
-# 커버리지 확인
-pnpm test:coverage
-
-# 린트 검증
-pnpm lint
-
-# 커밋
-git add src/__tests__/e2e/
-git commit -m "test: E2E 반복 일정 통합 테스트 추가"
-```
-
----
-
-### Phase 10: 문서 업데이트 및 PR (20분)
+### Phase 9: 문서 업데이트 (20분)
 **Agent**: Orchestrator Agent
 
 ```bash
@@ -762,11 +731,6 @@ edit README.md
 # 커밋
 git add CLAUDE.md README.md
 git commit -m "docs: 반복 일정 기능 문서 업데이트"
-
-# PR 생성
-git push origin feature/recurring-events
-gh pr create --title "feat: 반복 일정 기능 구현 (TDD)" \
-  --body "반복 일정 기능을 TDD 사이클로 구현했습니다. Red-Green-Refactor 각 단계마다 커밋을 생성했습니다."
 ```
 
 ---
@@ -776,7 +740,6 @@ gh pr create --title "feat: 반복 일정 기능 구현 (TDD)" \
 ### 1. 준비
 ```bash
 cd /Users/jaeyun/Documents/Personal/front_7th_chapter1-2
-git checkout -b feature/recurring-events
 ```
 
 ### 2. Agent 순차 실행
@@ -812,7 +775,7 @@ specs/09-recurring-events.md를 신규 생성해줘."
 #### Agent 6: 최종 통합
 ```
 "Agent 6 (Orchestrator) 역할을 수행해줘.
-통합 테스트, 커버리지 검증, PR 생성까지 완료해줘."
+품질 검증, 문서 업데이트, 최종 리포트 생성까지 완료해줘."
 ```
 
 ---
@@ -852,7 +815,7 @@ pnpm lint:tsc  # TypeScript 컴파일 확인
 - 명세 문서 동기화
 
 ✅ **TDD 준수**:
-- 20개 커밋 생성
+- 21개 커밋 생성 (명세 + 설계 + 기능×18 + 문서)
 - Red-Green-Refactor 사이클 준수
 - 각 단계마다 검증
 
@@ -868,7 +831,6 @@ pnpm lint:tsc  # TypeScript 컴파일 확인
 ## 최종 체크리스트
 
 ### Phase 0: 준비
-- [ ] 브랜치 생성
 - [ ] TodoWrite로 작업 목록 생성
 
 ### Phase 1-2: 명세 및 설계
@@ -883,11 +845,10 @@ pnpm lint:tsc  # TypeScript 컴파일 확인
 - [ ] 기능 5: 삭제 모달 (R-G-R)
 - [ ] 기능 6: API 통합 (R-G-R)
 
-### Phase 9-10: 통합 및 문서
-- [ ] E2E 통합 테스트
+### Phase 9: 문서 업데이트
 - [ ] 커버리지 검증 (85%+)
-- [ ] 문서 업데이트
-- [ ] PR 생성
+- [ ] 문서 업데이트 (CLAUDE.md, README.md)
+- [ ] 최종 리포트 생성
 
 ---
 
