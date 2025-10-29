@@ -252,9 +252,25 @@ feedback-agent[N]-to-agent[M]-[TIMESTAMP].md
 
 ### 피드백 템플릿 생성
 ```bash
-# 향후 구현 예정
+# 피드백 템플릿 자동 생성
 .claude/scripts/feedback-generator.sh <FROM_AGENT> <TO_AGENT> <ISSUE_TYPE>
+
+# 예시: Agent 2 → Agent 1 명세 품질 피드백
+.claude/scripts/feedback-generator.sh 2 1 spec-quality
+
+# 예시: Agent 6 → Agent 4 커밋 누락 피드백
+.claude/scripts/feedback-generator.sh 6 4 commit-missing
+
+# 예시: Agent 6 → Agent 5 테스트 실패 피드백
+.claude/scripts/feedback-generator.sh 6 5 test-failure
 ```
+
+**지원하는 Issue Type**:
+- **Agent 2 → Agent 1**: `spec-quality` (명세 품질 문제)
+- **Agent 6 → Agent 3,4,5**: `commit-missing`, `test-failure`, `lint-error`, `tdd-violation`
+- **Agent 5 → Agent 4**: `complexity`, `duplication` (선택적)
+
+**출력 위치**: `claudedocs/feedback-logs/feedback-agent[N]-to-agent[M]-[TIMESTAMP].md`
 
 ---
 

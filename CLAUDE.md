@@ -1158,6 +1158,72 @@ Always follow testing rules in rules/ directory when writing tests.
 
 ---
 
+### 7. 피드백 템플릿 생성 (feedback-generator.sh)
+
+**목적**: Agent 간 피드백 템플릿 자동 생성
+
+**사용법**:
+```bash
+.claude/scripts/feedback-generator.sh <FROM_AGENT> <TO_AGENT> <ISSUE_TYPE>
+```
+
+**지원하는 피드백 조합**:
+
+#### Agent 2 → Agent 1 (명세 품질 피드백)
+```bash
+# 명세 품질 문제 피드백
+.claude/scripts/feedback-generator.sh 2 1 spec-quality
+```
+
+**Issue Type**: `spec-quality`
+**내용**: 3단계 근거 (사실 → 평가 → 대안) 형식의 명세 개선 요청
+
+#### Agent 6 → Agent 3, 4, 5 (커밋/품질 문제 피드백)
+```bash
+# 커밋 누락 피드백
+.claude/scripts/feedback-generator.sh 6 4 commit-missing
+
+# 테스트 실패 피드백
+.claude/scripts/feedback-generator.sh 6 3 test-failure
+
+# 린트 에러 피드백
+.claude/scripts/feedback-generator.sh 6 5 lint-error
+
+# TDD 사이클 위반 피드백
+.claude/scripts/feedback-generator.sh 6 4 tdd-violation
+```
+
+**Issue Types**:
+- `commit-missing`: Git 커밋 누락
+- `test-failure`: 테스트 실패
+- `lint-error`: TypeScript/ESLint 에러
+- `tdd-violation`: TDD 사이클 위반
+
+#### Agent 5 → Agent 4 (복잡도/중복 코드 피드백)
+```bash
+# 복잡도 문제 피드백
+.claude/scripts/feedback-generator.sh 5 4 complexity
+
+# 중복 코드 피드백
+.claude/scripts/feedback-generator.sh 5 4 duplication
+```
+
+**Issue Types**:
+- `complexity`: 복잡도 문제
+- `duplication`: 중복 코드
+
+**출력**:
+- 파일 저장: `claudedocs/feedback-logs/feedback-agent[N]-to-agent[M]-[TIMESTAMP].md`
+- 템플릿 포함 내용: 문제 상세, 요구 조치, 자동화 도구 안내, 재시도 정책
+
+**특징**:
+- 표준화된 피드백 형식
+- Agent별 맞춤 템플릿
+- 재시도 메커니즘 포함
+- 자동화 도구 연동
+
+---
+
 ### 자동화 워크플로우 예시
 
 **시나리오**: 시간 검증 기능 TDD 개발
