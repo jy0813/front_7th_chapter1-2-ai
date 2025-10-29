@@ -1,7 +1,7 @@
 # 6개 Agent 시스템 분석 보고서
 
 **작성일**: 2025-10-30
-**버전**: 2.0.0
+**버전**: 2.9.2
 **분석 대상**: 6개 Agent 시스템 (Feature Design, Test Design, Red Phase, Green Phase, Refactor, Orchestrator)
 
 ---
