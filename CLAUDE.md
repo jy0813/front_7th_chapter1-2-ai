@@ -1,12 +1,32 @@
 # CLAUDE.md
 
-**문서 버전**: 2.8.0
+**문서 버전**: 2.9.2
 **최종 업데이트**: 2025-10-29
-**이전 버전**: 2.7.0 (Agent 4 원칙 기반), 2.6.0 (Agent 산출물 흐름도), 2.5.0 (Agent 2 커밋 정보), 2.4.0 (전체 6 Agent 시스템 완성), 2.3.0 (테스트 설계 Agent), 2.2.0 (기능 설계 Agent), 2.1.0 (6개 Agent 시스템), 2.0.0 (명세 기반 개발 + TDD 통합), 1.0.0 (초기 문서)
+**이전 버전**: 2.9.1 (feedback-generator.sh), 2.9.0 (자동화 도구 6개), 2.8.0 (품질 강화), 2.7.0 (Agent 4 원칙 기반), 2.6.0 (Agent 산출물 흐름도), 2.5.0 (Agent 2 커밋 정보), 2.4.0 (전체 6 Agent 시스템 완성), 2.3.0 (테스트 설계 Agent), 2.2.0 (기능 설계 Agent), 2.1.0 (6개 Agent 시스템), 2.0.0 (명세 기반 개발 + TDD 통합), 1.0.0 (초기 문서)
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 📋 문서 변경 이력
+
+### v2.9.2 (2025-10-29)
+- **워크플로우 문서 체계화**: WORKFLOW_RECURRING_EVENTS.md 및 산출물 문서 구조 완성
+  - **자동화 도구 섹션 추가**: WORKFLOW_RECURRING_EVENTS.md에 v2.9.0-2.9.2 자동화 도구 7개 문서화 (120줄)
+  - **claudedocs/README.md 생성**: Agent 산출물 체계 및 로그 관리 가이드 (260줄)
+  - **6개 템플릿 생성**: claudedocs/templates/ 디렉토리에 Agent별 산출물 템플릿 파일 생성 (총 835줄)
+    - 01-feature-design-template.md (Agent 1, 140줄)
+    - 02-test-design-template.md (Agent 2, 120줄)
+    - 03-red-phase-template.md (Agent 3, 80줄)
+    - 04-green-phase-template.md (Agent 4, 135줄)
+    - 05-refactor-template.md (Agent 5, 100줄)
+    - 06-orchestrator-template.md (Agent 6, 260줄)
+  - **산출물 추적성 향상**: 모든 Agent 출력물이 표준화된 템플릿 기반으로 생성
+
+### v2.9.1 (2025-10-29)
+- **피드백 자동화 완성**: feedback-generator.sh 추가 (7번째 자동화 스크립트)
+  - Agent 2→1, Agent 6→3/4/5 피드백 템플릿 자동 생성 (90% 시간 절감)
+  - 3단계 근거 서술 체계 (사실 → 평가 → 대안) 자동 포함
+  - 최대 재시도 횟수 및 피드백 프로토콜 자동 적용
+- **지식 베이스 활용**: feedback-generator.sh가 knowledge-base/ 참조하여 패턴 기반 피드백 생성
 
 ### v2.9.0 (2025-10-30)
 - **자동화 도구 대폭 개선**: 6개 스크립트 추가로 자동화 수준 30% → 70%
@@ -1443,6 +1463,8 @@ Claude Code를 사용할 때 다음 순서로 문서를 참조하세요:
 
 | 버전 | 날짜 | 주요 변경사항 |
 |------|------|-------------|
+| 2.9.2 | 2025-10-29 | **워크플로우 문서 체계화**: WORKFLOW_RECURRING_EVENTS.md 자동화 섹션 추가, claudedocs/README.md 생성, 6개 템플릿 생성 (835줄) |
+| 2.9.1 | 2025-10-29 | **피드백 자동화 완성**: feedback-generator.sh 추가 (7번째 자동화 스크립트, 90% 시간 절감) |
 | 2.9.0 | 2025-10-30 | **자동화 도구 대폭 개선**: 6개 스크립트 추가 (70% 자동화), 지식 베이스 구축, 피드백 프로토콜 정립 |
 | 2.8.0 | 2025-10-29 | **전체 6 Agent 시스템 품질 강화**: 품질 게이트 (Agent 1, 2), 피드백 루프, 커밋 강제 (Agent 6), 에러 처리 |
 | 2.7.0 | 2025-10-29 | **Agent 4 최소 구현 기준 근본적 변경**: 정량적 기준 제거 → 원칙 기반 (YAGNI, 단순성 우선, Fake it) |
