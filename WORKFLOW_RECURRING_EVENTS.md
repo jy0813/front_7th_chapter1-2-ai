@@ -80,9 +80,20 @@
 **도구**: Read, Write, Edit, Grep
 
 **출력물**:
-- `specs/02-business-rules.md` 업데이트
+- `specs/02-business-rules.md` 업데이트 - Agent 2, 3, 4, 5가 참조
 - `specs/08-test-scenarios.md` 업데이트
 - `specs/09-recurring-events.md` 신규 생성 (마크다운 형식)
+- `claudedocs/01-feature-design-recurring-events.md` - 작업 범위 정리
+
+**품질 검증 8개 항목** (v2.8.0):
+1. ✅ Given-When-Then 패턴 준수
+2. ✅ 구체적 입력값/예시 결과값 포함
+3. ✅ 엣지 케이스 명시
+4. ✅ 테스트 가능한 수준의 상세도
+5. ✅ 명세 범위 준수 (과도한 기능 추가 금지)
+6. ✅ 구현 가능성 확인
+7. ✅ 예시 충분성
+8. ✅ 명확한 수용 기준
 
 **⚠️ 중요한 TIP**:
 
@@ -161,9 +172,18 @@
 **도구**: Read, Write, Grep
 
 **출력물**:
-- 테스트 파일 구조 설계 문서
+- `claudedocs/02-test-design-recurring-events.md` - 테스트 구조 설계 (Agent 3이 참조)
 - 테스트 케이스가 채워진 테스트 파일 (또는 기존 파일에 추가)
 - `src/__tests__/__fixtures__/mockRecurringEvents.ts`
+- Git 커밋 (test: [DESIGN] ...) - Agent 6이 검증
+
+**명세 품질 검증 5개 항목** (v2.8.0):
+1. ✅ Given-When-Then 패턴 준수
+2. ✅ 구체적 예시 포함
+3. ✅ 엣지 케이스 명시
+4. ✅ 테스트 가능 여부
+5. ✅ 명세 범위 준수
+→ 불완전 시 Agent 1에게 피드백
 
 **⚠️ 중요한 TIP**:
 
@@ -245,7 +265,16 @@
 **출력물**:
 - 테스트 파일 생성 (또는 기존 파일에 추가)
 - 테스트 실패 확인 로그
-- Git 커밋 (Red Phase)
+- Git 커밋 (test: [RED] ...) - Agent 6이 검증
+
+**⚠️ 필수 준수 규칙 (Testing Rules)** (v2.8.0):
+- **rules/tdd-principles.md**: TDD 원칙 및 안티패턴 (필수 읽기)
+- **rules/testing-library-queries.md**: Testing Library 쿼리 우선순위 (필수 준수)
+- **rules/react-testing-library-best-practices.md**: RTL 베스트 프랙티스 (필수 준수)
+
+**우선 참조 순서** (v2.8.0):
+1. **🥇 claudedocs/02-test-design-recurring-events.md** (Agent 2가 설계한 테스트 시나리오)
+2. **🥈 specs/09-recurring-events.md** (명세 문서)
 
 **⚠️ 중요한 TIP**:
 
@@ -309,6 +338,16 @@ git commit -m 'test: [RED] 반복 일정 생성 로직 테스트 작성'
 - 테스트 실행 및 성공 확인
 - Green 커밋 생성
 
+**최소 구현 원칙** (v2.7.0):
+- **YAGNI (You Aren't Gonna Need It)**: 테스트에 명시되지 않은 기능은 구현하지 않음
+- **단순성 우선 (Simplicity First)**: 가장 단순한 방법으로 테스트를 통과시킴
+- **Fake it till you make it**: 하드코딩도 허용, Refactor Phase에서 일반화
+
+**판단 기준**:
+1. ✅ 이 코드가 테스트를 통과하는가?
+2. ✅ 더 단순한 방법은 없는가?
+3. ✅ 테스트에 없는 기능을 구현했는가? (NO여야 함)
+
 **도구**: Write, Edit, Read, Bash, MCP (Context7)
 
 **출력물**:
@@ -357,15 +396,17 @@ git commit -m 'test: [RED] 반복 일정 생성 로직 테스트 작성'
 1. specs/04-api-specification.md 읽기 (서버 API 엔드포인트)
 2. specs/09-recurring-events.md 읽기 (반복 로직 명세)
 
-[3단계] 최소 구현 작성:
+[3단계] 최소 구현 작성 (YAGNI 원칙 적용):
 1. src/utils/repeatUtils.ts 생성
-2. 다음 함수 구현:
+2. 테스트에서 요구하는 함수만 구현:
    - generateRecurringEvents (메인 함수)
    - generateDailyEvents (매일 반복)
    - generateWeeklyEvents (매주 반복)
    - generateMonthlyEvents (매월 반복, 31일 케이스 처리)
    - generateYearlyEvents (매년 반복, 윤년 케이스 처리)
    - isLeapYear (윤년 판단 헬퍼)
+3. 단순성 우선: 하드코딩도 OK (예: 특정 케이스만 우선 구현)
+4. 테스트가 통과하면 충분! Refactor에서 개선
 
 [4단계] 테스트 실행 및 성공 확인:
 1. pnpm test 실행
@@ -401,17 +442,22 @@ git commit -m 'feat: [GREEN] 반복 일정 생성 로직 최소 구현'
 **도구**: Read, Edit, Bash
 
 **출력물**:
-- 개선된 코드
+- 개선된 코드 (src/utils/ 또는 src/hooks/) - Agent 6이 검증
 - 테스트 통과 확인 로그
 - 린트 검증 로그
-- Git 커밋 (Refactor Phase)
+- Git 커밋 (refactor: [REFACTOR] ...) - Agent 6이 검증
+
+**⚠️ 리팩토링 범위 제한** (v2.8.0):
+- ⚠️ **현재 파일만 수정** (절대 규칙)
+- ❌ 다른 파일 수정 절대 금지
+- 이유: 과도한 수정은 디버깅을 어렵게 만들고 TDD 사이클 위반
 
 **⚠️ 중요한 TIP**:
 
 ✅ **리팩토링 범위를 제한하세요**
+- "이 기능에 필요한 최소한의 개선"에 집중
 - 현재 기능 구현 파일만 리팩토링 (다른 파일 수정 금지)
 - 과도한 수정은 디버깅을 어렵게 만듭니다
-- "이 기능에 필요한 최소한의 개선"에 집중
 
 ✅ **반드시 테스트 통과를 확인하세요**
 - 리팩토링 후 `pnpm test` 실행
@@ -479,23 +525,40 @@ git commit -m 'refactor: [REFACTOR] 반복 일정 생성 로직 개선'
 **도구**: TodoWrite, Task, Bash, Read, Write
 
 **출력물**:
-- 전체 진행 상황 리포트
-- 품질 검증 리포트 (테스트 커버리지, 린트 결과)
-- TDD 워크플로우 최종 리포트
+- claudedocs/06-orchestrator-progress-recurring-events.md - 전체 진행 상황
+- claudedocs/06-orchestrator-quality-recurring-events.md - 품질 검증 리포트
+- claudedocs/06-orchestrator-tdd-recurring-events.md - TDD 사이클 검증
+- claudedocs/06-orchestrator-final-recurring-events.md - 최종 워크플로우 리포트
+
+**⚠️ 커밋 검증 및 강제** (v2.8.0):
+- 각 Agent 작업 완료 시 Git 커밋 확인
+  - Agent 2: `test: [DESIGN]`
+  - Agent 3: `test: [RED]`
+  - Agent 4: `feat: [GREEN]`
+  - Agent 5: `refactor: [REFACTOR]`
+- 커밋 누락 시 즉시 지적하고 재실행 요청
+- 커밋 메시지 패턴 검증
+
+**⚠️ 에러 처리 메커니즘** (v2.8.0):
+1. **Agent 실행 실패** → 최대 2회 재시도
+2. **품질 검증 실패** → 해당 Agent 재실행
+3. **커밋 누락/Git 에러** → 즉시 수정 요청
+4. **TDD 사이클 위반** → 즉시 지적 및 재작업
 
 **⚠️ 중요한 TIP**:
 
 ✅ **각 Agent가 git 커밋을 반드시 하도록 강제하세요**
-- Red Phase Agent → 테스트 파일 커밋 필수
-- Green Phase Agent → 구현 파일 커밋 필수
-- Refactor Agent → 개선된 파일 커밋 필수
+- Agent 2 → 테스트 설계 커밋 필수 (`test: [DESIGN]`)
+- Agent 3 → 테스트 파일 커밋 필수 (`test: [RED]`)
+- Agent 4 → 구현 파일 커밋 필수 (`feat: [GREEN]`)
+- Agent 5 → 개선된 파일 커밋 필수 (`refactor: [REFACTOR]`)
 - **커밋 누락 시 `git reset` 또는 `git revert`를 활용하여 이전 단계로 되돌리세요**
 
 ✅ **Git 되돌리기 활용법**
 - Agent가 커밋을 깜빡한 경우 즉시 지적
 - `git reset --soft HEAD~1` 로 마지막 커밋을 취소한 후 수정하고 재커밋
 - 또는 `git revert <commit-hash>` 로 특정 커밋을 되돌리기
-- 커밋 메시지 컨벤션 준수 확인 (test: [RED], feat: [GREEN], refactor: [REFACTOR])
+- 커밋 메시지 컨벤션 준수 확인
 
 ✅ **품질 검증 체크리스트**
 - 모든 테스트 통과 (`pnpm test`)

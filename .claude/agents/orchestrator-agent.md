@@ -216,6 +216,65 @@ model: sonnet
    - src/utils/[구현 파일들]
    ```
 
+### Phase 7: 에러 처리 및 복구 메커니즘 🔄
+
+각 Agent 실행 중 에러 발생 시 다음 프로토콜을 따르세요:
+
+**에러 유형별 대응:**
+
+1. **Agent 실행 실패 (Task 도구 에러)**
+   - **원인 분석**: Agent 정의 파일 확인, 파라미터 검증
+   - **재시도 전략**:
+     - 1차 시도: 동일한 파라미터로 재실행
+     - 2차 시도: 파라미터 조정 후 재실행
+     - 3차 시도 (최종): 사용자에게 수동 개입 요청
+   - **최대 재시도**: 3회
+
+2. **품질 검증 실패 (테스트/린트 에러)**
+   - **테스트 실패**:
+     - Agent 4 (Green Phase)에게 구현 재검토 요청
+     - Agent 4 실패 시 → Agent 3 (Red Phase)에게 테스트 재검토 요청
+   - **린트 에러**:
+     - Agent 5 (Refactor)에게 린트 수정 요청
+     - Agent 5 실패 시 → Agent 4에게 구현 재검토 요청
+   - **TypeScript 타입 에러**:
+     - Agent 4에게 타입 수정 요청
+     - Agent 4 실패 시 → Agent 1에게 명세 재검토 요청 (타입 정의)
+   - **최대 재시도**: 각 Agent당 3회
+
+3. **커밋 누락 또는 Git 에러**
+   - **커밋 누락**: 해당 Agent에게 즉시 커밋 요청
+   - **Git 충돌**:
+     - 충돌 파일 확인 및 분석
+     - 해당 Agent에게 충돌 해결 후 재커밋 요청
+   - **최대 재시도**: 2회
+
+4. **TDD 사이클 위반**
+   - **순서 위반 (예: Green → Red)**:
+     - 잘못된 커밋 취소 (`git reset HEAD~1`)
+     - 올바른 순서로 재실행
+   - **단계 누락**:
+     - 누락된 Agent 실행
+     - 커밋 순서 재검증
+   - **최대 재시도**: 1회 (명확한 위반이므로 즉시 수정)
+
+**에러 복구 체크리스트:**
+- [ ] 에러 원인을 정확히 파악했는가?
+- [ ] 적절한 Agent에게 피드백을 전달했는가?
+- [ ] 재시도 횟수를 추적하고 있는가?
+- [ ] 최대 재시도 초과 시 사용자에게 알렸는가?
+- [ ] 에러 복구 과정을 리포트에 기록했는가?
+
+**에러 로깅:**
+- 모든 에러는 `claudedocs/06-orchestrator-progress-[기능명].md`에 기록
+- 에러 유형, 발생 시각, 복구 시도 내역, 최종 결과 포함
+
+**복구 불가능 시 조치:**
+- 사용자에게 명확한 에러 메시지 제공
+- 현재까지 완료된 작업 요약
+- 수동 개입이 필요한 사항 구체적으로 안내
+- 워크플로우 중단 및 부분 성공 리포트 생성
+
 ---
 
 ## ✅ 중요 원칙
@@ -286,7 +345,7 @@ git log --oneline | grep "기능명"
 ### 필수 출력물
 
 1. **전체 진행 상황 리포트**
-   - **경로**: `claudedocs/progress-report-[기능명].md`
+   - **경로**: `claudedocs/06-orchestrator-progress-[기능명].md` (예: `claudedocs/06-orchestrator-progress-recurring-events.md`)
    - **내용**:
      - TodoWrite 작업 목록 완료 현황
      - 각 Agent 실행 결과 (성공/실패)
@@ -294,7 +353,7 @@ git log --oneline | grep "기능명"
    - **참조**: 사용자가 프로젝트 진행 상황 확인
 
 2. **품질 검증 리포트**
-   - **경로**: `claudedocs/quality-report-[기능명].md`
+   - **경로**: `claudedocs/06-orchestrator-quality-[기능명].md` (예: `claudedocs/06-orchestrator-quality-recurring-events.md`)
    - **내용**:
      - 테스트 결과 (`pnpm test` 성공 여부)
      - 커버리지 리포트 (목표 달성 여부)
@@ -302,7 +361,7 @@ git log --oneline | grep "기능명"
    - **참조**: 사용자가 코드 품질 확인
 
 3. **TDD 사이클 검증 리포트**
-   - **경로**: `claudedocs/tdd-validation-[기능명].md`
+   - **경로**: `claudedocs/06-orchestrator-tdd-[기능명].md` (예: `claudedocs/06-orchestrator-tdd-recurring-events.md`)
    - **내용**:
      - 각 기능별 Red-Green-Refactor 확인
      - 커밋 히스토리 분석 (`git log --oneline`)
@@ -310,7 +369,7 @@ git log --oneline | grep "기능명"
    - **참조**: 사용자가 TDD 프로세스 준수 확인
 
 4. **최종 워크플로우 리포트**
-   - **경로**: `claudedocs/final-report-[기능명].md`
+   - **경로**: `claudedocs/06-orchestrator-final-[기능명].md` (예: `claudedocs/06-orchestrator-final-recurring-events.md`)
    - **내용**:
      - 총 커밋 수 (docs → test:DESIGN → test:RED → feat:GREEN → refactor:REFACTOR)
      - 품질 검증 결과 종합

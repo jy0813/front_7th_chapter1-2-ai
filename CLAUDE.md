@@ -1,12 +1,39 @@
 # CLAUDE.md
 
-**문서 버전**: 2.6.0
+**문서 버전**: 2.8.0
 **최종 업데이트**: 2025-10-29
-**이전 버전**: 2.5.0 (Agent 2 커밋 정보), 2.4.0 (전체 6 Agent 시스템 완성), 2.3.0 (테스트 설계 Agent), 2.2.0 (기능 설계 Agent), 2.1.0 (6개 Agent 시스템), 2.0.0 (명세 기반 개발 + TDD 통합), 1.0.0 (초기 문서)
+**이전 버전**: 2.7.0 (Agent 4 원칙 기반), 2.6.0 (Agent 산출물 흐름도), 2.5.0 (Agent 2 커밋 정보), 2.4.0 (전체 6 Agent 시스템 완성), 2.3.0 (테스트 설계 Agent), 2.2.0 (기능 설계 Agent), 2.1.0 (6개 Agent 시스템), 2.0.0 (명세 기반 개발 + TDD 통합), 1.0.0 (초기 문서)
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 📋 문서 변경 이력
+
+### v2.8.0 (2025-10-29)
+- **중요**: 전체 6 Agent 시스템 품질 강화 및 협업 개선
+  - **Agent 1**: 명세 품질 자체 검증 8개 항목 추가, 피드백 프로토콜 구축
+  - **Agent 2**: 명세 품질 검증 5개 항목 + Git 커밋 단계 추가 (test: [DESIGN])
+  - **Agent 3**: Testing Rules 필수 준수 강제, 우선 참조 순서 명확화
+  - **Agent 5**: 리팩토링 범위 제한 명확화 (현재 파일만)
+  - **Agent 6**: 커밋 검증 및 강제, 에러 처리 메커니즘 4가지 추가
+- **시스템 레벨**: 피드백 루프 구축, 산출물 추적성 향상, Git 커밋 강제
+- **품질 게이트**: Agent 1 (8개 항목), Agent 2 (5개 항목), Agent 6 (종합 검증)
+- **총 커밋 수**: 20개 → 21개 (Agent 2의 test: [DESIGN] 커밋 추가)
+
+### v2.7.0 (2025-10-29)
+- **중요**: Agent 4 (Green Phase) 최소 구현 기준 근본적 변경
+  - 변경 전: 정량적 기준 (함수 ≤20줄, 복잡도 ≤5, 중첩 ≤3, 파라미터 ≤3)
+  - 변경 후: 원칙 기반 (YAGNI, 단순성 우선, Fake it till you make it)
+  - 이유: AI Agent 특성 반영, TDD 철학 본질 회귀, 실용성 향상
+- **추가**: CLAUDE.md Agent 4 섹션에 최소 구현 원칙 명시
+  - 3대 원칙: YAGNI, 단순성 우선, Fake it
+  - 판단 기준: 3가지 검증 질문
+- **추가**: WORKFLOW_RECURRING_EVENTS.md Agent 4 섹션에 원칙 적용 방법 추가
+  - 실행 명령 [3단계]에 YAGNI 원칙 적용 예시
+  - 하드코딩 허용 명시 (단순성 우선)
+- **개선**: .claude/agents/green-phase-agent.md 상세 업데이트
+  - Phase 3: 정량적 기준 제거 → 3대 원칙으로 대체
+  - Phase 7: 피드백 시나리오 "기준 초과" → "원칙 위반"
+  - Phase 7: 체크리스트 "정량적 기준" → "원칙 준수"
 
 ### v2.6.0 (2025-10-29)
 - **추가**: Agent 시스템 산출물 흐름도 추가
@@ -574,9 +601,27 @@ export function getTimeErrorMessage(
 - Given-When-Then 시나리오 작성
 
 **출력물**:
-- 명세 문서 (specs/ 디렉토리)
-- 작업 범위 정리 문서
+- 명세 문서 (specs/ 디렉토리) - Agent 2, 3, 4, 5가 참조
+- 작업 범위 정리 문서 (claudedocs/)
 - 체크리스트
+
+**품질 검증** (v2.8.0):
+- 명세 품질 자체 검증 (8개 항목)
+  - Given-When-Then 패턴 준수
+  - 구체적 입력값/예시 결과값 포함
+  - 엣지 케이스 명시
+  - 테스트 가능한 수준의 상세도
+  - 명세 범위 준수
+  - 구현 가능성 확인
+  - 예시 충분성
+  - 명확한 수용 기준
+- 검증 실패 시 즉시 보완
+- Agent 2가 즉시 작업 가능한 수준 보장
+
+**피드백 프로토콜** (v2.8.0):
+- 다른 Agent로부터 피드백 수신 시나리오
+- 최대 3회 재시도 메커니즘
+- 피드백 반영 체크리스트
 
 **주의사항**:
 - 반드시 프로젝트 분석 후 작업 범위를 정리하세요
@@ -600,16 +645,27 @@ export function getTimeErrorMessage(
 - 테스트 구조 Git 커밋
 
 **출력물**:
-- 테스트 파일 구조 설계 문서
+- 테스트 파일 구조 설계 문서 (claudedocs/) - Agent 3이 참조
 - 테스트 케이스 (테스트 파일)
 - 테스트 데이터 fixtures
-- Git 커밋 (test: [DESIGN] ...)
+- Git 커밋 (test: [DESIGN] ...) - Agent 6이 검증
+
+**명세 품질 검증** (v2.8.0):
+- 테스트 설계 전 명세 품질 확인 (5개 항목)
+  - Given-When-Then 패턴 준수
+  - 구체적 예시 포함
+  - 엣지 케이스 명시
+  - 테스트 가능 여부
+  - 명세 범위 준수
+- 불완전 시 Agent 1에게 구체적 피드백 제공
+- Agent 3이 즉시 코드 작성 가능한 수준 보장
 
 **주의사항**:
+- **중요**: 테스트 구조와 시나리오만 정의 (실제 코드는 Agent 3이 작성)
 - 기존 테스트 작성 방식을 참고하세요
 - 테스트 명세의 설명은 최대한 구체적으로 작성하세요
 - 명세의 범위를 벗어나지 마세요
-- 반드시 Git 커밋을 수행하세요
+- 반드시 Git 커밋을 수행하세요 (test: [DESIGN] ...)
 
 **호출 방법**:
 ```bash
@@ -621,10 +677,14 @@ export function getTimeErrorMessage(
 
 **서브 에이전트 정의**: [.claude/agents/red-phase-agent.md](./.claude/agents/red-phase-agent.md)
 
-**⚠️ 필수 준수 규칙 (Testing Rules)**:
+**⚠️ 필수 준수 규칙 (Testing Rules)** (v2.8.0):
 - **rules/tdd-principles.md**: TDD 원칙 및 안티패턴 (필수 읽기)
 - **rules/testing-library-queries.md**: Testing Library 쿼리 우선순위 (필수 준수)
 - **rules/react-testing-library-best-practices.md**: RTL 베스트 프랙티스 (필수 준수)
+
+**우선 참조 순서** (v2.8.0):
+1. **🥇 claudedocs/02-test-design-[기능명].md** (Agent 2가 설계한 테스트 시나리오)
+2. **🥈 specs/[기능명].md** (명세 문서)
 
 **핵심 역할**:
 - 실패하는 테스트 코드 작성 (TDD Red Phase)
@@ -657,6 +717,16 @@ export function getTimeErrorMessage(
 - 테스트 실행 및 성공 확인
 - Green 커밋 생성
 
+**최소 구현 원칙** (v2.7.0 업데이트):
+- **YAGNI (You Aren't Gonna Need It)**: 테스트에 명시되지 않은 기능은 구현하지 않음
+- **단순성 우선 (Simplicity First)**: 가장 단순한 방법으로 테스트를 통과시킴
+- **Fake it till you make it**: 하드코딩도 허용, Refactor Phase에서 일반화
+
+**판단 기준**:
+1. ✅ 이 코드가 테스트를 통과하는가?
+2. ✅ 더 단순한 방법은 없는가?
+3. ✅ 테스트에 없는 기능을 구현했는가? (NO여야 함)
+
 **출력물**:
 - 구현 파일 생성/수정
 - 테스트 성공 확인 로그
@@ -685,15 +755,20 @@ export function getTimeErrorMessage(
 - 타입 안전성 강화
 
 **출력물**:
-- 개선된 코드
+- 개선된 코드 (src/utils/ 또는 src/hooks/) - Agent 6이 검증
 - 테스트 통과 확인 로그
 - 린트 검증 로그
-- Git 커밋 (refactor: [REFACTOR] ...)
+- Git 커밋 (refactor: [REFACTOR] ...) - Agent 6이 검증
+
+**리팩토링 범위 제한** (v2.8.0):
+- ⚠️ **현재 파일만 수정** (절대 규칙)
+- ❌ 다른 파일 수정 절대 금지
+- 이유: 과도한 수정은 디버깅을 어렵게 만들고 TDD 사이클 위반
 
 **주의사항**:
-- 리팩토링 범위를 제한하세요 (현재 기능 파일만)
 - 반드시 테스트 통과를 확인하세요
 - 린트 검증도 필수입니다 (pnpm lint, pnpm lint:tsc)
+- 테스트 실패 시 즉시 롤백
 
 **호출 방법**:
 ```bash
@@ -713,16 +788,30 @@ export function getTimeErrorMessage(
 - 최종 리포트 생성
 
 **출력물**:
-- 전체 진행 상황 리포트
-- 품질 검증 리포트 (테스트, 커버리지, 린트)
-- TDD 사이클 검증 리포트
-- 최종 TDD 워크플로우 리포트
+- claudedocs/06-orchestrator-progress-[기능명].md - 전체 진행 상황
+- claudedocs/06-orchestrator-quality-[기능명].md - 품질 검증 리포트
+- claudedocs/06-orchestrator-tdd-[기능명].md - TDD 사이클 검증
+- claudedocs/06-orchestrator-final-[기능명].md - 최종 워크플로우 리포트
+
+**커밋 검증 및 강제** (v2.8.0):
+- 각 Agent 작업 완료 시 Git 커밋 확인
+  - Agent 2: `test: [DESIGN]`
+  - Agent 3: `test: [RED]`
+  - Agent 4: `feat: [GREEN]`
+  - Agent 5: `refactor: [REFACTOR]`
+- 커밋 누락 시 즉시 지적하고 재실행 요청
+- 커밋 메시지 패턴 검증
+
+**에러 처리 메커니즘** (v2.8.0):
+1. **Agent 실행 실패** → 최대 2회 재시도
+2. **품질 검증 실패** → 해당 Agent 재실행
+3. **커밋 누락/Git 에러** → 즉시 수정 요청
+4. **TDD 사이클 위반** → 즉시 지적 및 재작업
 
 **주의사항**:
-- 각 Agent가 git 커밋을 반드시 하도록 강제하세요
-- 커밋 누락 시 즉시 지적하고 재실행 요청
 - 품질 검증 체크리스트를 모두 통과해야 합니다
 - TDD Red-Green-Refactor 사이클 준수 확인
+- 모든 커밋이 올바른 순서로 생성되었는지 확인
 
 **호출 방법**:
 ```bash
@@ -928,6 +1017,9 @@ Claude Code를 사용할 때 다음 순서로 문서를 참조하세요:
 
 | 버전 | 날짜 | 주요 변경사항 |
 |------|------|-------------|
+| 2.8.0 | 2025-10-29 | **전체 6 Agent 시스템 품질 강화**: 품질 게이트 (Agent 1, 2), 피드백 루프, 커밋 강제 (Agent 6), 에러 처리 |
+| 2.7.0 | 2025-10-29 | **Agent 4 최소 구현 기준 근본적 변경**: 정량적 기준 제거 → 원칙 기반 (YAGNI, 단순성 우선, Fake it) |
+| 2.6.0 | 2025-10-29 | Agent 시스템 산출물 흐름도 추가, 산출물 경로 명시 |
 | 2.5.0 | 2025-10-29 | Agent 2 커밋 정보 추가 (test: [DESIGN] 태그, 총 커밋 21개) |
 | 2.4.0 | 2025-10-28 | 전체 6 Agent 시스템 완성 (Agent 3-6 서브 에이전트 정의 파일 생성, rules 준수 Agent 명시) |
 | 2.3.0 | 2025-10-28 | 테스트 설계 Agent 서브 에이전트 정의 파일 생성 |
