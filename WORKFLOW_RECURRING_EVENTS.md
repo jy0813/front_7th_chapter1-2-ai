@@ -981,14 +981,135 @@ pnpm lint:tsc  # TypeScript 컴파일 확인
 
 ---
 
+## 자동화 도구 (v2.9.0)
+
+### 개요
+
+6 Agent 시스템 운영을 효율화하기 위한 자동화 도구 (`.claude/scripts/`)
+
+**자동화 수준**: 30% → **70%** ✅
+
+### 7개 자동화 스크립트
+
+| # | 스크립트 | Agent | 목적 | 시간 절감 |
+|---|---------|-------|------|----------|
+| 1 | commit-helper.sh | All | Agent별 Git 커밋 자동화 | 75% ↓ |
+| 2 | test-enforcer.sh | 3,4,5 | TDD Phase 검증 (RED/GREEN/REFACTOR) | 80% ↓ |
+| 3 | quality-gate.sh | 6 | 품질 게이트 (TypeScript/ESLint/Test) | 80% ↓ |
+| 4 | doc-generator.sh | All | Agent별 문서 템플릿 생성 | 83% ↓ |
+| 5 | final-report.sh | 6 | 최종 워크플로우 리포트 생성 | 83% ↓ |
+| 6 | auto-recovery.sh | All | 5가지 에러 복구 가이드 | 83% ↓ |
+| 7 | feedback-generator.sh | 2,6 | Agent 간 피드백 템플릿 생성 | 90% ↓ |
+
+### 사용법 예시
+
+#### Git 커밋 자동화
+```bash
+# Agent별 커밋 태그 자동 적용
+.claude/scripts/commit-helper.sh 1 "반복 일정 명세 작성"
+# → "docs: 반복 일정 명세 작성"
+
+.claude/scripts/commit-helper.sh 3 "반복 일정 생성 로직 테스트 작성"
+# → "test: [RED] 반복 일정 생성 로직 테스트 작성"
+```
+
+#### TDD Phase 검증
+```bash
+# Red Phase: 테스트 실패 확인
+.claude/scripts/test-enforcer.sh RED src/__tests__/unit/easy.repeatUtils.spec.ts
+
+# Green Phase: 테스트 통과 확인
+.claude/scripts/test-enforcer.sh GREEN
+
+# Refactor Phase: 여전히 통과 확인
+.claude/scripts/test-enforcer.sh REFACTOR
+```
+
+#### 품질 게이트
+```bash
+# 전체 품질 검증 (TypeScript + ESLint + Test)
+.claude/scripts/quality-gate.sh
+
+# Strict 모드 (커버리지 포함)
+.claude/scripts/quality-gate.sh --strict
+```
+
+#### 문서 자동 생성
+```bash
+# Agent 1 산출물 템플릿 생성
+.claude/scripts/doc-generator.sh 1 recurring-events
+
+# Agent 6 산출물 템플릿 생성 (4종)
+.claude/scripts/doc-generator.sh 6 recurring-events
+```
+
+#### 최종 리포트
+```bash
+# Git 로그 + 테스트 결과 + 커버리지 종합 리포트
+.claude/scripts/final-report.sh recurring-events
+```
+
+#### 에러 복구
+```bash
+# 테스트 실패 시 복구 가이드
+.claude/scripts/auto-recovery.sh test-failure
+
+# 리팩토링 실패 시 롤백 가이드
+.claude/scripts/auto-recovery.sh refactor-failure
+```
+
+#### 피드백 템플릿
+```bash
+# Agent 2 → Agent 1: 명세 품질 피드백
+.claude/scripts/feedback-generator.sh 2 1 spec-quality
+
+# Agent 6 → Agent 4: 커밋 누락 피드백
+.claude/scripts/feedback-generator.sh 6 4 commit-missing
+```
+
+### 지식 베이스 활용
+
+**경로**: `.claude/knowledge-base/`
+
+#### 디렉토리 구조
+```
+.claude/knowledge-base/
+├── patterns/              # 반복 사용 가능한 코드 패턴
+│   └── tdd-patterns.md         # 6개 검증된 TDD 패턴
+├── lessons-learned/       # 프로젝트 진행 중 얻은 교훈
+├── common-errors/         # 자주 발생하는 에러 및 해결법
+└── best-practices/        # 검증된 베스트 프랙티스
+    ├── agent-1-best-practices.md
+    ├── agent-2-best-practices.md
+    └── ... (agent 3-6)
+```
+
+#### 활용 시점
+- **패턴 활용**: 새로운 기능 개발 시 `patterns/` 참조
+- **교훈 학습**: `lessons-learned/` 디렉토리에서 과거 실수 학습
+- **에러 해결**: 에러 발생 시 `common-errors/` 참조
+- **베스트 프랙티스**: Agent별 `best-practices/` 문서 준수
+
+---
+
 ## 참고 자료
 
-- [CLAUDE.md](./CLAUDE.md): 프로젝트 개발 가이드
+### 프로젝트 문서
+- [CLAUDE.md](./CLAUDE.md): 프로젝트 개발 가이드 (v2.9.0 자동화 섹션 포함)
 - [specs/README.md](./specs/README.md): 명세 문서 개요
 - [rules/README.md](./rules/README.md): 테스트 규칙 가이드
 - [rules/tdd-principles.md](./rules/tdd-principles.md): TDD 원칙
 
+### 자동화 및 협업
+- [.claude/scripts/](./. claude/scripts/): 7개 자동화 스크립트
+- [.claude/feedback-protocol.md](./.claude/feedback-protocol.md): Agent 간 피드백 프로토콜
+- [.claude/knowledge-base/](./.claude/knowledge-base/): 지식 베이스
+
+### 산출물 템플릿
+- [claudedocs/templates/](./claudedocs/templates/): Agent별 산출물 템플릿 (doc-generator.sh로 생성)
+
 ---
 
 **작성자**: Claude Code (Orchestrator Agent)
-**워크플로우 버전**: 1.0.0
+**워크플로우 버전**: 2.0.0 (v2.9.0 자동화 통합)
+**최종 업데이트**: 2025-10-29
