@@ -76,11 +76,21 @@ model: sonnet
 1. **Agent 1 (Feature Design) 실행**
    - Task 도구로 feature-design-agent 호출
    - 명세 문서 작성 확인
+   - **커밋 확인**: `docs: 기능명 명세 작성`
+   - 커밋 누락 시 즉시 지적하고 재실행 요청
    - TodoWrite 상태 업데이트: `completed`
 
 2. **Agent 2 (Test Design) 실행**
    - Task 도구로 test-design-agent 호출
    - 테스트 구조 설계 확인
+   - **커밋 확인**: `test: [DESIGN] 기능명 테스트 구조 설계`
+   - 커밋 누락 시 즉시 지적하고 재실행 요청
+   - **커밋 파일 검증**:
+     ```bash
+     git diff HEAD~1 --name-only
+     # 예상 파일: claudedocs/02-test-design-[기능명].md
+     #           src/__tests__/__fixtures__/mock[기능명].ts
+     ```
    - TodoWrite 상태 업데이트: `completed`
 
 ### Phase 2: Agent 3-5 실행 (Red-Green-Refactor 사이클)
@@ -283,26 +293,86 @@ model: sonnet
 
 **커밋 강제 절차:**
 
-1. **Agent 실행 후 즉시 커밋 확인**
+1. **Agent 실행 전 커밋 해시 저장**
    ```bash
+   # Agent 실행 전 현재 커밋 해시 기록
+   BEFORE_COMMIT=$(git rev-parse HEAD)
+   ```
+
+2. **Agent 실행 후 즉시 커밋 검증**
+   ```bash
+   # 새로운 커밋이 생성되었는지 확인
+   AFTER_COMMIT=$(git rev-parse HEAD)
+
+   if [ "$BEFORE_COMMIT" = "$AFTER_COMMIT" ]; then
+     echo "⚠️ 커밋이 누락되었습니다!"
+     # 재실행 요청
+   fi
+
+   # 최신 커밋 메시지 확인
    git log --oneline -1
    ```
 
-2. **커밋 메시지 패턴 검증**
-   - Red Phase: `test: [RED]`
-   - Green Phase: `feat: [GREEN]`
-   - Refactor: `refactor: [REFACTOR]`
+3. **커밋 메시지 패턴 검증**
 
-3. **커밋 누락 시 즉시 지적**
+   각 Agent별 예상 커밋 메시지 패턴:
+   - **Agent 1 (Feature Design)**: `docs: 기능명 명세 작성`
+   - **Agent 2 (Test Design)**: `test: [DESIGN] 기능명 테스트 구조 설계`
+   - **Agent 3 (Red Phase)**: `test: [RED] 기능명 테스트 작성`
+   - **Agent 4 (Green Phase)**: `feat: [GREEN] 기능명 최소 구현`
+   - **Agent 5 (Refactor)**: `refactor: [REFACTOR] 기능명 개선`
+
+   **패턴 검증 명령어:**
+   ```bash
+   # Red Phase 예시
+   COMMIT_MSG=$(git log -1 --pretty=%B)
+   if [[ ! $COMMIT_MSG =~ ^test:\ \[RED\] ]]; then
+     echo "⚠️ 커밋 메시지 패턴이 올바르지 않습니다!"
+     echo "예상: test: [RED] ..."
+     echo "실제: $COMMIT_MSG"
+   fi
+   ```
+
+4. **커밋 파일 검증**
+   ```bash
+   # 커밋에 포함된 파일 목록 확인
+   git diff HEAD~1 --name-only
+
+   # Agent별 예상 파일 검증
+   # Agent 3 (Red Phase) 예시:
+   # - src/__tests__/unit/easy.[기능명].spec.ts
+   # - src/__tests__/hooks/[기능명].spec.ts (훅 테스트 시)
+   ```
+
+5. **커밋 누락 시 즉시 지적 및 재실행 강제**
    ```
    ⚠️ 커밋이 누락되었습니다!
 
-   Agent [N]이 작업을 완료했지만 커밋하지 않았습니다.
-   다음 커밋을 생성하세요:
+   Agent [N] ([Agent 이름])이 작업을 완료했지만 커밋하지 않았습니다.
 
-   git add [파일명]
-   git commit -m "[커밋 메시지]"
+   **필수 조치:**
+   1. 다음 명령으로 변경 사항 확인:
+      git status
+
+   2. 파일 스테이징:
+      git add [파일명]
+
+   3. 커밋 생성:
+      git commit -m "[예상 커밋 메시지]"
+
+   4. 커밋 확인:
+      git log --oneline -1
+
+   **재실행 요청:**
+   이 Agent를 다시 실행하여 커밋까지 완료하도록 하세요.
    ```
+
+6. **커밋 검증 체크리스트**
+   - [ ] 새로운 커밋이 생성되었는가? (`git rev-parse HEAD` 변경 확인)
+   - [ ] 커밋 메시지 패턴이 올바른가? (Agent별 예상 패턴 일치)
+   - [ ] 커밋에 예상 파일이 포함되었는가? (`git diff HEAD~1 --name-only`)
+   - [ ] 커밋 시각이 Agent 실행 직후인가? (몇 초 이내)
+   - [ ] 다른 Agent의 커밋이 아닌가? (Agent 3 실행 후 Agent 4 커밋 확인 등)
 
 ### 원칙 2: 품질 검증 체크리스트를 모두 통과해야 합니다
 
