@@ -39,14 +39,12 @@
 ### 1. [Testing Library 쿼리 우선순위](./testing-library-queries.md)
 
 **내용**:
-
 - 쿼리 선택 3단계 우선순위
 - 각 쿼리 타입 상세 설명
 - 사용 시나리오 및 예시
 - TypeScript 타입 통합
 
 **주요 규칙**:
-
 - Priority 1: `getByRole` → `getByLabelText` → `getByPlaceholderText` → `getByText` → `getByDisplayValue`
 - Priority 2: `getByAltText` → `getByTitle`
 - Priority 3: `getByTestId` (최후의 수단)
@@ -56,7 +54,6 @@
 ### 2. [React Testing Library 베스트 프랙티스](./react-testing-library-best-practices.md)
 
 **내용**:
-
 - ESLint 설정 및 도구
 - 쿼리 메서드 올바른 사용
 - Assertion 패턴
@@ -65,7 +62,6 @@
 - 사용자 상호작용
 
 **주요 안티패턴**:
-
 - ❌ `container.querySelector()` 사용
 - ❌ `fireEvent` 대신 `userEvent` 사용 권장
 - ❌ `waitFor()` 내부에서 side effect 실행
@@ -76,14 +72,12 @@
 ### 3. [TDD 원칙 및 안티패턴](./tdd-principles.md)
 
 **내용**:
-
 - Red-Green-Refactor 사이클 상세
 - TypeScript/React 환경 최적화 규칙
 - 8가지 안티패턴 및 해결 방법
 - 커밋 전략
 
 **주요 안티패턴**:
-
 - ❌ 타입 변경과 로직 변경 동시 수행
 - ❌ 구현 후 테스트 작성
 - ❌ TypeScript 컴파일 에러 포함 커밋
@@ -116,7 +110,6 @@ describe('MyButton', () => {
 ```
 
 **규칙 적용**:
-
 - ✅ `getByRole` 사용 (접근성 쿼리)
 - ✅ `userEvent` 사용 (실제 사용자 상호작용)
 - ✅ `toBeInTheDocument()` 사용 (jest-dom matcher)
@@ -140,7 +133,6 @@ export function MyButton() {
 ```
 
 **규칙 적용**:
-
 - ✅ 테스트를 통과하는 최소한의 코드만 작성
 - ✅ TypeScript 타입 에러 없음
 - ✅ 과도한 구현 방지
@@ -170,7 +162,6 @@ export function MyButton({ initialCount = 0 }: MyButtonProps) {
 ```
 
 **규칙 적용**:
-
 - ✅ TypeScript 타입 추가
 - ✅ 함수 추출 (가독성 향상)
 - ✅ 테스트는 여전히 통과
@@ -182,21 +173,18 @@ export function MyButton({ initialCount = 0 }: MyButtonProps) {
 ### Claude Code 사용 시
 
 1. **테스트 작성 전 규칙 확인**:
-
 ```
 "rules/testing-library-queries.md를 참고하여
 적절한 쿼리 메서드를 선택한 테스트 코드를 작성해줘."
 ```
 
 2. **안티패턴 검증**:
-
 ```
 "rules/react-testing-library-best-practices.md의 규칙을 위반한
 코드가 있는지 검토해줘."
 ```
 
 3. **TDD 사이클 준수**:
-
 ```
 "rules/tdd-principles.md를 따라 Red-Green-Refactor 순서로
 [기능명] 기능을 구현해줘."
@@ -207,7 +195,6 @@ export function MyButton({ initialCount = 0 }: MyButtonProps) {
 ### ESLint 통합
 
 프로젝트에 이미 설정된 ESLint 플러그인:
-
 - `eslint-plugin-testing-library`
 - `eslint-plugin-jest-dom`
 
@@ -231,7 +218,6 @@ ESLint가 자동으로 규칙 위반을 감지합니다.
 ## 참고 자료
 
 ### 프로젝트 내부 문서
-
 - [specs/README.md](../specs/README.md): 명세 문서 가이드
 - [CLAUDE.md](../CLAUDE.md): Claude Code 개발 가이드
 - [README.md](../README.md): 프로젝트 전체 개요
@@ -240,14 +226,13 @@ ESLint가 자동으로 규칙 위반을 감지합니다.
 
 ## 🔖 버전 히스토리
 
-| 버전  | 날짜       | 변경 내용             | 작성자      |
-| ----- | ---------- | --------------------- | ----------- |
+| 버전 | 날짜 | 변경 내용 | 작성자 |
+|------|------|-----------|--------|
 | 1.0.0 | 2025-10-27 | 테스트 규칙 초기 작성 | Claude Code |
 
 ---
 
 **다음 문서**:
-
 - [Testing Library 쿼리 우선순위](./testing-library-queries.md)
 - [React Testing Library 베스트 프랙티스](./react-testing-library-best-practices.md)
 - [TDD 원칙 및 안티패턴](./tdd-principles.md)

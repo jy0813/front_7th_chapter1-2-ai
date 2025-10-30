@@ -9,7 +9,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 📋 문서 변경 이력
 
 ### v2.9.2 (2025-10-30)
-
 - **워크플로우 문서 체계화**: WORKFLOW_RECURRING_EVENTS.md 및 산출물 문서 구조 완성
   - **자동화 도구 섹션 추가**: WORKFLOW_RECURRING_EVENTS.md에 v2.9.0-2.9.2 자동화 도구 7개 문서화 (120줄)
   - **claudedocs/README.md 생성**: Agent 산출물 체계 및 로그 관리 가이드 (260줄)
@@ -23,7 +22,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - **산출물 추적성 향상**: 모든 Agent 출력물이 표준화된 템플릿 기반으로 생성
 
 ### v2.9.1 (2025-10-30)
-
 - **피드백 자동화 완성**: feedback-generator.sh 추가 (7번째 자동화 스크립트)
   - Agent 2→1, Agent 6→3/4/5 피드백 템플릿 자동 생성 (90% 시간 절감)
   - 3단계 근거 서술 체계 (사실 → 평가 → 대안) 자동 포함
@@ -31,7 +29,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **지식 베이스 활용**: feedback-generator.sh가 knowledge-base/ 참조하여 패턴 기반 피드백 생성
 
 ### v2.9.0 (2025-10-30)
-
 - **자동화 도구 대폭 개선**: 6개 스크립트 추가로 자동화 수준 30% → 70%
   - **commit-helper.sh**: Agent별 Git 커밋 자동화 (75% 시간 절감)
   - **test-enforcer.sh**: TDD Phase별 테스트 검증 및 로그 저장 (80% 절감)
@@ -48,7 +45,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **CLAUDE.md 자동화 섹션 추가**: 전체 자동화 도구 사용법 및 워크플로우 문서화
 
 ### v2.8.0 (2025-10-29)
-
 - **중요**: 전체 6 Agent 시스템 품질 강화 및 협업 개선
   - **Agent 1**: 명세 품질 자체 검증 8개 항목 추가 (3단계 근거: 사실 → 평가 → 대안), 피드백 프로토콜 구축
   - **Agent 2**: 명세 품질 검증 5개 항목 (3단계 근거: 사실 → 평가 → 대안) + Git 커밋 단계 추가 (test: [DESIGN])
@@ -61,7 +57,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **총 커밋 수**: 20개 → 21개 (Agent 2의 test: [DESIGN] 커밋 추가)
 
 ### v2.7.0 (2025-10-29)
-
 - **중요**: Agent 4 (Green Phase) 최소 구현 기준 근본적 변경
   - 변경 전: 정량적 기준 (함수 ≤20줄, 복잡도 ≤5, 중첩 ≤3, 파라미터 ≤3)
   - 변경 후: 원칙 기반 (YAGNI, 단순성 우선, Fake it till you make it)
@@ -78,7 +73,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Phase 7: 체크리스트 "정량적 기준" → "원칙 준수"
 
 ### v2.6.0 (2025-10-29)
-
 - **추가**: Agent 시스템 산출물 흐름도 추가
   - 6개 Agent 간 산출물 참조 관계 시각화
   - 각 Agent의 산출물 경로 명시 (specs/, claudedocs/, src/)
@@ -91,7 +85,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - 역할 중복 방지를 위한 경고 추가
 
 ### v2.5.0 (2025-10-29)
-
 - **추가**: Agent 2 커밋 정보 추가
   - Agent 2도 테스트 구조 설계 후 Git 커밋 수행
   - 커밋 태그: `test: [DESIGN]`
@@ -100,7 +93,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **개선**: Git 커밋 컨벤션 섹션에 `test: [DESIGN]` 태그 추가
 
 ### v2.4.0 (2025-10-28)
-
 - **추가**: 나머지 4개 Agent 서브 에이전트 정의 파일 생성
   - red-phase-agent.md (Agent 3)
   - green-phase-agent.md (Agent 4)
@@ -111,25 +103,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **완성**: 전체 6 Agent 시스템 문서화 완료
 
 ### v2.3.0 (2025-10-28)
-
 - **추가**: 테스트 설계 Agent 서브 에이전트 정의 파일 생성 (.claude/agents/test-design-agent.md)
 - **추가**: Agent 2 섹션에 서브 에이전트 링크 및 호출 방법 추가
 
 ### v2.2.0 (2025-10-28)
-
 - **추가**: 기능 설계 Agent 서브 에이전트 정의 파일 생성 (.claude/agents/feature-design-agent.md)
 - **추가**: 서브 에이전트 호출 방법 및 참조 추가
 - **개선**: Agent 1 섹션에 서브 에이전트 링크 추가
 
 ### v2.1.0 (2025-10-28)
-
 - **추가**: 6개 Agent 시스템 설명 및 활용 가이드
 - **추가**: 반복 일정 기능 구현 워크플로우 참조
 - **추가**: AI 협업 리포트 템플릿 참조
 - **개선**: 프로젝트 문서 참조 구조 명확화
 
 ### v2.0.0 (2025-10-27)
-
 - **추가**: 명세 기반 개발(Specification-Driven Development) 섹션
 - **추가**: TDD(Test-Driven Development) 워크플로우 가이드
 - **추가**: 테스트 규칙 (Testing Library + TDD 원칙) 통합
@@ -138,7 +126,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **개선**: 개발 시 주의사항 명확화
 
 ### v1.0.0 (초기)
-
 - 기본 프로젝트 개요 및 아키텍처 설명
 
 ---
@@ -146,7 +133,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 프로젝트 개요
 
 일정 관리 캘린더 애플리케이션 (React + TypeScript + Vite)
-
 - 일정 생성/수정/삭제 및 알림 기능
 - 주간/월간 캘린더 뷰 제공
 - 일정 검색 및 카테고리 분류
@@ -155,19 +141,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 프로젝트 특징
 
 **명세 기반 개발 (Specification-Driven Development)**
-
 - `specs/` 디렉토리에 살아있는 문서(Living Documentation)로 모든 요구사항 정의
 - AI가 명세를 읽고 코드를 생성할 수 있는 수준의 상세 명세
 - 명세 → 테스트 → 구현 순서로 개발 진행
 
 **TDD(Test-Driven Development) 기반**
-
 - Red-Green-Refactor 사이클 엄격히 준수
 - 단위 테스트 기반 순수 함수 설계
 - `rules/` 디렉토리에 테스트 작성 규칙 정의
 
 **AI 협업 최적화**
-
 - Claude Code, GitHub Copilot, Cursor 등 AI 도구 활용 가이드 제공
 - 명세와 규칙을 AI가 이해하고 코드 생성하도록 구조화
 - 6개 Agent 시스템으로 역할 분담 및 품질 관리
@@ -175,7 +158,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 개발 명령어
 
 ### 필수 개발 명령어
-
 ```bash
 # 개발 서버 실행 (Vite + Express 서버 동시 실행)
 pnpm dev
@@ -192,7 +174,6 @@ pnpm build
 ```
 
 ### 테스트 명령어
-
 ```bash
 # 테스트 실행 (watch 모드)
 pnpm test
@@ -205,7 +186,6 @@ pnpm test:coverage
 ```
 
 ### 린트 명령어
-
 ```bash
 # 전체 린트 검사 (ESLint + TypeScript)
 pnpm lint
@@ -220,7 +200,6 @@ pnpm lint:tsc
 ## 아키텍처 구조
 
 ### 계층 구조
-
 ```
 src/
 ├── App.tsx              # 메인 애플리케이션 컴포넌트 (모든 UI 렌더링)
@@ -249,13 +228,11 @@ src/
 ### 설계 패턴
 
 **단일 컴포넌트 구조**
-
 - `App.tsx`가 모든 UI를 렌더링하는 단일 컴포넌트 구조
 - 비즈니스 로직은 커스텀 훅으로 분리하여 관심사 분리
 - 상태 관리는 React 기본 hooks (useState, useEffect) 사용
 
 **Hooks 기반 아키텍처**
-
 - `useEventForm`: 폼 상태, 유효성 검증, 에러 메시지 관리
 - `useEventOperations`: API 호출 및 데이터 동기화
 - `useCalendarView`: 캘린더 네비게이션 및 공휴일 데이터
@@ -263,13 +240,11 @@ src/
 - `useSearch`: 검색어 기반 일정 필터링
 
 **Utils 함수 설계 원칙**
-
 - 순수 함수로 구현 (부수효과 없음)
 - 단위 테스트 가능하도록 설계
 - 날짜/시간 로직, 일정 계산, 유효성 검증 등 재사용 가능한 로직
 
 **데이터 흐름**
-
 1. 사용자 입력 → `useEventForm` (유효성 검증)
 2. 폼 제출 → `useEventOperations` (API 호출)
 3. 서버 응답 → 상태 업데이트 → UI 리렌더링
@@ -278,12 +253,10 @@ src/
 ### API 서버 (server.js)
 
 **Express 서버**
-
 - 포트 3000에서 실행
 - JSON 파일 기반 데이터베이스 (`realEvents.json`)
 
 **엔드포인트**
-
 - `GET /api/events` - 모든 일정 조회
 - `POST /api/events` - 단일 일정 생성
 - `PUT /api/events/:id` - 단일 일정 수정
@@ -295,7 +268,6 @@ src/
 - `DELETE /api/recurring-events/:repeatId` - 반복 일정 시리즈 삭제
 
 **데이터 저장 방식**
-
 - 파일 시스템 기반 JSON 저장
 - UUID로 일정 ID 생성
 - 반복 일정은 `repeat.id`로 그룹 관리
@@ -303,20 +275,17 @@ src/
 ### 테스트 전략
 
 **테스트 구조**
-
 - `unit/`: 유틸리티 함수 단위 테스트 (`easy.*.spec.ts`)
 - `hooks/`: 커스텀 훅 테스트
 - `medium.integration.spec.tsx`: 컴포넌트 통합 테스트
 
 **테스트 도구**
-
 - Vitest: 테스트 러너
 - Testing Library: React 컴포넌트 테스트
 - MSW: API 모킹
 - jsdom: 브라우저 환경 시뮬레이션
 
 **테스트 실행 환경**
-
 - `setupTests.ts`에서 전역 설정
 - MSW handlers로 API 응답 모킹
 - `.coverage/` 디렉토리에 커버리지 리포트 생성
@@ -324,20 +293,17 @@ src/
 ### 주요 기술 스택
 
 **UI 라이브러리**
-
 - Material-UI (MUI) v7 - UI 컴포넌트
 - Emotion - CSS-in-JS
 - Framer Motion - 애니메이션
 - notistack - 토스트 알림
 
 **개발 도구**
-
 - Vite - 빌드 도구
 - TypeScript - 타입 안정성
 - ESLint + Prettier - 코드 품질
 
 **테스트**
-
 - Vitest - 테스트 프레임워크
 - Testing Library - React 테스트 유틸리티
 - MSW - API 모킹
@@ -350,34 +316,31 @@ src/
 
 프로젝트의 모든 요구사항은 `specs/` 디렉토리에 문서화되어 있습니다.
 
-| 문서                                                                   | 설명                              | AI 도구 활용                  |
-| ---------------------------------------------------------------------- | --------------------------------- | ----------------------------- |
-| [README.md](./specs/README.md)                                         | 명세 개요 및 TDD 워크플로우       | 개발 전 필수 읽기             |
-| [01-data-models.md](./specs/01-data-models.md)                         | TypeScript 타입 정의 및 필드 제약 | 타입 생성 시 참조             |
-| [02-business-rules.md](./specs/02-business-rules.md)                   | 비즈니스 로직 및 제약사항         | 검증 로직 구현 시 참조        |
-| [03-user-workflows.md](./specs/03-user-workflows.md)                   | 사용자 시나리오 및 워크플로우     | 통합 테스트 작성 시 참조      |
-| [04-api-specification.md](./specs/04-api-specification.md)             | REST API 엔드포인트 상세          | API 호출 코드 작성 시 참조    |
-| [05-validation-rules.md](./specs/05-validation-rules.md)               | 입력 유효성 검증 로직             | 유효성 검증 함수 구현 시 참조 |
-| [06-event-overlap-detection.md](./specs/06-event-overlap-detection.md) | 일정 겹침 감지 알고리즘           | 겹침 로직 구현 시 참조        |
-| [07-notification-system.md](./specs/07-notification-system.md)         | 알림 시스템 트리거 로직           | 알림 기능 구현 시 참조        |
-| [08-test-scenarios.md](./specs/08-test-scenarios.md)                   | 수용 기준 및 테스트 케이스        | 테스트 작성 시 참조           |
+| 문서 | 설명 | AI 도구 활용 |
+|------|------|-------------|
+| [README.md](./specs/README.md) | 명세 개요 및 TDD 워크플로우 | 개발 전 필수 읽기 |
+| [01-data-models.md](./specs/01-data-models.md) | TypeScript 타입 정의 및 필드 제약 | 타입 생성 시 참조 |
+| [02-business-rules.md](./specs/02-business-rules.md) | 비즈니스 로직 및 제약사항 | 검증 로직 구현 시 참조 |
+| [03-user-workflows.md](./specs/03-user-workflows.md) | 사용자 시나리오 및 워크플로우 | 통합 테스트 작성 시 참조 |
+| [04-api-specification.md](./specs/04-api-specification.md) | REST API 엔드포인트 상세 | API 호출 코드 작성 시 참조 |
+| [05-validation-rules.md](./specs/05-validation-rules.md) | 입력 유효성 검증 로직 | 유효성 검증 함수 구현 시 참조 |
+| [06-event-overlap-detection.md](./specs/06-event-overlap-detection.md) | 일정 겹침 감지 알고리즘 | 겹침 로직 구현 시 참조 |
+| [07-notification-system.md](./specs/07-notification-system.md) | 알림 시스템 트리거 로직 | 알림 기능 구현 시 참조 |
+| [08-test-scenarios.md](./specs/08-test-scenarios.md) | 수용 기준 및 테스트 케이스 | 테스트 작성 시 참조 |
 
 ### 명세 활용 원칙
 
 **1. 명세를 먼저 읽고 구현**
-
 ```bash
 # Claude Code 사용 예시
 "specs/05-validation-rules.md를 읽고 getTimeErrorMessage 함수를 TDD로 구현해줘"
 ```
 
 **2. Given-When-Then 패턴 준수**
-
 - 명세의 모든 시나리오는 Given-When-Then 형식으로 작성됨
 - 테스트 코드 작성 시 이 구조를 그대로 변환
 
 **3. 명세와 코드 동기화**
-
 - 명세 변경 시 테스트와 구현 코드도 함께 업데이트
 - Git 커밋에 명세 + 테스트 + 코드를 함께 포함
 
@@ -387,12 +350,12 @@ src/
 
 ### 테스트 규칙 문서 구조 (`rules/`)
 
-| 문서                                                                                       | 설명                          | 적용 시점                |
-| ------------------------------------------------------------------------------------------ | ----------------------------- | ------------------------ |
-| [README.md](./rules/README.md)                                                             | 테스트 규칙 개요              | 테스트 작성 전 필수 읽기 |
-| [testing-library-queries.md](./rules/testing-library-queries.md)                           | Testing Library 쿼리 우선순위 | 쿼리 선택 시 참조        |
-| [react-testing-library-best-practices.md](./rules/react-testing-library-best-practices.md) | RTL 베스트 프랙티스           | 컴포넌트 테스트 시 참조  |
-| [tdd-principles.md](./rules/tdd-principles.md)                                             | TDD 원칙 및 안티패턴          | 개발 프로세스 전반       |
+| 문서 | 설명 | 적용 시점 |
+|------|------|----------|
+| [README.md](./rules/README.md) | 테스트 규칙 개요 | 테스트 작성 전 필수 읽기 |
+| [testing-library-queries.md](./rules/testing-library-queries.md) | Testing Library 쿼리 우선순위 | 쿼리 선택 시 참조 |
+| [react-testing-library-best-practices.md](./rules/react-testing-library-best-practices.md) | RTL 베스트 프랙티스 | 컴포넌트 테스트 시 참조 |
+| [tdd-principles.md](./rules/tdd-principles.md) | TDD 원칙 및 안티패턴 | 개발 프로세스 전반 |
 
 ### 핵심 테스트 규칙
 
@@ -400,17 +363,17 @@ src/
 
 ```typescript
 // ✅ Priority 1: 접근성 쿼리 (사용자가 요소를 찾는 방식)
-screen.getByRole('button', { name: /저장/i });
-screen.getByLabelText('시작 시간');
-screen.getByPlaceholderText('제목을 입력하세요');
-screen.getByText('일정 추가');
+screen.getByRole('button', { name: /저장/i })
+screen.getByLabelText('시작 시간')
+screen.getByPlaceholderText('제목을 입력하세요')
+screen.getByText('일정 추가')
 
 // ⚠️ Priority 2: 시맨틱 쿼리 (차선책)
-screen.getByAltText('프로필 이미지');
-screen.getByTitle('도움말');
+screen.getByAltText('프로필 이미지')
+screen.getByTitle('도움말')
 
 // ❌ Priority 3: Test ID (최후의 수단)
-screen.getByTestId('event-form'); // 다른 방법이 없을 때만 사용
+screen.getByTestId('event-form') // 다른 방법이 없을 때만 사용
 ```
 
 **2. 사용자 상호작용 패턴**
@@ -448,7 +411,6 @@ fireEvent.click(button); // 지양
 ### 안티패턴 방지
 
 **❌ 하지 말아야 할 것들**
-
 - `container.querySelector()` 사용
 - 구현 후 테스트 작성
 - 불필요한 `role`, `aria-*` 속성 추가
@@ -457,7 +419,6 @@ fireEvent.click(button); // 지양
 - 모호한 테스트 이름
 
 **✅ 올바른 패턴**
-
 - `screen` 객체 사용
 - 테스트 먼저 작성 (TDD)
 - 시맨틱 HTML 활용
@@ -505,13 +466,11 @@ fireEvent.click(button); // 지양
 ### 실전 예시: 시간 유효성 검증 구현
 
 #### Step 1: 명세 읽기
-
 ```bash
 "specs/05-validation-rules.md의 시간 유효성 검증 규칙을 읽어줘"
 ```
 
 #### Step 2: 🔴 Red - 테스트 작성
-
 ```typescript
 // src/__tests__/unit/easy.timeValidation.spec.ts
 import { describe, it, expect } from 'vitest';
@@ -529,21 +488,20 @@ describe('getTimeErrorMessage', () => {
     // Then
     expect(result).toEqual({
       startTimeError: '시작 시간은 종료 시간보다 빨라야 합니다.',
-      endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.',
+      endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.'
     });
   });
 });
 ```
 
 #### Step 3: 🟢 Green - 최소 구현
-
 ```typescript
 // src/utils/timeValidation.ts
 export function getTimeErrorMessage(start: string, end: string) {
   if (start >= end) {
     return {
       startTimeError: '시작 시간은 종료 시간보다 빨라야 합니다.',
-      endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.',
+      endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.'
     };
   }
   return { startTimeError: '', endTimeError: '' };
@@ -551,7 +509,6 @@ export function getTimeErrorMessage(start: string, end: string) {
 ```
 
 #### Step 4: 🔵 Refactor - 개선
-
 ```typescript
 // src/utils/timeValidation.ts
 export type TimeErrorMessage = {
@@ -559,12 +516,15 @@ export type TimeErrorMessage = {
   endTimeError: string;
 };
 
-export function getTimeErrorMessage(start: string, end: string): TimeErrorMessage {
+export function getTimeErrorMessage(
+  start: string,
+  end: string
+): TimeErrorMessage {
   const hasError = start >= end;
 
   return {
     startTimeError: hasError ? '시작 시간은 종료 시간보다 빨라야 합니다.' : '',
-    endTimeError: hasError ? '종료 시간은 시작 시간보다 늦어야 합니다.' : '',
+    endTimeError: hasError ? '종료 시간은 시작 시간보다 늦어야 합니다.' : ''
   };
 }
 ```
@@ -578,12 +538,10 @@ export function getTimeErrorMessage(start: string, end: string): TimeErrorMessag
 복잡한 기능 개발을 위해 역할별로 특화된 6개 Agent를 활용하는 시스템입니다.
 
 **참고 문서**:
-
 - [WORKFLOW_RECURRING_EVENTS.md](./WORKFLOW_RECURRING_EVENTS.md) - 반복 일정 기능 구현 워크플로우
 - [.claude/agents/](./.claude/agents/) - 서브 에이전트 정의 파일
 
 **서브 에이전트 호출 방법**:
-
 ```bash
 # Claude Code에서 직접 호출
 @feature-design-agent "새로운 기능 요구사항"
@@ -661,7 +619,6 @@ export function getTimeErrorMessage(start: string, end: string): TimeErrorMessag
 ```
 
 **산출물 활용 방법**:
-
 - 각 Agent는 `Read`, `Grep`, `Glob` 도구로 이전 Agent의 산출물 읽기
 - `Bash` 도구로 Git 로그 확인 및 테스트 실행
 - 모든 산출물은 Git 커밋으로 버전 관리되어 추적 가능
@@ -670,26 +627,22 @@ export function getTimeErrorMessage(start: string, end: string): TimeErrorMessag
 ### Agent 역할 및 책임
 
 #### Agent 1: 기능 설계 Agent (Feature Design Agent)
-
 **Persona**: Scribe + Analyzer + Architect
 
 **서브 에이전트 정의**: [.claude/agents/feature-design-agent.md](./.claude/agents/feature-design-agent.md)
 
 **핵심 역할**:
-
 - 프로젝트 분석 후 작업 범위 정리 (가장 중요!)
 - 요구사항 분석 및 명세 문서 작성
 - specs/ 디렉토리 업데이트
 - Given-When-Then 시나리오 작성
 
 **출력물**:
-
 - 명세 문서 (specs/ 디렉토리) - Agent 2, 3, 4, 5가 참조
 - 작업 범위 정리 문서 (claudedocs/)
 - 체크리스트
 
 **품질 검증** (v2.8.0):
-
 - 명세 품질 자체 검증 (8개 항목)
   - Given-When-Then 패턴 준수
   - 구체적 입력값/예시 결과값 포함
@@ -703,45 +656,38 @@ export function getTimeErrorMessage(start: string, end: string): TimeErrorMessag
 - Agent 2가 즉시 작업 가능한 수준 보장
 
 **피드백 프로토콜** (v2.8.0):
-
 - 다른 Agent로부터 피드백 수신 시나리오
 - 최대 3회 재시도 메커니즘
 - 피드백 반영 체크리스트
 
 **주의사항**:
-
 - 반드시 프로젝트 분석 후 작업 범위를 정리하세요
 - 명세를 구체화하는 정도로 진행하세요 (새로운 기능 추가 금지)
 - 구체적인 입력값과 예시 결과값을 함께 제공하세요
 
 **호출 방법**:
-
 ```bash
 @feature-design-agent "기능 요구사항을 설명해주세요"
 ```
 
 #### Agent 2: 테스트 설계 Agent (Test Design Agent)
-
 **Persona**: QA + Architect + TDD 전문가
 
 **서브 에이전트 정의**: [.claude/agents/test-design-agent.md](./.claude/agents/test-design-agent.md)
 
 **핵심 역할**:
-
 - 명세 기반 테스트 설계
 - 테스트 구조 설계 (단위/훅/통합)
 - 테스트 케이스가 채워진 테스트 파일 생성
 - 테스트 구조 Git 커밋
 
 **출력물**:
-
 - 테스트 파일 구조 설계 문서 (claudedocs/) - Agent 3이 참조
 - 테스트 케이스 (테스트 파일)
 - 테스트 데이터 fixtures
 - Git 커밋 (test: [DESIGN] ...) - Agent 6이 검증
 
 **명세 품질 검증** (v2.8.0):
-
 - 테스트 설계 전 명세 품질 확인 (5개 항목)
   - Given-When-Then 패턴 준수
   - 구체적 예시 포함
@@ -752,7 +698,6 @@ export function getTimeErrorMessage(start: string, end: string): TimeErrorMessag
 - Agent 3이 즉시 코드 작성 가능한 수준 보장
 
 **주의사항**:
-
 - **중요**: 테스트 구조와 시나리오만 정의 (실제 코드는 Agent 3이 작성)
 - 기존 테스트 작성 방식을 참고하세요
 - 테스트 명세의 설명은 최대한 구체적으로 작성하세요
@@ -760,142 +705,119 @@ export function getTimeErrorMessage(start: string, end: string): TimeErrorMessag
 - 반드시 Git 커밋을 수행하세요 (test: [DESIGN] ...)
 
 **호출 방법**:
-
 ```bash
 @test-design-agent "specs/09-recurring-events.md 기반으로 테스트 케이스를 설계해주세요"
 ```
 
 #### Agent 3: Red Phase Agent (테스트 코드 작성 Agent)
-
 **Persona**: QA + TDD 전문가
 
 **서브 에이전트 정의**: [.claude/agents/red-phase-agent.md](./.claude/agents/red-phase-agent.md)
 
 **⚠️ 필수 준수 규칙 (Testing Rules)** (v2.8.0):
-
 - **rules/tdd-principles.md**: TDD 원칙 및 안티패턴 (필수 읽기)
 - **rules/testing-library-queries.md**: Testing Library 쿼리 우선순위 (필수 준수)
 - **rules/react-testing-library-best-practices.md**: RTL 베스트 프랙티스 (필수 준수)
 
 **우선 참조 순서** (v2.8.0):
-
 1. **🥇 claudedocs/02-test-design-[기능명].md** (Agent 2가 설계한 테스트 시나리오)
 2. **🥈 specs/[기능명].md** (명세 문서)
 
 **핵심 역할**:
-
 - 실패하는 테스트 코드 작성 (TDD Red Phase)
 - 테스트 실행 및 실패 확인
 - Red 커밋 생성
 
 **출력물**:
-
 - 테스트 파일 생성 (또는 기존 파일에 추가)
 - 테스트 실패 확인 로그
 - Git 커밋 (test: [RED] ...)
 
 **주의사항**:
-
 - Kent Beck의 테스트 작성 방법론 참고
 - Given-When-Then 패턴으로 구체적인 테스트 명세 작성
 - 기존 테스트 유틸리티를 활용하세요
 - Testing Library 쿼리 우선순위 준수 (getByRole > getByLabelText > getByTestId)
 
 **호출 방법**:
-
 ```bash
 @red-phase-agent "specs/05-validation-rules.md를 참고하여 시간 유효성 검증 테스트를 작성해줘"
 ```
 
 #### Agent 4: Green Phase Agent (코드 작성 Agent)
-
 **Persona**: Frontend/Backend Developer
 
 **서브 에이전트 정의**: [.claude/agents/green-phase-agent.md](./.claude/agents/green-phase-agent.md)
 
 **핵심 역할**:
-
 - 테스트를 통과하는 최소 구현 작성 (TDD Green Phase)
 - 테스트 실행 및 성공 확인
 - Green 커밋 생성
 
 **최소 구현 원칙** (v2.7.0 업데이트):
-
 - **YAGNI (You Aren't Gonna Need It)**: 테스트에 명시되지 않은 기능은 구현하지 않음
 - **단순성 우선 (Simplicity First)**: 가장 단순한 방법으로 테스트를 통과시킴
 - **Fake it till you make it**: 하드코딩도 허용, Refactor Phase에서 일반화
 
 **판단 기준**:
-
 1. ✅ 이 코드가 테스트를 통과하는가?
 2. ✅ 더 단순한 방법은 없는가?
 3. ✅ 테스트에 없는 기능을 구현했는가? (NO여야 함)
 
 **출력물**:
-
 - 구현 파일 생성/수정
 - 테스트 성공 확인 로그
 - 코드 설명 문서
 - Git 커밋 (feat: [GREEN] ...)
 
 **주의사항**:
-
 - API 사용법을 명확히 하세요 (specs/04-api-specification.md)
 - 프로젝트 구조를 정확히 파악하세요
 - 절대 테스트 코드를 수정하지 마세요
 - MCP 도구를 적극 활용하세요 (Context7, Sequential)
 
 **호출 방법**:
-
 ```bash
 @green-phase-agent "src/__tests__/unit/easy.timeValidation.spec.ts의 테스트를 통과하는 구현을 작성해줘"
 ```
 
 #### Agent 5: Refactor Agent (리팩토링 Agent)
-
 **Persona**: Refactorer + Performance
 
 **서브 에이전트 정의**: [.claude/agents/refactor-agent.md](./.claude/agents/refactor-agent.md)
 
 **핵심 역할**:
-
 - 코드 품질 개선 (TDD Refactor Phase)
 - 중복 제거 및 가독성 향상
 - 타입 안전성 강화
 
 **출력물**:
-
 - 개선된 코드 (src/utils/ 또는 src/hooks/) - Agent 6이 검증
 - 테스트 통과 확인 로그
 - 린트 검증 로그
 - Git 커밋 (refactor: [REFACTOR] ...) - Agent 6이 검증
 
 **리팩토링 범위 제한** (v2.8.0):
-
 - ⚠️ **현재 파일만 수정** (절대 규칙)
 - ❌ 다른 파일 수정 절대 금지
 - 이유: 과도한 수정은 디버깅을 어렵게 만들고 TDD 사이클 위반
 
 **주의사항**:
-
 - 반드시 테스트 통과를 확인하세요
 - 린트 검증도 필수입니다 (pnpm lint, pnpm lint:tsc)
 - 테스트 실패 시 즉시 롤백
 
 **호출 방법**:
-
 ```bash
 @refactor-agent "src/utils/timeValidation.ts 파일을 리팩토링해줘"
 ```
 
 #### Agent 6: Orchestrator Agent (전체 오케스트레이션 Agent)
-
 **Persona**: Architect + DevOps + Project Manager
 
 **서브 에이전트 정의**: [.claude/agents/orchestrator-agent.md](./.claude/agents/orchestrator-agent.md)
 
 **핵심 역할**:
-
 - 전체 워크플로우 조율 및 품질 관리
 - Agent 1-5 순차 실행 관리
 - 코드 리뷰 및 품질 검증
@@ -903,14 +825,12 @@ export function getTimeErrorMessage(start: string, end: string): TimeErrorMessag
 - 최종 리포트 생성
 
 **출력물**:
-
 - claudedocs/06-orchestrator-progress-[기능명].md - 전체 진행 상황
 - claudedocs/06-orchestrator-quality-[기능명].md - 품질 검증 리포트
 - claudedocs/06-orchestrator-tdd-[기능명].md - TDD 사이클 검증
 - claudedocs/06-orchestrator-final-[기능명].md - 최종 워크플로우 리포트
 
 **커밋 검증 및 강제** (v2.8.0):
-
 - 각 Agent 작업 완료 시 Git 커밋 확인
   - Agent 2: `test: [DESIGN]`
   - Agent 3: `test: [RED]`
@@ -920,20 +840,17 @@ export function getTimeErrorMessage(start: string, end: string): TimeErrorMessag
 - 커밋 메시지 패턴 검증
 
 **에러 처리 메커니즘** (v2.8.0):
-
 1. **Agent 실행 실패** → 최대 2회 재시도
 2. **품질 검증 실패** → 해당 Agent 재실행
 3. **커밋 누락/Git 에러** → 즉시 수정 요청
 4. **TDD 사이클 위반** → 즉시 지적 및 재작업
 
 **주의사항**:
-
 - 품질 검증 체크리스트를 모두 통과해야 합니다
 - TDD Red-Green-Refactor 사이클 준수 확인
 - 모든 커밋이 올바른 순서로 생성되었는지 확인
 
 **호출 방법**:
-
 ```bash
 @orchestrator-agent "반복 일정 기능을 TDD로 구현해줘. 기능은 6개: 일일, 주간, 월간, 연간 반복 + 단일/전체 수정 + 단일/전체 삭제"
 ```
@@ -963,14 +880,14 @@ Phase N+1: 최종 검증 (Agent 6)
 
 ### Git 커밋 컨벤션
 
-| 커밋 태그              | 설명                 | Agent   |
-| ---------------------- | -------------------- | ------- |
-| `docs:`                | 명세 문서 작성       | Agent 1 |
-| `test: [DESIGN]`       | 테스트 구조 설계     | Agent 2 |
-| `test: [RED]`          | 실패하는 테스트 작성 | Agent 3 |
-| `feat: [GREEN]`        | 최소 구현            | Agent 4 |
-| `refactor: [REFACTOR]` | 코드 개선            | Agent 5 |
-| `docs:`                | 최종 문서 업데이트   | Agent 6 |
+| 커밋 태그 | 설명 | Agent |
+|----------|------|-------|
+| `docs:` | 명세 문서 작성 | Agent 1 |
+| `test: [DESIGN]` | 테스트 구조 설계 | Agent 2 |
+| `test: [RED]` | 실패하는 테스트 작성 | Agent 3 |
+| `feat: [GREEN]` | 최소 구현 | Agent 4 |
+| `refactor: [REFACTOR]` | 코드 개선 | Agent 5 |
+| `docs:` | 최종 문서 업데이트 | Agent 6 |
 
 ### 실전 예시
 
@@ -1041,14 +958,12 @@ export function isOverlapping(event1: Event, event2: Event): boolean {
 ### Cursor에서 명세 기반 개발
 
 1. `.cursorrules` 파일에 명세 경로 추가:
-
 ```
 Always reference specifications in specs/ directory before implementing features.
 Always follow testing rules in rules/ directory when writing tests.
 ```
 
 2. 프롬프트 예시:
-
 ```
 "specs/05-validation-rules.md의 시간 검증 규칙을 구현해줘.
 명세의 모든 예외 케이스를 처리하고, rules/tdd-principles.md에 따라
@@ -1074,13 +989,11 @@ Always follow testing rules in rules/ directory when writing tests.
 **목적**: Agent별 커밋 태그를 자동 생성하여 일관성 보장
 
 **사용법**:
-
 ```bash
 .claude/scripts/commit-helper.sh <AGENT_NUMBER> <MESSAGE>
 ```
 
 **예시**:
-
 ```bash
 # Agent 3: Red Phase 커밋
 .claude/scripts/commit-helper.sh 3 "시간 검증 테스트 작성"
@@ -1092,7 +1005,6 @@ Always follow testing rules in rules/ directory when writing tests.
 ```
 
 **특징**:
-
 - Agent 번호 검증 (1-6만 허용)
 - 자동 staging (git add .)
 - Claude Code 푸터 추가
@@ -1105,13 +1017,11 @@ Always follow testing rules in rules/ directory when writing tests.
 **목적**: TDD Phase별로 테스트 결과를 검증하고 로그 저장
 
 **사용법**:
-
 ```bash
 .claude/scripts/test-enforcer.sh <PHASE> [TEST_FILE]
 ```
 
 **예시**:
-
 ```bash
 # Red Phase: 테스트 실패 확인
 .claude/scripts/test-enforcer.sh RED src/__tests__/unit/easy.timeValidation.spec.ts
@@ -1124,13 +1034,11 @@ Always follow testing rules in rules/ directory when writing tests.
 ```
 
 **Phase별 검증**:
-
 - **RED**: 테스트가 실패해야 함 (예상된 동작)
 - **GREEN**: 모든 테스트가 통과해야 함
 - **REFACTOR**: 리팩토링 후에도 테스트 통과 유지
 
 **출력**:
-
 - 로그 저장: `claudedocs/test-logs/test-${PHASE}-${TIMESTAMP}.log`
 - 성공/실패 상태 및 다음 단계 안내
 - 실패 시 원인 분석 및 조치사항 제공
@@ -1142,13 +1050,11 @@ Always follow testing rules in rules/ directory when writing tests.
 **목적**: TypeScript, ESLint, 테스트, Git 상태를 종합 검증
 
 **사용법**:
-
 ```bash
 .claude/scripts/quality-gate.sh [--strict]
 ```
 
 **검증 항목**:
-
 1. ✅ TypeScript 타입 체크 (필수)
 2. ✅ ESLint 코드 품질 검사 (필수)
 3. ✅ 단위 테스트 실행 (필수)
@@ -1156,7 +1062,6 @@ Always follow testing rules in rules/ directory when writing tests.
 5. ✅ 테스트 커버리지 (--strict 모드)
 
 **예시**:
-
 ```bash
 # 기본 모드: 필수 항목만 검증
 .claude/scripts/quality-gate.sh
@@ -1166,13 +1071,11 @@ Always follow testing rules in rules/ directory when writing tests.
 ```
 
 **출력**:
-
 - 항목별 통과/실패 상태
 - 로그 저장: `claudedocs/quality-logs/quality-gate-${TIMESTAMP}.log`
 - 실패 시 조치사항 안내
 
 **주로 사용하는 Agent**:
-
 - Agent 5 (Refactor): 리팩토링 후 품질 확인
 - Agent 6 (Orchestrator): 최종 품질 검증
 
@@ -1183,13 +1086,11 @@ Always follow testing rules in rules/ directory when writing tests.
 **목적**: Agent별 산출물 문서 템플릿 자동 생성
 
 **사용법**:
-
 ```bash
 .claude/scripts/doc-generator.sh <AGENT> <FEATURE_NAME>
 ```
 
 **예시**:
-
 ```bash
 # Agent 1: 명세 문서 템플릿 생성
 .claude/scripts/doc-generator.sh 1 recurring-events
@@ -1205,7 +1106,6 @@ Always follow testing rules in rules/ directory when writing tests.
 ```
 
 **템플릿 포함 내용**:
-
 - Agent별 역할 및 책임
 - 체크리스트
 - 3단계 근거 서술 형식 (v2.8.0)
@@ -1218,20 +1118,17 @@ Always follow testing rules in rules/ directory when writing tests.
 **목적**: 기능 개발 완료 시 종합 리포트 자동 생성
 
 **사용법**:
-
 ```bash
 .claude/scripts/final-report.sh <FEATURE_NAME>
 ```
 
 **예시**:
-
 ```bash
 .claude/scripts/final-report.sh recurring-events
 # 생성: claudedocs/06-orchestrator-final-recurring-events.md
 ```
 
 **리포트 포함 내용**:
-
 - Git 커밋 이력 분석
 - 최종 테스트 결과
 - TypeScript/ESLint 검증 결과
@@ -1241,7 +1138,6 @@ Always follow testing rules in rules/ directory when writing tests.
 - 발견된 이슈 및 개선 제안
 
 **자동 수집 정보**:
-
 - Git log (커밋 패턴 검증)
 - 테스트 실행 결과
 - 커버리지 정보
@@ -1254,13 +1150,11 @@ Always follow testing rules in rules/ directory when writing tests.
 **목적**: 에러 발생 시 자동 복구 안내 및 로그 저장
 
 **사용법**:
-
 ```bash
 .claude/scripts/auto-recovery.sh <ERROR_TYPE>
 ```
 
 **지원하는 ERROR_TYPE**:
-
 - **test-failure**: 테스트 실패 시 복구
 - **lint-error**: 린트 에러 시 복구
 - **commit-missing**: 커밋 누락 시 복구
@@ -1268,7 +1162,6 @@ Always follow testing rules in rules/ directory when writing tests.
 - **dependency-error**: 의존성 에러 시 복구
 
 **예시**:
-
 ```bash
 # 테스트 실패 복구
 .claude/scripts/auto-recovery.sh test-failure
@@ -1278,7 +1171,6 @@ Always follow testing rules in rules/ directory when writing tests.
 ```
 
 **복구 메커니즘**:
-
 1. 현재 상태 백업 (`/tmp/*.patch`)
 2. 에러 로그 수집
 3. 원인 분석 및 조치사항 제시
@@ -1291,7 +1183,6 @@ Always follow testing rules in rules/ directory when writing tests.
 **목적**: Agent 간 피드백 템플릿 자동 생성
 
 **사용법**:
-
 ```bash
 .claude/scripts/feedback-generator.sh <FROM_AGENT> <TO_AGENT> <ISSUE_TYPE>
 ```
@@ -1299,7 +1190,6 @@ Always follow testing rules in rules/ directory when writing tests.
 **지원하는 피드백 조합**:
 
 #### Agent 2 → Agent 1 (명세 품질 피드백)
-
 ```bash
 # 명세 품질 문제 피드백
 .claude/scripts/feedback-generator.sh 2 1 spec-quality
@@ -1309,7 +1199,6 @@ Always follow testing rules in rules/ directory when writing tests.
 **내용**: 3단계 근거 (사실 → 평가 → 대안) 형식의 명세 개선 요청
 
 #### Agent 6 → Agent 3, 4, 5 (커밋/품질 문제 피드백)
-
 ```bash
 # 커밋 누락 피드백
 .claude/scripts/feedback-generator.sh 6 4 commit-missing
@@ -1325,14 +1214,12 @@ Always follow testing rules in rules/ directory when writing tests.
 ```
 
 **Issue Types**:
-
 - `commit-missing`: Git 커밋 누락
 - `test-failure`: 테스트 실패
 - `lint-error`: TypeScript/ESLint 에러
 - `tdd-violation`: TDD 사이클 위반
 
 #### Agent 5 → Agent 4 (복잡도/중복 코드 피드백)
-
 ```bash
 # 복잡도 문제 피드백
 .claude/scripts/feedback-generator.sh 5 4 complexity
@@ -1342,17 +1229,14 @@ Always follow testing rules in rules/ directory when writing tests.
 ```
 
 **Issue Types**:
-
 - `complexity`: 복잡도 문제
 - `duplication`: 중복 코드
 
 **출력**:
-
 - 파일 저장: `claudedocs/feedback-logs/feedback-agent[N]-to-agent[M]-[TIMESTAMP].md`
 - 템플릿 포함 내용: 문제 상세, 요구 조치, 자동화 도구 안내, 재시도 정책
 
 **특징**:
-
 - 표준화된 피드백 형식
 - Agent별 맞춤 템플릿
 - 재시도 메커니즘 포함
@@ -1412,7 +1296,6 @@ Always follow testing rules in rules/ directory when writing tests.
 **목적**: 개발 과정에서 발견한 패턴, 교훈, 베스트 프랙티스 축적
 
 **디렉토리 구조**:
-
 ```
 .claude/knowledge-base/
 ├── README.md                          # 사용 가이드
@@ -1438,7 +1321,6 @@ Always follow testing rules in rules/ directory when writing tests.
 ```
 
 **사용 방법**:
-
 1. **패턴 참조**: 새로운 기능 개발 시 `patterns/` 디렉토리 참조
 2. **교훈 학습**: `lessons-learned/`에서 과거 실수 방지
 3. **에러 해결**: `common-errors/`에서 빠른 문제 해결
@@ -1455,16 +1337,13 @@ Always follow testing rules in rules/ directory when writing tests.
 **주요 피드백 루프**:
 
 #### 1. Agent 2 → Agent 1 (명세 품질 검증)
-
 - 트리거: Agent 2의 Phase 1.5 검증 중 실패 항목 발견
 - 내용: 3단계 근거 (사실 → 평가 → 대안)로 구체적 피드백
 - 재시도: 최대 3회
 
 **예시**:
-
 ```markdown
 #### 1. ❌ 구체적 예시
-
 - **근거 (사실)**: 시나리오 3에 입력값 없음
 - **근거 (평가)**: Agent 2가 테스트 데이터 생성 불가
 - **근거 (대안)**: 예시 입력/출력 추가 필요
@@ -1473,7 +1352,6 @@ Always follow testing rules in rules/ directory when writing tests.
 ```
 
 #### 2. Agent 6 → Agent 3, 4, 5 (커밋 및 품질 문제)
-
 - 트리거: Git 커밋 누락, 테스트 실패, 린트 에러, TDD 사이클 위반
 - 내용: 문제 상세, 요구 조치, 자동화 도구 안내
 - 재시도: 최대 2회
@@ -1482,14 +1360,14 @@ Always follow testing rules in rules/ directory when writing tests.
 
 ### 자동화 효과 (예상)
 
-| 항목        | 수동 작업 (Before) | 자동화 (After) | 시간 절감 |
-| ----------- | ------------------ | -------------- | --------- |
-| Git 커밋    | Agent당 2분        | 30초           | 75% ↓     |
-| 테스트 검증 | Phase당 5분        | 1분            | 80% ↓     |
-| 품질 게이트 | 15분               | 3분            | 80% ↓     |
-| 문서 생성   | Agent당 30분       | 5분            | 83% ↓     |
-| 최종 리포트 | 1시간              | 10분           | 83% ↓     |
-| 에러 복구   | 30분               | 5분            | 83% ↓     |
+| 항목 | 수동 작업 (Before) | 자동화 (After) | 시간 절감 |
+|------|------------------|---------------|----------|
+| Git 커밋 | Agent당 2분 | 30초 | 75% ↓ |
+| 테스트 검증 | Phase당 5분 | 1분 | 80% ↓ |
+| 품질 게이트 | 15분 | 3분 | 80% ↓ |
+| 문서 생성 | Agent당 30분 | 5분 | 83% ↓ |
+| 최종 리포트 | 1시간 | 10분 | 83% ↓ |
+| 에러 복구 | 30분 | 5분 | 83% ↓ |
 
 **총 자동화 수준**: 30% → **70%**
 
@@ -1506,39 +1384,33 @@ Always follow testing rules in rules/ directory when writing tests.
 ## 개발 시 주의사항
 
 ### 타입 정의
-
 - `types.ts`에 정의된 `Event`, `EventForm`, `RepeatInfo` 타입 사용
 - 모든 이벤트 데이터는 `Event` 인터페이스를 준수해야 함
 - 반복 일정은 `RepeatInfo` 인터페이스 구조 유지
 
 ### 일정 검증 로직
-
 - 시간 유효성: `utils/timeValidation.ts`의 `getTimeErrorMessage` 사용
 - 일정 겹침: `utils/eventOverlap.ts`의 `findOverlappingEvents` 사용
 - 날짜 계산: `utils/dateUtils.ts`의 함수들 활용
 
 ### 반복 일정
-
 - UI는 주석 처리되어 있음 (8주차 과제 예정)
 - 서버 API는 구현되어 있음 (`server.js`)
 - `repeat.type`이 'none'인 경우 일반 일정으로 처리
 - 반복 일정 기능 구현 시 [WORKFLOW_RECURRING_EVENTS.md](./WORKFLOW_RECURRING_EVENTS.md) 참조
 
 ### 테스트 작성 가이드
-
 - 유틸리티 함수는 `unit/` 디렉토리에 단위 테스트 작성
 - 훅은 `renderHook`을 사용하여 테스트
 - 통합 테스트는 실제 사용자 시나리오 기반으로 작성
 - MSW handlers는 `__mocks__/handlers.ts`에 정의
 
 ### API 통신
-
 - Vite dev server의 프록시를 통해 `/api` 요청을 `localhost:3000`으로 전달
 - `pnpm dev` 명령어로 Vite와 Express 서버를 동시 실행해야 함
 - 테스트 환경에서는 MSW로 API 모킹
 
 ### 상태 관리 패턴
-
 - 전역 상태 관리 라이브러리 없음 (React 기본 hooks 사용)
 - 각 훅이 독립적으로 상태 관리
 - Props drilling을 통한 데이터 전달
@@ -1549,7 +1421,6 @@ Always follow testing rules in rules/ directory when writing tests.
 ## 프로젝트 특징
 
 ### 과제 기반 프로젝트
-
 - **명세 기반 개발(SDD)**: 살아있는 문서로 요구사항 정의 및 관리
 - **TDD 워크플로우**: Red-Green-Refactor 사이클 엄격히 준수
 - **AI 협업 최적화**: AI 도구가 명세와 규칙을 읽고 코드 생성
@@ -1558,20 +1429,17 @@ Always follow testing rules in rules/ directory when writing tests.
 ### 코드 작성 원칙
 
 **개발 우선순위**
-
 1. **명세 우선**: 명세를 먼저 읽고 요구사항 이해
 2. **테스트 주도**: 테스트를 먼저 작성하고 구현
 3. **규칙 준수**: Testing Library 쿼리 우선순위 및 TDD 원칙 적용
 
 **코드 품질 기준**
-
 - **순수 함수**: 유틸리티 함수는 부수효과 없는 순수 함수로 작성
 - **관심사 분리**: 비즈니스 로직(hooks) ↔ UI 로직(App.tsx) 분리
 - **타입 안전성**: TypeScript 타입 시스템 최대 활용
 - **테스트 가능성**: 모든 함수는 테스트 가능하도록 설계
 
 **개발 프로세스**
-
 ```
 명세 읽기 → 규칙 확인 → 테스트 작성 → 구현 → 리팩토링 → 품질 검증 → 커밋
 ```
@@ -1593,33 +1461,31 @@ Claude Code를 사용할 때 다음 순서로 문서를 참조하세요:
 
 ## 버전 이력 요약
 
-| 버전  | 날짜       | 주요 변경사항                                                                                                                 |
-| ----- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 버전 | 날짜 | 주요 변경사항 |
+|------|------|-------------|
 | 2.9.2 | 2025-10-30 | **워크플로우 문서 체계화**: WORKFLOW_RECURRING_EVENTS.md 자동화 섹션 추가, claudedocs/README.md 생성, 6개 템플릿 생성 (835줄) |
-| 2.9.1 | 2025-10-30 | **피드백 자동화 완성**: feedback-generator.sh 추가 (7번째 자동화 스크립트, 90% 시간 절감)                                     |
-| 2.9.0 | 2025-10-30 | **자동화 도구 대폭 개선**: 6개 스크립트 추가 (70% 자동화), 지식 베이스 구축, 피드백 프로토콜 정립                             |
-| 2.8.0 | 2025-10-29 | **전체 6 Agent 시스템 품질 강화**: 품질 게이트 (Agent 1, 2), 피드백 루프, 커밋 강제 (Agent 6), 에러 처리                      |
-| 2.7.0 | 2025-10-29 | **Agent 4 최소 구현 기준 근본적 변경**: 정량적 기준 제거 → 원칙 기반 (YAGNI, 단순성 우선, Fake it)                            |
-| 2.6.0 | 2025-10-29 | Agent 시스템 산출물 흐름도 추가, 산출물 경로 명시                                                                             |
-| 2.5.0 | 2025-10-29 | Agent 2 커밋 정보 추가 (test: [DESIGN] 태그, 총 커밋 21개)                                                                    |
-| 2.4.0 | 2025-10-28 | 전체 6 Agent 시스템 완성 (Agent 3-6 서브 에이전트 정의 파일 생성, rules 준수 Agent 명시)                                      |
-| 2.3.0 | 2025-10-28 | 테스트 설계 Agent 서브 에이전트 정의 파일 생성                                                                                |
-| 2.2.0 | 2025-10-28 | 기능 설계 Agent 서브 에이전트 정의 파일 생성                                                                                  |
-| 2.1.0 | 2025-10-28 | 6개 Agent 시스템 추가, 반복 일정 워크플로우 참조, 문서 구조 개선                                                              |
-| 2.0.0 | 2025-10-27 | 명세 기반 개발 + TDD 워크플로우 통합, 테스트 규칙 추가                                                                        |
-| 1.0.0 | 초기       | 기본 프로젝트 구조 및 아키텍처 설명                                                                                           |
+| 2.9.1 | 2025-10-30 | **피드백 자동화 완성**: feedback-generator.sh 추가 (7번째 자동화 스크립트, 90% 시간 절감) |
+| 2.9.0 | 2025-10-30 | **자동화 도구 대폭 개선**: 6개 스크립트 추가 (70% 자동화), 지식 베이스 구축, 피드백 프로토콜 정립 |
+| 2.8.0 | 2025-10-29 | **전체 6 Agent 시스템 품질 강화**: 품질 게이트 (Agent 1, 2), 피드백 루프, 커밋 강제 (Agent 6), 에러 처리 |
+| 2.7.0 | 2025-10-29 | **Agent 4 최소 구현 기준 근본적 변경**: 정량적 기준 제거 → 원칙 기반 (YAGNI, 단순성 우선, Fake it) |
+| 2.6.0 | 2025-10-29 | Agent 시스템 산출물 흐름도 추가, 산출물 경로 명시 |
+| 2.5.0 | 2025-10-29 | Agent 2 커밋 정보 추가 (test: [DESIGN] 태그, 총 커밋 21개) |
+| 2.4.0 | 2025-10-28 | 전체 6 Agent 시스템 완성 (Agent 3-6 서브 에이전트 정의 파일 생성, rules 준수 Agent 명시) |
+| 2.3.0 | 2025-10-28 | 테스트 설계 Agent 서브 에이전트 정의 파일 생성 |
+| 2.2.0 | 2025-10-28 | 기능 설계 Agent 서브 에이전트 정의 파일 생성 |
+| 2.1.0 | 2025-10-28 | 6개 Agent 시스템 추가, 반복 일정 워크플로우 참조, 문서 구조 개선 |
+| 2.0.0 | 2025-10-27 | 명세 기반 개발 + TDD 워크플로우 통합, 테스트 규칙 추가 |
+| 1.0.0 | 초기 | 기본 프로젝트 구조 및 아키텍처 설명 |
 
 ---
 
 ## 관련 문서
 
 ### 프로젝트 문서
-
 - **README.md**: 프로젝트 전체 개요 및 과제 제출 체크리스트
 - **CLAUDE.md** (현재 문서): Claude Code를 위한 프로젝트 가이드
 
 ### 명세 문서 (specs/)
-
 - **[specs/README.md](./specs/README.md)**: 명세 개요 및 TDD 워크플로우
 - **[specs/01-data-models.md](./specs/01-data-models.md)**: TypeScript 타입 정의
 - **[specs/02-business-rules.md](./specs/02-business-rules.md)**: 비즈니스 로직
@@ -1631,18 +1497,15 @@ Claude Code를 사용할 때 다음 순서로 문서를 참조하세요:
 - **[specs/08-test-scenarios.md](./specs/08-test-scenarios.md)**: 테스트 시나리오
 
 ### 테스트 규칙 (rules/)
-
 - **[rules/README.md](./rules/README.md)**: 테스트 규칙 개요
 - **[rules/testing-library-queries.md](./rules/testing-library-queries.md)**: Testing Library 쿼리 우선순위
 - **[rules/react-testing-library-best-practices.md](./rules/react-testing-library-best-practices.md)**: RTL 베스트 프랙티스
 - **[rules/tdd-principles.md](./rules/tdd-principles.md)**: TDD 원칙 및 안티패턴
 
 ### 워크플로우 문서
-
 - **[WORKFLOW_RECURRING_EVENTS.md](./WORKFLOW_RECURRING_EVENTS.md)**: 반복 일정 기능 구현 워크플로우 (6개 Agent 시스템)
 
 ### 과제 제출 문서
-
 - **[report.md](./report.md)**: AI 활용 리포트 템플릿
 
 ---

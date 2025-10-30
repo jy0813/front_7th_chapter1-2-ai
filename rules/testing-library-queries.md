@@ -24,7 +24,6 @@
 > **"테스트는 사용자가 앱과 상호작용하는 방식을 최대한 모방해야 합니다."**
 
 쿼리 선택 시 항상 다음 질문을 고려하세요:
-
 - ✅ 실제 사용자가 이 요소를 어떻게 찾을까?
 - ✅ 시각 장애인이 스크린 리더로 이 요소를 찾을 수 있을까?
 - ✅ 이 쿼리가 접근성 문제를 감지할 수 있을까?
@@ -76,13 +75,11 @@
 **설명**: 접근성 트리에 노출된 모든 요소를 쿼리할 수 있습니다.
 
 **장점**:
-
 - ✅ 접근성 문제를 자동으로 감지
 - ✅ 시맨틱 HTML 강제
 - ✅ 가장 사용자 중심적
 
 **사용법**:
-
 ```typescript
 // ✅ Good: 역할과 접근 가능한 이름으로 쿼리
 screen.getByRole('button', { name: /제출/i });
@@ -91,7 +88,6 @@ screen.getByRole('heading', { level: 1, name: /제목/i });
 ```
 
 **TypeScript 타입 힌트**:
-
 ```typescript
 import { screen } from '@testing-library/react';
 import type { ByRoleMatcher, ByRoleOptions } from '@testing-library/react';
@@ -116,7 +112,6 @@ const element: HTMLElement = button;
 | `<img>` | img | `getByRole('img', { name: /로고/i })` |
 
 **실전 예시**:
-
 ```typescript
 // ❌ Bad: 클래스 이름으로 쿼리
 const button = container.querySelector('.submit-button');
@@ -132,13 +127,11 @@ const button = screen.getByRole('button', { name: /제출/i });
 **설명**: `<label>` 요소와 연결된 form 요소를 쿼리합니다.
 
 **장점**:
-
 - ✅ form 접근성 보장
 - ✅ label과 input 연결 검증
 - ✅ 사용자가 form을 채우는 방식 반영
 
 **사용법**:
-
 ```typescript
 // ✅ Good: label 텍스트로 input 찾기
 screen.getByLabelText(/이메일/i);
@@ -146,7 +139,6 @@ screen.getByLabelText(/비밀번호/i);
 ```
 
 **HTML 구조 요구사항**:
-
 ```tsx
 {/* ✅ Good: 명시적 label 연결 */}
 <label htmlFor="email">이메일</label>
@@ -163,7 +155,6 @@ screen.getByLabelText(/비밀번호/i);
 ```
 
 **실전 예시**:
-
 ```typescript
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -186,20 +177,17 @@ it('이메일 입력 필드에 값을 입력할 수 있다', async () => {
 **설명**: placeholder 속성으로 요소를 찾습니다.
 
 **주의사항**:
-
 - ⚠️ placeholder는 label을 대체할 수 없음
 - ⚠️ label이 없으면 접근성 문제
 - ⚠️ 가능하면 `getByLabelText` 사용 권장
 
 **사용법**:
-
 ```typescript
 // ⚠️ 차선책: label이 없을 때만 사용
 screen.getByPlaceholderText(/검색어를 입력하세요/i);
 ```
 
 **개선 방법**:
-
 ```tsx
 {/* ❌ Bad: placeholder만 있음 */}
 <input placeholder="이메일" />
@@ -216,12 +204,10 @@ screen.getByPlaceholderText(/검색어를 입력하세요/i);
 **설명**: 텍스트 내용으로 요소를 찾습니다. 주로 `div`, `span`, `p` 등 비대화형 요소에 사용합니다.
 
 **장점**:
-
 - ✅ 사용자가 보는 텍스트로 검증
 - ✅ 번역 누락 감지 가능
 
 **사용법**:
-
 ```typescript
 // ✅ Good: 텍스트 내용으로 요소 찾기
 screen.getByText(/환영합니다/i);
@@ -232,7 +218,6 @@ screen.getByText(/결제가 완료되었습니다/i);
 ```
 
 **실전 예시**:
-
 ```typescript
 it('일정이 추가되면 목록에 표시된다', () => {
   render(<EventList events={mockEvents} />);
@@ -244,7 +229,6 @@ it('일정이 추가되면 목록에 표시된다', () => {
 ```
 
 **주의사항**:
-
 ```typescript
 // ❌ Bad: button, link 등 대화형 요소는 getByRole 사용
 const button = screen.getByText(/제출/i);
@@ -260,19 +244,16 @@ const button = screen.getByRole('button', { name: /제출/i });
 **설명**: input, textarea, select의 현재 값으로 요소를 찾습니다.
 
 **사용 시나리오**:
-
 - 수정 폼에서 기존 값 확인
 - 여러 input 중 특정 값을 가진 요소 찾기
 
 **사용법**:
-
 ```typescript
 // ✅ Good: 미리 채워진 값으로 input 찾기
 const input = screen.getByDisplayValue(/기존 제목/i);
 ```
 
 **실전 예시**:
-
 ```typescript
 it('수정 모드에서 기존 일정 정보가 로드된다', () => {
   render(<EventForm event={existingEvent} mode="edit" />);
@@ -294,13 +275,11 @@ HTML5 및 ARIA 호환 쿼리입니다.
 **설명**: `alt` 속성으로 요소를 찾습니다.
 
 **사용 시나리오**:
-
 - `<img>` 요소
 - `<area>` 요소
 - `<input type="image">` 요소
 
 **사용법**:
-
 ```typescript
 // ✅ Good: alt 텍스트로 이미지 찾기
 screen.getByAltText(/회사 로고/i);
@@ -308,17 +287,12 @@ screen.getByAltText(/사용자 프로필 사진/i);
 ```
 
 **HTML 요구사항**:
-
 ```tsx
-{
-  /* ✅ Good: alt 속성 필수 */
-}
-<img src="/logo.png" alt="회사 로고" />;
+{/* ✅ Good: alt 속성 필수 */}
+<img src="/logo.png" alt="회사 로고" />
 
-{
-  /* ❌ Bad: alt 없음 (접근성 문제) */
-}
-<img src="/logo.png" />;
+{/* ❌ Bad: alt 없음 (접근성 문제) */}
+<img src="/logo.png" />
 ```
 
 ---
@@ -328,35 +302,26 @@ screen.getByAltText(/사용자 프로필 사진/i);
 **설명**: `title` 속성으로 요소를 찾습니다.
 
 **단점**:
-
 - ⚠️ 스크린 리더 지원 일관성 부족
 - ⚠️ 시각적 사용자에게 기본적으로 표시되지 않음
 - ⚠️ hover 시에만 tooltip으로 표시됨
 
 **사용법**:
-
 ```typescript
 // ⚠️ 차선책: 다른 쿼리 사용 불가할 때만
 screen.getByTitle(/닫기/i);
 ```
 
 **개선 방법**:
-
 ```tsx
-{
-  /* ❌ Bad: title만 사용 */
-}
-<button title="닫기">X</button>;
+{/* ❌ Bad: title만 사용 */}
+<button title="닫기">X</button>
 
-{
-  /* ✅ Good: aria-label 사용 */
-}
-<button aria-label="닫기">X</button>;
+{/* ✅ Good: aria-label 사용 */}
+<button aria-label="닫기">X</button>
 
-{
-  /* ✅ Better: 접근 가능한 텍스트 */
-}
-<button>닫기</button>;
+{/* ✅ Better: 접근 가능한 텍스트 */}
+<button>닫기</button>
 ```
 
 ---
@@ -368,19 +333,16 @@ screen.getByTitle(/닫기/i);
 **설명**: `data-testid` 속성으로 요소를 찾습니다.
 
 **사용 시나리오** (오직 다음 경우에만):
-
 - 텍스트가 동적으로 변경되는 경우
 - role이나 label이 없는 레거시 코드
 - 시맨틱 쿼리로 특정할 수 없는 경우
 
 **단점**:
-
 - ❌ 사용자가 볼 수 없는 속성
 - ❌ 접근성 검증 불가
 - ❌ 코드 중복 (HTML + 테스트 모두 유지)
 
 **사용법**:
-
 ```typescript
 // ❌ Bad: 너무 쉽게 사용
 const element = screen.getByTestId('submit-button');
@@ -390,18 +352,13 @@ const dynamicContent = screen.getByTestId('loading-spinner');
 ```
 
 **개선 사례**:
-
 ```tsx
-{
-  /* ❌ Bad: testid에 의존 */
-}
-<button data-testid="submit-button">제출</button>;
+{/* ❌ Bad: testid에 의존 */}
+<button data-testid="submit-button">제출</button>
 // 테스트: screen.getByTestId('submit-button')
 
-{
-  /* ✅ Good: role 사용 */
-}
-<button>제출</button>;
+{/* ✅ Good: role 사용 */}
+<button>제출</button>
 // 테스트: screen.getByRole('button', { name: /제출/i })
 ```
 
@@ -411,7 +368,7 @@ const dynamicContent = screen.getByTestId('loading-spinner');
 
 각 쿼리는 3가지 변형이 있습니다:
 
-### get\* - 동기, 요소 존재 기대
+### get* - 동기, 요소 존재 기대
 
 - **반환**: 요소 또는 에러 throw
 - **사용 시기**: 요소가 반드시 존재해야 할 때
@@ -423,7 +380,7 @@ const button = screen.getByRole('button', { name: /제출/i });
 
 ---
 
-### query\* - 동기, 요소 부재 확인
+### query* - 동기, 요소 부재 확인
 
 - **반환**: 요소 또는 null
 - **사용 시기**: 요소가 없는지 확인할 때
@@ -440,7 +397,7 @@ expect(screen.getByRole('button')).toBeInTheDocument();
 
 ---
 
-### find\* - 비동기, 요소 대기
+### find* - 비동기, 요소 대기
 
 - **반환**: Promise<Element>
 - **사용 시기**: 비동기로 나타나는 요소 (API 호출 후 등)

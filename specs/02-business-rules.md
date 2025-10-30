@@ -38,17 +38,16 @@
 
 **규칙**: 일정 생성 시 다음 필드는 반드시 입력되어야 함
 
-| 필드        | 조건             | 에러 메시지                      |
-| ----------- | ---------------- | -------------------------------- |
-| `title`     | 비어있지 않음    | "필수 정보를 모두 입력해주세요." |
-| `date`      | 유효한 날짜 형식 | "필수 정보를 모두 입력해주세요." |
+| 필드 | 조건 | 에러 메시지 |
+|------|------|-------------|
+| `title` | 비어있지 않음 | "필수 정보를 모두 입력해주세요." |
+| `date` | 유효한 날짜 형식 | "필수 정보를 모두 입력해주세요." |
 | `startTime` | 유효한 시간 형식 | "필수 정보를 모두 입력해주세요." |
-| `endTime`   | 유효한 시간 형식 | "필수 정보를 모두 입력해주세요." |
+| `endTime` | 유효한 시간 형식 | "필수 정보를 모두 입력해주세요." |
 
 **구현 위치**: `App.tsx:addOrUpdateEvent()`
 
 **테스트 시나리오**:
-
 ```gherkin
 Given: 사용자가 일정 추가 폼에서
 When: title이 비어있는 상태로 "일정 추가" 버튼 클릭
@@ -63,19 +62,16 @@ And: 일정이 생성되지 않음
 **규칙**: 시작 시간은 종료 시간보다 빨라야 함
 
 **조건**:
-
 - `startTime < endTime` (엄격한 부등호, 같을 수 없음)
 - 검증 시점: 사용자가 시간 입력 필드를 변경할 때마다 (onBlur)
 
 **구현 위치**: `utils/timeValidation.ts:getTimeErrorMessage()`
 
 **에러 메시지**:
-
 - startTime 필드: "시작 시간은 종료 시간보다 빨라야 합니다."
 - endTime 필드: "종료 시간은 시작 시간보다 늦어야 합니다."
 
 **테스트 시나리오**:
-
 ```gherkin
 Given: 사용자가 일정 추가 폼에서
 When: startTime = "14:00", endTime = "14:00" 입력
@@ -90,14 +86,14 @@ And: "일정 추가" 버튼 클릭 시 "시간 설정을 확인해주세요." �
 
 **규칙**: 일정 생성 폼의 기본값
 
-| 필드               | 기본값           | 이유                    |
-| ------------------ | ---------------- | ----------------------- |
-| `category`         | `'업무'`         | 가장 일반적인 사용 사례 |
-| `notificationTime` | `10` (10분 전)   | 충분한 준비 시간        |
-| `repeat.type`      | `'none'`         | 대부분 일회성 일정      |
-| `repeat.interval`  | `1`              | 반복 시 가장 일반적     |
-| `description`      | `''` (빈 문자열) | 선택적 필드             |
-| `location`         | `''` (빈 문자열) | 선택적 필드             |
+| 필드 | 기본값 | 이유 |
+|------|--------|------|
+| `category` | `'업무'` | 가장 일반적인 사용 사례 |
+| `notificationTime` | `10` (10분 전) | 충분한 준비 시간 |
+| `repeat.type` | `'none'` | 대부분 일회성 일정 |
+| `repeat.interval` | `1` | 반복 시 가장 일반적 |
+| `description` | `''` (빈 문자열) | 선택적 필드 |
+| `location` | `''` (빈 문자열) | 선택적 필드 |
 
 **구현 위치**: `hooks/useEventForm.ts`
 
@@ -122,11 +118,9 @@ And: "일정 추가" 버튼 클릭 시 "시간 설정을 확인해주세요." �
 **규칙**: 모든 필드를 수정할 수 있음 (id 제외)
 
 **수정 불가 필드**:
-
 - `id`: 생성 후 변경 불가
 
 **수정 가능 필드**:
-
 - `title`, `date`, `startTime`, `endTime`
 - `description`, `location`, `category`
 - `repeat` (전체 객체)
@@ -159,7 +153,6 @@ const overlapping = findOverlappingEvents(eventData, events);
 **규칙**: "Edit event" 버튼 클릭 시 기존 값으로 폼 채움
 
 **동작**:
-
 1. 기존 일정의 모든 필드 값을 폼에 설정
 2. 폼 제목을 "일정 수정"으로 변경
 3. 제출 버튼 텍스트를 "일정 수정"으로 변경
@@ -175,7 +168,6 @@ const overlapping = findOverlappingEvents(eventData, events);
 **규칙**: 삭제 확인 없이 즉시 삭제
 
 **동작**:
-
 1. "Delete event" 버튼 클릭
 2. 서버에 DELETE 요청
 3. 성공 시 목록에서 제거
@@ -203,20 +195,17 @@ const overlapping = findOverlappingEvents(eventData, events);
 **규칙**: 같은 날짜에 시간이 겹치는 일정 감지
 
 **겹침 조건**:
-
 ```typescript
 // event1과 event2가 겹침
 startTime1 < endTime2 AND startTime2 < endTime1
 ```
 
 **예시**:
-
 - Event A: 10:00-12:00
 - Event B: 11:00-13:00
 - 결과: 겹침 (11:00-12:00 구간)
 
 **예시 (겹치지 않음)**:
-
 - Event A: 10:00-12:00
 - Event B: 12:00-14:00
 - 결과: 겹치지 않음 (12:00에서 정확히 만남)
@@ -230,7 +219,6 @@ startTime1 < endTime2 AND startTime2 < endTime1
 **규칙**: 겹치는 일정이 있으면 경고 다이얼로그 표시
 
 **다이얼로그 내용**:
-
 - 제목: "일정 겹침 경고"
 - 메시지: "다음 일정과 겹칩니다:"
 - 겹치는 일정 목록 표시 (제목, 날짜, 시간)
@@ -247,12 +235,10 @@ startTime1 < endTime2 AND startTime2 < endTime1
 **규칙**: 겹침이 있어도 사용자가 "계속 진행" 선택 가능
 
 **비즈니스 가치**:
-
 - 긴급한 일정은 겹쳐도 등록해야 할 수 있음
 - 시스템이 강제하지 않고 사용자가 판단
 
 **제한사항**:
-
 - 현재 버전에서는 무제한 겹침 허용
 - 향후 버전에서는 겹침 횟수 제한 고려 가능
 
@@ -267,7 +253,6 @@ startTime1 < endTime2 AND startTime2 < endTime1
 **이유**: 8주차 과제로 예정
 
 **현재 동작**:
-
 - `repeat` 필드는 데이터 모델에 존재
 - 기본값: `{ type: 'none', interval: 1 }`
 - 서버 API는 반복 일정 지원 (구현 완료)
@@ -282,7 +267,6 @@ startTime1 < endTime2 AND startTime2 < endTime1
 **규칙**: 서버는 반복 일정 생성/수정/삭제 지원
 
 **API 엔드포인트**:
-
 - POST /api/events-list: 여러 일정 동시 생성
 - PUT /api/recurring-events/:repeatId: 반복 일정 시리즈 수정
 - DELETE /api/recurring-events/:repeatId: 반복 일정 시리즈 삭제
@@ -297,13 +281,13 @@ startTime1 < endTime2 AND startTime2 < endTime1
 
 **규칙**: 다음 5가지 알림 시간만 선택 가능
 
-| 값 (분) | 표시     | 사용 사례               |
-| ------- | -------- | ----------------------- |
-| 1       | 1분 전   | 긴급 회의, 직전 준비    |
-| 10      | 10분 전  | 일반적인 회의           |
-| 60      | 1시간 전 | 이동 시간 필요한 약속   |
-| 120     | 2시간 전 | 준비 시간 필요한 이벤트 |
-| 1440    | 1일 전   | 중요한 일정, 사전 준비  |
+| 값 (분) | 표시 | 사용 사례 |
+|---------|------|-----------|
+| 1 | 1분 전 | 긴급 회의, 직전 준비 |
+| 10 | 10분 전 | 일반적인 회의 |
+| 60 | 1시간 전 | 이동 시간 필요한 약속 |
+| 120 | 2시간 전 | 준비 시간 필요한 이벤트 |
+| 1440 | 1일 전 | 중요한 일정, 사전 준비 |
 
 **구현 위치**: `App.tsx:notificationOptions`
 
@@ -314,7 +298,6 @@ startTime1 < endTime2 AND startTime2 < endTime1
 **규칙**: 현재 시간이 일정 시작 시간 - 알림 시간 이내일 때 알림 표시
 
 **알고리즘**:
-
 ```typescript
 const now = new Date();
 const eventStart = new Date(`${event.date}T${event.startTime}`);
@@ -353,7 +336,6 @@ if (now >= notifyTime && now < eventStart) {
 **규칙**: 같은 일정에 대해 한 번만 알림 표시
 
 **동작**:
-
 1. 알림 표시 시 해당 일정 ID를 `notifiedEvents` 배열에 추가
 2. 이미 `notifiedEvents`에 있는 일정은 알림 생략
 3. 페이지 새로고침 시 초기화 (세션 단위)
@@ -373,7 +355,6 @@ if (now >= notifyTime && now < eventStart) {
 - `location`: 일정 위치
 
 **검색 제외 필드**:
-
 - `category`: 별도 필터로 구현 권장
 - `date`, `startTime`, `endTime`: 날짜 필터로 구현 권장
 
@@ -387,16 +368,14 @@ if (now >= notifyTime && now < eventStart) {
 
 ```typescript
 const searchLower = searchTerm.toLowerCase();
-const matches = events.filter(
-  (event) =>
-    event.title.toLowerCase().includes(searchLower) ||
-    event.description.toLowerCase().includes(searchLower) ||
-    event.location.toLowerCase().includes(searchLower)
+const matches = events.filter(event =>
+  event.title.toLowerCase().includes(searchLower) ||
+  event.description.toLowerCase().includes(searchLower) ||
+  event.location.toLowerCase().includes(searchLower)
 );
 ```
 
 **특징**:
-
 - 대소문자 구분 없음
 - 부분 문자열 허용 ("회의" 검색 시 "팀 회의", "회의실" 모두 매칭)
 - 실시간 검색 (입력할 때마다 필터링)
@@ -408,7 +387,6 @@ const matches = events.filter(
 **규칙**: 검색어가 비어있으면 현재 뷰의 모든 일정 표시
 
 **동작**:
-
 - 검색어 = "" → 필터링 없이 전체 목록 표시
 - 뷰(주간/월간)에 따라 날짜 범위만 필터링
 
