@@ -34,9 +34,9 @@ const DEFAULT_END_YEARS: Record<RepeatType, number> = {
  */
 function formatDate(date: Date): string {
   const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 /**
@@ -107,22 +107,14 @@ function generateDailyWeeklyDates(
 ): string[] {
   const dates: string[] = [];
   const current = new Date(start);
-  let iterationCount = 0;
-
-  // 날짜 증가량 계산
   const daysToAdd = repeatType === 'daily' ? interval : interval * 7;
 
-  while (current <= end && iterationCount < MAX_ITERATIONS) {
-    iterationCount++;
-
-    // 날짜 추가
+  for (let i = 0; i < MAX_ITERATIONS && current <= end; i++) {
     dates.push(formatDate(current));
-
-    // 다음 날짜로 이동
     current.setDate(current.getDate() + daysToAdd);
   }
 
-  if (iterationCount >= MAX_ITERATIONS) {
+  if (current <= end) {
     throw new Error(`무한루프 방지: 최대 반복 횟수(${MAX_ITERATIONS}) 초과`);
   }
 
@@ -147,51 +139,60 @@ function generateMonthlyYearlyDates(
   const dates: string[] = [];
   const startDay = start.getDate();
   const startMonth = start.getMonth();
-
   let year = start.getFullYear();
   let month = start.getMonth();
-  let iterationCount = 0;
 
-  while (iterationCount < MAX_ITERATIONS) {
-    iterationCount++;
-
-    // 특수 케이스: 31일, 2월 29일 유효성 검증
+  for (let i = 0; i < MAX_ITERATIONS; i++) {
     const isValid = isDateValid(year, month, startDay, startMonth, repeatType);
 
     if (isValid) {
       const current = new Date(year, month, startDay);
 
-      // 종료일 초과 시 루프 종료
-      if (current > end) {
-        break;
-      }
+      if (current > end) break;
 
-      // 날짜 추가
       dates.push(formatDate(current));
     }
 
     // 다음 날짜 계산
-    if (repeatType === 'monthly') {
-      month += interval;
-      while (month >= 12) {
-        month -= 12;
-        year += 1;
-      }
-      // 조기 종료 체크
-      if (new Date(year, month, 1) > end) break;
-    } else {
-      // yearly
-      year += interval;
-      // 조기 종료 체크
-      if (new Date(year, month, 1) > end) break;
-    }
-  }
+    const nextMonthDate = calculateNextMonth(year, month, interval, repeatType);
+    year = nextMonthDate.year;
+    month = nextMonthDate.month;
 
-  if (iterationCount >= MAX_ITERATIONS) {
-    throw new Error(`무한루프 방지: 최대 반복 횟수(${MAX_ITERATIONS}) 초과`);
+    // 조기 종료 체크
+    if (new Date(year, month, 1) > end) break;
   }
 
   return dates;
+}
+
+/**
+ * 다음 월 계산 (monthly/yearly)
+ *
+ * @param year - 현재 년도
+ * @param month - 현재 월 (0-11)
+ * @param interval - 반복 간격
+ * @param repeatType - 반복 유형
+ * @returns 다음 년도와 월
+ */
+function calculateNextMonth(
+  year: number,
+  month: number,
+  interval: number,
+  repeatType: 'monthly' | 'yearly'
+): { year: number; month: number } {
+  if (repeatType === 'yearly') {
+    return { year: year + interval, month };
+  }
+
+  let nextMonth = month + interval;
+  let nextYear = year;
+
+  while (nextMonth >= 12) {
+    nextMonth -= 12;
+    nextYear += 1;
+  }
+
+  return { year: nextYear, month: nextMonth };
 }
 
 /**
@@ -292,10 +293,11 @@ export function generateRecurringDates(
  * @returns 365개의 날짜 배열 (YYYY-MM-DD 형식)
  */
 export function generateDailyDates(startDate: string): string[] {
+  const DAYS_IN_YEAR = 365;
   const dates: string[] = [];
   const start = new Date(startDate);
 
-  for (let i = 0; i < 365; i++) {
+  for (let i = 0; i < DAYS_IN_YEAR; i++) {
     const date = new Date(start);
     date.setDate(start.getDate() + i);
     dates.push(formatDate(date));
@@ -312,12 +314,14 @@ export function generateDailyDates(startDate: string): string[] {
  * @returns 52개의 날짜 배열 (YYYY-MM-DD 형식)
  */
 export function generateWeeklyDates(startDate: string): string[] {
+  const WEEKS_IN_YEAR = 52;
+  const DAYS_IN_WEEK = 7;
   const dates: string[] = [];
   const start = new Date(startDate);
 
-  for (let i = 0; i < 52; i++) {
+  for (let i = 0; i < WEEKS_IN_YEAR; i++) {
     const date = new Date(start);
-    date.setDate(start.getDate() + i * 7);
+    date.setDate(start.getDate() + i * DAYS_IN_WEEK);
     dates.push(formatDate(date));
   }
 
@@ -333,24 +337,14 @@ export function generateWeeklyDates(startDate: string): string[] {
  * @returns 최대 12개의 날짜 배열 (YYYY-MM-DD 형식)
  */
 export function generateMonthlyDates(startDate: string): string[] {
+  const MONTHS_IN_YEAR = 12;
   const dates: string[] = [];
   const start = new Date(startDate);
   const targetDay = start.getDate();
-  const startYear = start.getFullYear();
-  const startMonth = start.getMonth();
 
-  // 12번 반복 (0~11개월)
-  for (let i = 0; i < 12; i++) {
-    // 월을 증가시키고 년도 자동 조정
-    let year = startYear;
-    let month = startMonth + i;
-
-    while (month >= 12) {
-      month -= 12;
-      year += 1;
-    }
-
-    const date = new Date(year, month, targetDay);
+  for (let i = 0; i < MONTHS_IN_YEAR; i++) {
+    const date = new Date(start);
+    date.setMonth(start.getMonth() + i);
 
     // 날짜가 유효한지 확인 (예: 31일이 없는 달 건너뛰기)
     if (date.getDate() === targetDay) {
