@@ -280,3 +280,94 @@ export function generateRecurringDates(
   // 'none' 또는 기타 케이스
   return [];
 }
+
+// ============================================
+// 테스트용 단순화된 날짜 생성 함수들
+// ============================================
+
+/**
+ * 시작일부터 365일치 매일 반복 날짜를 생성합니다.
+ *
+ * @param startDate - 시작 날짜 (YYYY-MM-DD 형식)
+ * @returns 365개의 날짜 배열 (YYYY-MM-DD 형식)
+ */
+export function generateDailyDates(startDate: string): string[] {
+  const dates: string[] = [];
+  const start = new Date(startDate);
+
+  for (let i = 0; i < 365; i++) {
+    const date = new Date(start);
+    date.setDate(start.getDate() + i);
+    dates.push(formatDate(date));
+  }
+
+  return dates;
+}
+
+/**
+ * 시작일부터 52주치 매주 반복 날짜를 생성합니다.
+ * 모든 날짜는 시작일과 같은 요일을 유지합니다.
+ *
+ * @param startDate - 시작 날짜 (YYYY-MM-DD 형식)
+ * @returns 52개의 날짜 배열 (YYYY-MM-DD 형식)
+ */
+export function generateWeeklyDates(startDate: string): string[] {
+  const dates: string[] = [];
+  const start = new Date(startDate);
+
+  for (let i = 0; i < 52; i++) {
+    const date = new Date(start);
+    date.setDate(start.getDate() + i * 7);
+    dates.push(formatDate(date));
+  }
+
+  return dates;
+}
+
+/**
+ * 시작일부터 12개월치 매월 반복 날짜를 생성합니다.
+ * 각 날짜는 시작일과 같은 일(day)을 유지하며,
+ * 해당 월에 그 날짜가 없으면 건너뜁니다.
+ *
+ * @param startDate - 시작 날짜 (YYYY-MM-DD 형식)
+ * @returns 최대 12개의 날짜 배열 (YYYY-MM-DD 형식)
+ */
+export function generateMonthlyDates(startDate: string): string[] {
+  const dates: string[] = [];
+  const start = new Date(startDate);
+  const targetDay = start.getDate();
+  const startYear = start.getFullYear();
+  const startMonth = start.getMonth();
+
+  // 12번 반복 (0~11개월)
+  for (let i = 0; i < 12; i++) {
+    // 월을 증가시키고 년도 자동 조정
+    let year = startYear;
+    let month = startMonth + i;
+
+    while (month >= 12) {
+      month -= 12;
+      year += 1;
+    }
+
+    const date = new Date(year, month, targetDay);
+
+    // 날짜가 유효한지 확인 (예: 31일이 없는 달 건너뛰기)
+    if (date.getDate() === targetDay) {
+      dates.push(formatDate(date));
+    }
+  }
+
+  return dates;
+}
+
+/**
+ * 시작일의 매년 반복 날짜를 생성합니다.
+ * 1년치 = 1개만 생성합니다.
+ *
+ * @param startDate - 시작 날짜 (YYYY-MM-DD 형식)
+ * @returns 1개의 날짜 배열 (YYYY-MM-DD 형식)
+ */
+export function generateYearlyDates(startDate: string): string[] {
+  return [startDate];
+}

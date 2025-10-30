@@ -24,26 +24,29 @@
 
 ### 핵심 명세 문서
 
-| 문서 | 설명 | 주요 독자 |
-|------|------|-----------|
-| [01. 데이터 모델](./01-data-models.md) | 타입 정의, 데이터 구조, 필드 제약사항 | 개발자, AI |
-| [02. 비즈니스 규칙](./02-business-rules.md) | 핵심 비즈니스 로직 및 제약사항 | 전체 |
-| [03. 사용자 워크플로우](./03-user-workflows.md) | 사용자 시나리오 및 단계별 동작 | 기획자, QA |
-| [04. API 명세](./04-api-specification.md) | REST API 엔드포인트 상세 | 개발자 |
-| [05. 검증 규칙](./05-validation-rules.md) | 입력 유효성 검증 로직 | 개발자, QA |
-| [06. 일정 겹침 감지](./06-event-overlap-detection.md) | 겹침 판단 알고리즘 | 개발자, AI |
-| [07. 알림 시스템](./07-notification-system.md) | 알림 트리거 및 표시 로직 | 개발자, QA |
-| [08. 테스트 시나리오](./08-test-scenarios.md) | 수용 기준 및 테스트 케이스 | QA, 개발자 |
+| 문서                                                  | 설명                                  | 주요 독자  |
+| ----------------------------------------------------- | ------------------------------------- | ---------- |
+| [01. 데이터 모델](./01-data-models.md)                | 타입 정의, 데이터 구조, 필드 제약사항 | 개발자, AI |
+| [02. 비즈니스 규칙](./02-business-rules.md)           | 핵심 비즈니스 로직 및 제약사항        | 전체       |
+| [03. 사용자 워크플로우](./03-user-workflows.md)       | 사용자 시나리오 및 단계별 동작        | 기획자, QA |
+| [04. API 명세](./04-api-specification.md)             | REST API 엔드포인트 상세              | 개발자     |
+| [05. 검증 규칙](./05-validation-rules.md)             | 입력 유효성 검증 로직                 | 개발자, QA |
+| [06. 일정 겹침 감지](./06-event-overlap-detection.md) | 겹침 판단 알고리즘                    | 개발자, AI |
+| [07. 알림 시스템](./07-notification-system.md)        | 알림 트리거 및 표시 로직              | 개발자, QA |
+| [08. 테스트 시나리오](./08-test-scenarios.md)         | 수용 기준 및 테스트 케이스            | QA, 개발자 |
 
 ### 읽는 순서 (역할별)
 
 **개발자가 처음 읽을 때**:
+
 1. 데이터 모델 → 비즈니스 규칙 → API 명세 → 검증 규칙 → 테스트 시나리오
 
 **QA가 테스트 작성 시**:
+
 1. 사용자 워크플로우 → 비즈니스 규칙 → 테스트 시나리오 → 검증 규칙
 
 **AI가 코드 생성 시**:
+
 1. 데이터 모델 → 비즈니스 규칙 → API 명세 → 검증 규칙 → 일정 겹침 감지
 
 ---
@@ -53,11 +56,13 @@
 ### 1. 명확하고 모호하지 않은 표현
 
 **❌ 나쁜 예시**:
+
 ```
 일정은 적절한 시간에 저장되어야 한다.
 ```
 
 **✅ 좋은 예시**:
+
 ```
 일정 생성 시 다음 조건을 만족해야 한다:
 - 시작 시간이 종료 시간보다 빠름 (startTime < endTime)
@@ -68,11 +73,13 @@
 ### 2. 실행 가능하고 테스트 가능
 
 모든 명세는 다음을 포함합니다:
+
 - **Given** (전제 조건): 테스트 초기 상태
 - **When** (동작): 사용자 또는 시스템 액션
 - **Then** (결과): 예상되는 결과 및 부작용
 
 **예시**:
+
 ```
 Given: 사용자가 "2025-10-27" 날짜에 "10:00-12:00" 일정 A를 가지고 있음
 When: "2025-10-27" 날짜에 "11:00-13:00" 일정 B를 생성 시도
@@ -141,15 +148,16 @@ Then: 일정 겹침 경고 다이얼로그가 표시됨
 
 이 명세에서 **Given-When-Then**은 BDD 도구가 아닌, **테스트 케이스를 명확히 구조화하는 패턴**입니다.
 
-| 명세 표현 | TDD 의미 | Vitest 코드 |
-|-----------|----------|-------------|
+| 명세 표현 | TDD 의미  | Vitest 코드           |
+| --------- | --------- | --------------------- |
 | **Given** | 전제 조건 | Arrange (테스트 준비) |
-| **When** | 동작 | Act (함수 호출) |
-| **Then** | 결과 검증 | Assert (결과 확인) |
+| **When**  | 동작      | Act (함수 호출)       |
+| **Then**  | 결과 검증 | Assert (결과 확인)    |
 
 ### 명세 → 테스트 코드 변환 예시
 
 #### 명세 (specs/05-validation-rules.md)
+
 ```gherkin
 Given: getTimeErrorMessage 함수가 있음
 When: getTimeErrorMessage('14:00', '13:00') 호출
@@ -161,6 +169,7 @@ Then: 다음 객체 반환
 ```
 
 #### TDD 테스트 코드 (Vitest)
+
 ```typescript
 describe('getTimeErrorMessage', () => {
   it('시작 시간이 종료 시간보다 늦을 때 에러 메시지 반환', () => {
@@ -174,7 +183,7 @@ describe('getTimeErrorMessage', () => {
     // Then (Assert) - 결과 검증
     expect(result).toEqual({
       startTimeError: '시작 시간은 종료 시간보다 빨라야 합니다.',
-      endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.'
+      endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.',
     });
   });
 });
@@ -208,12 +217,14 @@ describe('getTimeErrorMessage', () => {
 ### AI 도구와 TDD
 
 #### Claude Code에 테스트 먼저 요청
+
 ```bash
 "specs/05-validation-rules.md를 읽고 timeValidation.spec.ts 테스트 코드를 먼저 작성해줘.
 그 다음 테스트를 통과하는 getTimeErrorMessage 함수를 구현해줘."
 ```
 
 #### GitHub Copilot 활용
+
 ```typescript
 // 📋 명세: specs/05-validation-rules.md
 // 🔴 TDD: 테스트 먼저 작성됨 (timeValidation.spec.ts)
@@ -290,11 +301,13 @@ export function isOverlapping(event1: Event, event2: Event): boolean {
 ### Cursor에서 명세 기반 개발
 
 1. `.cursorrules` 파일에 명세 경로 추가:
+
 ```
 Always reference specifications in specs/ directory before implementing features.
 ```
 
 2. 프롬프트 예시:
+
 ```
 "specs/05-validation-rules.md의 시간 검증 규칙을 구현해줘.
 명세의 모든 예외 케이스를 처리하고 테스트 코드도 작성해줘."
@@ -319,10 +332,12 @@ Always reference specifications in specs/ directory before implementing features
 ## 📚 참고 자료
 
 ### 내부 문서
+
 - [CLAUDE.md](../CLAUDE.md): Claude Code를 위한 개발 가이드
 - [README.md](../README.md): 프로젝트 전체 개요
 
 ### 테스트 규칙
+
 - [rules/README.md](../rules/README.md): 테스트 규칙 가이드 개요
 - [rules/testing-library-queries.md](../rules/testing-library-queries.md): Testing Library 쿼리 우선순위
 - [rules/react-testing-library-best-practices.md](../rules/react-testing-library-best-practices.md): React Testing Library 베스트 프랙티스
@@ -332,8 +347,8 @@ Always reference specifications in specs/ directory before implementing features
 
 ## 🔖 버전 히스토리
 
-| 버전 | 날짜 | 변경 내용 | 작성자 |
-|------|------|-----------|--------|
+| 버전  | 날짜       | 변경 내용      | 작성자      |
+| ----- | ---------- | -------------- | ----------- |
 | 1.0.0 | 2025-10-27 | 초기 명세 작성 | Claude Code |
 
 ---
@@ -341,6 +356,7 @@ Always reference specifications in specs/ directory before implementing features
 ## 📞 명세 관련 문의
 
 명세에 대한 질문, 개선 제안, 오류 발견 시:
+
 1. GitHub Issue 생성
 2. PR로 직접 명세 수정 제안
 3. 팀 미팅에서 논의

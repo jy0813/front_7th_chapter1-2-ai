@@ -124,26 +124,29 @@ export interface Event extends EventForm {
 ### 1. RepeatType
 
 #### 정의
+
 ```typescript
 type RepeatType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
 ```
 
 #### 각 값의 의미
 
-| 값 | 의미 | 사용 예시 |
-|---|------|----------|
-| `'none'` | 반복 없음 | 일회성 회의, 단발성 이벤트 |
-| `'daily'` | 매일 반복 | 매일 아침 운동, 일일 스탠드업 |
-| `'weekly'` | 매주 반복 | 주간 회의, 주말 활동 |
-| `'monthly'` | 매월 반복 | 월간 보고, 월급날 |
-| `'yearly'` | 매년 반복 | 생일, 기념일, 연간 행사 |
+| 값          | 의미      | 사용 예시                     |
+| ----------- | --------- | ----------------------------- |
+| `'none'`    | 반복 없음 | 일회성 회의, 단발성 이벤트    |
+| `'daily'`   | 매일 반복 | 매일 아침 운동, 일일 스탠드업 |
+| `'weekly'`  | 매주 반복 | 주간 회의, 주말 활동          |
+| `'monthly'` | 매월 반복 | 월간 보고, 월급날             |
+| `'yearly'`  | 매년 반복 | 생일, 기념일, 연간 행사       |
 
 #### 제약사항
+
 - 반드시 위 5개 값 중 하나여야 함
 - 대소문자 구분 (모두 소문자)
 - 빈 문자열이나 null 불가
 
 #### 기본값
+
 ```typescript
 const defaultRepeatType: RepeatType = 'none';
 ```
@@ -153,6 +156,7 @@ const defaultRepeatType: RepeatType = 'none';
 ### 2. RepeatInfo
 
 #### 정의
+
 ```typescript
 interface RepeatInfo {
   type: RepeatType;
@@ -164,12 +168,14 @@ interface RepeatInfo {
 #### 필드별 상세
 
 ##### `type: RepeatType`
+
 - **필수 여부**: 필수
 - **설명**: 반복 유형을 지정
 - **유효한 값**: RepeatType 참조
 - **예시**: `'daily'`, `'weekly'`, `'none'`
 
 ##### `interval: number`
+
 - **필수 여부**: 필수
 - **설명**: 반복 간격 (단위는 type에 따라 다름)
 - **유효한 값**: 양의 정수 (1 이상)
@@ -189,6 +195,7 @@ interface RepeatInfo {
   ```
 
 ##### `endDate?: string`
+
 - **필수 여부**: 선택적
 - **설명**: 반복이 종료되는 날짜
 - **형식**: ISO 8601 (YYYY-MM-DD)
@@ -222,11 +229,12 @@ function validateRepeatInfo(repeat: RepeatInfo): boolean {
 ```
 
 #### 기본값
+
 ```typescript
 const defaultRepeatInfo: RepeatInfo = {
   type: 'none',
   interval: 1,
-  endDate: undefined
+  endDate: undefined,
 };
 ```
 
@@ -235,6 +243,7 @@ const defaultRepeatInfo: RepeatInfo = {
 ### 3. EventForm
 
 #### 정의
+
 ```typescript
 interface EventForm {
   title: string;
@@ -252,6 +261,7 @@ interface EventForm {
 #### 필드별 상세
 
 ##### `title: string`
+
 - **필수 여부**: 필수
 - **설명**: 일정의 제목
 - **제약사항**:
@@ -261,12 +271,13 @@ interface EventForm {
   - 공백만으로 구성 불가
 - **예시**:
   ```typescript
-  "팀 회의"
-  "점심 약속 - 홍길동"
-  "2025 Q1 전략 회의"
+  '팀 회의';
+  '점심 약속 - 홍길동';
+  '2025 Q1 전략 회의';
   ```
 
 ##### `date: string`
+
 - **필수 여부**: 필수
 - **설명**: 일정이 발생하는 날짜
 - **형식**: ISO 8601 (YYYY-MM-DD)
@@ -276,12 +287,13 @@ interface EventForm {
   - 과거 날짜도 허용
 - **예시**:
   ```typescript
-  "2025-10-27"
-  "2025-12-25"
-  "2024-01-01"
+  '2025-10-27';
+  '2025-12-25';
+  '2024-01-01';
   ```
 
 ##### `startTime: string`
+
 - **필수 여부**: 필수
 - **설명**: 일정 시작 시간
 - **형식**: 24시간제 (HH:mm)
@@ -291,12 +303,13 @@ interface EventForm {
   - endTime보다 빨라야 함
 - **예시**:
   ```typescript
-  "09:00"
-  "14:30"
-  "23:45"
+  '09:00';
+  '14:30';
+  '23:45';
   ```
 
 ##### `endTime: string`
+
 - **필수 여부**: 필수
 - **설명**: 일정 종료 시간
 - **형식**: 24시간제 (HH:mm)
@@ -307,12 +320,13 @@ interface EventForm {
   - startTime과 같을 수 없음
 - **예시**:
   ```typescript
-  "10:00"
-  "15:30"
-  "23:59"
+  '10:00';
+  '15:30';
+  '23:59';
   ```
 
 ##### `description: string`
+
 - **필수 여부**: 선택적 (빈 문자열 허용)
 - **설명**: 일정에 대한 상세 설명
 - **제약사항**:
@@ -320,12 +334,13 @@ interface EventForm {
   - 빈 문자열 허용
 - **예시**:
   ```typescript
-  ""  // 설명 없음
-  "Q1 목표 달성 현황 및 Q2 계획 논의"
-  "참석자: 팀 전체, 장소: 대회의실"
+  ''; // 설명 없음
+  'Q1 목표 달성 현황 및 Q2 계획 논의';
+  '참석자: 팀 전체, 장소: 대회의실';
   ```
 
 ##### `location: string`
+
 - **필수 여부**: 선택적 (빈 문자열 허용)
 - **설명**: 일정이 열리는 장소
 - **제약사항**:
@@ -333,13 +348,14 @@ interface EventForm {
   - 빈 문자열 허용
 - **예시**:
   ```typescript
-  ""  // 장소 없음
-  "회의실 A"
-  "서울시 강남구 테헤란로 123"
-  "Zoom 링크: https://zoom.us/j/123456"
+  ''; // 장소 없음
+  '회의실 A';
+  '서울시 강남구 테헤란로 123';
+  'Zoom 링크: https://zoom.us/j/123456';
   ```
 
 ##### `category: string`
+
 - **필수 여부**: 필수
 - **설명**: 일정 카테고리
 - **유효한 값**: `'업무'` | `'개인'` | `'가족'` | `'기타'`
@@ -349,13 +365,14 @@ interface EventForm {
 - **기본값**: `'업무'`
 - **예시**:
   ```typescript
-  "업무"  // 회의, 프로젝트 등
-  "개인"  // 운동, 취미 등
-  "가족"  // 가족 행사, 모임 등
-  "기타"  // 분류하기 애매한 것들
+  '업무'; // 회의, 프로젝트 등
+  '개인'; // 운동, 취미 등
+  '가족'; // 가족 행사, 모임 등
+  '기타'; // 분류하기 애매한 것들
   ```
 
 ##### `repeat: RepeatInfo`
+
 - **필수 여부**: 필수
 - **설명**: 반복 일정 설정
 - **기본값**: `{ type: 'none', interval: 1 }`
@@ -368,6 +385,7 @@ interface EventForm {
   ```
 
 ##### `notificationTime: number`
+
 - **필수 여부**: 필수
 - **설명**: 일정 시작 전 몇 분 전에 알림을 보낼지 설정
 - **단위**: 분 (minutes)
@@ -384,9 +402,9 @@ interface EventForm {
   - 음수 불가
 - **예시**:
   ```typescript
-  10    // 10분 전 알림
-  60    // 1시간 전 알림
-  1440  // 1일 전 알림
+  10; // 10분 전 알림
+  60; // 1시간 전 알림
+  1440; // 1일 전 알림
   ```
 
 #### 전체 예시
@@ -403,9 +421,9 @@ const exampleEventForm: EventForm = {
   repeat: {
     type: 'weekly',
     interval: 1,
-    endDate: '2025-12-31'
+    endDate: '2025-12-31',
   },
-  notificationTime: 10
+  notificationTime: 10,
 };
 ```
 
@@ -414,6 +432,7 @@ const exampleEventForm: EventForm = {
 ### 4. Event
 
 #### 정의
+
 ```typescript
 interface Event extends EventForm {
   id: string;
@@ -423,6 +442,7 @@ interface Event extends EventForm {
 #### 필드별 상세
 
 ##### `id: string`
+
 - **필수 여부**: 필수 (서버가 생성)
 - **설명**: 일정의 고유 식별자
 - **형식**: UUID v4
@@ -432,8 +452,8 @@ interface Event extends EventForm {
   - 형식: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`
 - **예시**:
   ```typescript
-  "123e4567-e89b-12d3-a456-426614174000"
-  "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+  '123e4567-e89b-12d3-a456-426614174000';
+  'f47ac10b-58cc-4372-a567-0e02b2c3d479';
   ```
 
 #### 전체 예시
@@ -451,9 +471,9 @@ const exampleEvent: Event = {
   repeat: {
     type: 'weekly',
     interval: 1,
-    endDate: '2025-12-31'
+    endDate: '2025-12-31',
   },
-  notificationTime: 10
+  notificationTime: 10,
 };
 ```
 
@@ -497,13 +517,14 @@ erDiagram
 ```typescript
 function createEventFromForm(form: EventForm): Event {
   return {
-    id: generateUUID(),  // 서버에서 생성
-    ...form
+    id: generateUUID(), // 서버에서 생성
+    ...form,
   };
 }
 ```
 
 **시나리오**: 사용자가 새 일정을 생성할 때
+
 - 입력: EventForm (id 없음)
 - 서버 동작: UUID 생성하여 id 추가
 - 출력: Event (id 포함)
@@ -518,6 +539,7 @@ function eventToForm(event: Event): EventForm {
 ```
 
 **시나리오**: 기존 일정을 수정할 때
+
 - 입력: Event (id 포함)
 - 클라이언트 동작: id 제거
 - API 호출: EventForm 전송 (URL에 id 포함: PUT /api/events/:id)
@@ -531,12 +553,13 @@ function updateEvent(id: string, updates: PartialEventUpdate): Event {
   const current = getEventById(id);
   return {
     ...current,
-    ...updates
+    ...updates,
   };
 }
 ```
 
 **시나리오**: 일정의 일부 필드만 수정할 때
+
 - 입력: 변경할 필드만 포함한 객체
 - 서버 동작: 기존 데이터와 병합
 - 출력: 전체 Event
@@ -559,9 +582,9 @@ const singleEvent: Event = {
   category: '개인',
   repeat: {
     type: 'none',
-    interval: 1
+    interval: 1,
   },
-  notificationTime: 60  // 1시간 전 알림
+  notificationTime: 60, // 1시간 전 알림
 };
 ```
 
@@ -571,7 +594,7 @@ const singleEvent: Event = {
 const weeklyEvent: Event = {
   id: 'b2c3d4e5-f6a7-4b5c-9d8e-7f6a5b4c3d2e',
   title: '주간 팀 회의',
-  date: '2025-10-28',  // 월요일
+  date: '2025-10-28', // 월요일
   startTime: '09:00',
   endTime: '10:00',
   description: '주간 업무 공유 및 계획',
@@ -580,9 +603,9 @@ const weeklyEvent: Event = {
   repeat: {
     type: 'weekly',
     interval: 1,
-    endDate: '2025-12-31'
+    endDate: '2025-12-31',
   },
-  notificationTime: 10  // 10분 전 알림
+  notificationTime: 10, // 10분 전 알림
 };
 ```
 
@@ -600,9 +623,9 @@ const alternateDayEvent: Event = {
   category: '개인',
   repeat: {
     type: 'daily',
-    interval: 2  // 격일
+    interval: 2, // 격일
   },
-  notificationTime: 1440  // 1일 전 알림
+  notificationTime: 1440, // 1일 전 알림
 };
 ```
 
@@ -620,9 +643,9 @@ const yearlyEvent: Event = {
   category: '가족',
   repeat: {
     type: 'yearly',
-    interval: 1
+    interval: 1,
   },
-  notificationTime: 1440  // 1일 전 알림
+  notificationTime: 1440, // 1일 전 알림
 };
 ```
 
@@ -635,14 +658,14 @@ const minimalEvent: Event = {
   date: '2025-11-20',
   startTime: '15:00',
   endTime: '15:30',
-  description: '',  // 빈 문자열
-  location: '',     // 빈 문자열
+  description: '', // 빈 문자열
+  location: '', // 빈 문자열
   category: '기타',
   repeat: {
     type: 'none',
-    interval: 1
+    interval: 1,
   },
-  notificationTime: 10
+  notificationTime: 10,
 };
 ```
 
@@ -714,7 +737,7 @@ const validEvent: Event = {
   location: '',
   category: '업무',
   repeat: { type: 'none', interval: 1 },
-  notificationTime: 10
+  notificationTime: 10,
 };
 
 // ❌ 컴파일 에러: id 누락
@@ -726,7 +749,7 @@ const invalidEvent: Event = {
 // ❌ 컴파일 에러: category 값 오류
 const invalidCategory: Event = {
   id: '...',
-  category: '회사',  // '업무', '개인', '가족', '기타'만 허용
+  category: '회사', // '업무', '개인', '가족', '기타'만 허용
   // ... 기타 필드
 };
 
@@ -734,8 +757,8 @@ const invalidCategory: Event = {
 const invalidRepeat: Event = {
   id: '...',
   repeat: {
-    type: 'hourly',  // RepeatType에 없는 값
-    interval: 1
+    type: 'hourly', // RepeatType에 없는 값
+    interval: 1,
   },
   // ... 기타 필드
 };

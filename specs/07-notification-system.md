@@ -18,9 +18,7 @@
 ```typescript
 const now = new Date();
 const eventStart = new Date(`${event.date}T${event.startTime}`);
-const notifyTime = new Date(
-  eventStart.getTime() - event.notificationTime * 60000
-);
+const notifyTime = new Date(eventStart.getTime() - event.notificationTime * 60000);
 
 if (now >= notifyTime && now < eventStart) {
   // 알림 표시
@@ -28,6 +26,7 @@ if (now >= notifyTime && now < eventStart) {
 ```
 
 **조건**:
+
 - 현재 시간 ≥ 알림 시간
 - 현재 시간 < 일정 시작 시간
 
@@ -35,13 +34,13 @@ if (now >= notifyTime && now < eventStart) {
 
 ## 알림 시간 옵션
 
-| 값 (분) | 표시 | 계산 |
-|---------|------|------|
-| 1 | 1분 전 | startTime - 1분 |
-| 10 | 10분 전 | startTime - 10분 |
-| 60 | 1시간 전 | startTime - 60분 |
-| 120 | 2시간 전 | startTime - 120분 |
-| 1440 | 1일 전 | startTime - 1440분 |
+| 값 (분) | 표시     | 계산               |
+| ------- | -------- | ------------------ |
+| 1       | 1분 전   | startTime - 1분    |
+| 10      | 10분 전  | startTime - 10분   |
+| 60      | 1시간 전 | startTime - 60분   |
+| 120     | 2시간 전 | startTime - 120분  |
+| 1440    | 1일 전   | startTime - 1440분 |
 
 ---
 
@@ -52,6 +51,7 @@ if (now >= notifyTime && now < eventStart) {
 **위치**: `position: fixed, top: 16px, right: 16px`
 
 **내용**:
+
 ```tsx
 <Alert severity="info">
   <AlertTitle>{event.title}</AlertTitle>
@@ -60,6 +60,7 @@ if (now >= notifyTime && now < eventStart) {
 ```
 
 **특징**:
+
 - 자동 사라짐 없음
 - 사용자가 X 버튼으로 직접 닫기
 
@@ -68,6 +69,7 @@ if (now >= notifyTime && now < eventStart) {
 ### 2. 일정 목록 강조
 
 **스타일**:
+
 - 배경색: `#ffebee` (연한 빨강)
 - 글꼴: `bold`
 - 글자 색: `#d32f2f` (빨강)
@@ -84,12 +86,13 @@ const [notifiedEvents, setNotifiedEvents] = useState<string[]>([]);
 
 // 알림 표시 시
 if (!notifiedEvents.includes(event.id)) {
-  setNotifications(prev => [...prev, notification]);
-  setNotifiedEvents(prev => [...prev, event.id]);
+  setNotifications((prev) => [...prev, notification]);
+  setNotifiedEvents((prev) => [...prev, event.id]);
 }
 ```
 
 **특징**:
+
 - 세션 단위 관리 (페이지 새로고침 시 초기화)
 - 같은 일정에 대해 한 번만 알림
 
@@ -98,11 +101,12 @@ if (!notifiedEvents.includes(event.id)) {
 ## 알림 확인 주기
 
 **구현**:
+
 ```typescript
 useEffect(() => {
   const checkNotifications = () => {
     // 모든 일정 검사
-    events.forEach(event => {
+    events.forEach((event) => {
       if (shouldNotify(event) && !notifiedEvents.includes(event.id)) {
         showNotification(event);
       }
@@ -121,7 +125,7 @@ useEffect(() => {
 ```typescript
 const notification = {
   id: event.id,
-  message: `${event.title} ${event.notificationTime}분 전입니다.`
+  message: `${event.title} ${event.notificationTime}분 전입니다.`,
 };
 ```
 

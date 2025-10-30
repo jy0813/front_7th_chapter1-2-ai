@@ -16,6 +16,7 @@
 ### VR-REQ-001: 제목 검증
 
 **규칙**:
+
 - 빈 문자열 불가
 - 최소 길이: 1자
 - 최대 길이: 100자
@@ -27,6 +28,7 @@
 ### VR-REQ-002: 날짜 검증
 
 **규칙**:
+
 - 빈 문자열 불가
 - 형식: `YYYY-MM-DD`
 - 정규식: `/^\d{4}-\d{2}-\d{2}$/`
@@ -39,6 +41,7 @@
 ### VR-REQ-003: 시간 검증
 
 **규칙** (startTime, endTime):
+
 - 빈 문자열 불가
 - 형식: `HH:mm`
 - 정규식: `/^\d{2}:\d{2}$/`
@@ -55,6 +58,7 @@
 **규칙**: `startTime < endTime`
 
 **구현**:
+
 ```typescript
 const startDate = new Date(`2000-01-01T${start}`);
 const endDate = new Date(`2000-01-01T${end}`);
@@ -62,7 +66,7 @@ const endDate = new Date(`2000-01-01T${end}`);
 if (startDate >= endDate) {
   return {
     startTimeError: '시작 시간은 종료 시간보다 빨라야 합니다.',
-    endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.'
+    endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.',
   };
 }
 ```
@@ -78,6 +82,7 @@ if (startDate >= endDate) {
 ### VR-OPT-001: 설명 검증
 
 **규칙**:
+
 - 빈 문자열 허용
 - 최대 길이: 500자
 
@@ -86,6 +91,7 @@ if (startDate >= endDate) {
 ### VR-OPT-002: 위치 검증
 
 **규칙**:
+
 - 빈 문자열 허용
 - 최대 길이: 200자
 

@@ -86,7 +86,7 @@ function parseDateTime(date: string, time: string): Date {
 function convertEventToDateRange(event: Event | EventForm) {
   return {
     start: parseDateTime(event.date, event.startTime),
-    end: parseDateTime(event.date, event.endTime)
+    end: parseDateTime(event.date, event.endTime),
   };
 }
 ```
@@ -96,12 +96,9 @@ function convertEventToDateRange(event: Event | EventForm) {
 ### findOverlappingEvents
 
 ```typescript
-function findOverlappingEvents(
-  newEvent: Event | EventForm,
-  events: Event[]
-): Event[] {
+function findOverlappingEvents(newEvent: Event | EventForm, events: Event[]): Event[] {
   return events.filter(
-    event => event.id !== (newEvent as Event).id && isOverlapping(event, newEvent)
+    (event) => event.id !== (newEvent as Event).id && isOverlapping(event, newEvent)
   );
 }
 ```

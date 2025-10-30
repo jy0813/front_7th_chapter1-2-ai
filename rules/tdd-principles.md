@@ -93,13 +93,14 @@ describe('getTimeErrorMessage', () => {
     // Then
     expect(result).toEqual({
       startTimeError: '시작 시간은 종료 시간보다 빨라야 합니다.',
-      endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.'
+      endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.',
     });
   });
 });
 ```
 
 **실행 결과**:
+
 ```bash
 ❌ FAIL  src/__tests__/unit/easy.timeValidation.spec.ts
   ✕ 시작 시간이 종료 시간보다 늦으면 에러 메시지를 반환한다
@@ -108,6 +109,7 @@ describe('getTimeErrorMessage', () => {
 ```
 
 **체크리스트**:
+
 - [ ] 명세 기반 테스트 작성
 - [ ] Given-When-Then 구조
 - [ ] 테스트 실행 → 실패 확인
@@ -138,7 +140,7 @@ export function getTimeErrorMessage(
   if (start >= end) {
     return {
       startTimeError: '시작 시간은 종료 시간보다 빨라야 합니다.',
-      endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.'
+      endTimeError: '종료 시간은 시작 시간보다 늦어야 합니다.',
     };
   }
 
@@ -147,12 +149,14 @@ export function getTimeErrorMessage(
 ```
 
 **실행 결과**:
+
 ```bash
 ✅ PASS  src/__tests__/unit/easy.timeValidation.spec.ts
   ✓ 시작 시간이 종료 시간보다 늦으면 에러 메시지를 반환한다 (5ms)
 ```
 
 **체크리스트**:
+
 - [ ] 테스트 통과하는 최소 코드
 - [ ] 과도한 추상화 지양
 - [ ] TypeScript 컴파일 성공
@@ -181,10 +185,7 @@ const NO_ERROR: TimeErrorResult = {
   endTimeError: null,
 };
 
-export function getTimeErrorMessage(
-  startTime: string,
-  endTime: string
-): TimeErrorResult {
+export function getTimeErrorMessage(startTime: string, endTime: string): TimeErrorResult {
   if (!startTime || !endTime) {
     return NO_ERROR;
   }
@@ -208,18 +209,21 @@ function parseTimeToDate(time: string): Date {
 ```
 
 **개선 사항**:
+
 - ✅ 타입 추출 (`TimeErrorResult`)
 - ✅ 상수 추출 (`ERROR_MESSAGES`, `NO_ERROR`)
 - ✅ 함수 추출 (`parseTimeToDate`)
 - ✅ `as const` 타입 안전성 강화
 
 **실행 결과**:
+
 ```bash
 ✅ PASS  src/__tests__/unit/easy.timeValidation.spec.ts
   ✓ 시작 시간이 종료 시간보다 늦으면 에러 메시지를 반환한다 (4ms)
 ```
 
 **체크리스트**:
+
 - [ ] 중복 제거
 - [ ] 가독성 향상
 - [ ] 타입 안전성 강화
@@ -232,6 +236,7 @@ function parseTimeToDate(time: string): Date {
 ### 1. ❌ 타입 변경과 로직 변경 동시 수행
 
 **문제점**:
+
 - 실패 원인 파악 어려움
 - 타입 에러인지 로직 에러인지 불명확
 - 리뷰 및 디버깅 어려움
@@ -258,6 +263,7 @@ function createEvent(data: EventForm): Event {
 ```
 
 **해결 방법**:
+
 ```typescript
 // ✅ Good: 커밋 1 - 타입 변경만
 interface Event {
@@ -270,7 +276,7 @@ interface Event {
 }
 
 function createEvent(data: EventForm): Event {
-  return { ...data, id: generateId() };  // 로직 변경 없음
+  return { ...data, id: generateId() }; // 로직 변경 없음
 }
 
 // 커밋 후...
@@ -278,13 +284,14 @@ function createEvent(data: EventForm): Event {
 // ✅ Good: 커밋 2 - 로직 변경만
 function createEvent(data: EventForm): Event {
   if (data.repeatType !== 'none') {
-    return generateRecurringEvents(data);  // 로직 추가
+    return generateRecurringEvents(data); // 로직 추가
   }
   return { ...data, id: generateId() };
 }
 ```
 
 **규칙**:
+
 > **"구조 변경과 행동 변경을 절대 동시에 커밋하지 않는다."**
 
 ---
@@ -292,6 +299,7 @@ function createEvent(data: EventForm): Event {
 ### 2. ❌ 구현 후 테스트 작성
 
 **문제점**:
+
 - TDD 사이클 위반
 - 테스트하기 어려운 코드 생성
 - 코드 설계 개선 기회 상실
@@ -312,6 +320,7 @@ export function calculateOverlap(event1: Event, event2: Event): boolean {
 ```
 
 **해결 방법**:
+
 ```typescript
 // ✅ Good: 테스트 먼저 (RED)
 describe('calculateOverlap', () => {
@@ -330,6 +339,7 @@ export function calculateOverlap(event1: Event, event2: Event): boolean {
 ```
 
 **규칙**:
+
 > **"Red (테스트) → Green (구현) → Refactor 순서 엄수"**
 
 ---
@@ -337,6 +347,7 @@ export function calculateOverlap(event1: Event, event2: Event): boolean {
 ### 3. ❌ TypeScript 제네릭 과용
 
 **문제점**:
+
 - 불필요한 복잡성 증가
 - YAGNI(You Aren't Gonna Need It) 위반
 - 테스트 작성 및 이해 어려움
@@ -353,24 +364,21 @@ function filterEvents<T extends Event, K extends keyof T>(
 ```
 
 **해결 방법**:
+
 ```typescript
 // ✅ Good: 필요한 만큼만
 function filterEventsByTitle(events: Event[], searchTerm: string): Event[] {
-  return events.filter(event =>
-    event.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  return events.filter((event) => event.title.toLowerCase().includes(searchTerm.toLowerCase()));
 }
 
 // ✅ 필요 시점에 제네릭 추가 (REFACTOR 단계)
-function filterEvents<T extends Event>(
-  events: T[],
-  predicate: (event: T) => boolean
-): T[] {
+function filterEvents<T extends Event>(events: T[], predicate: (event: T) => boolean): T[] {
   return events.filter(predicate);
 }
 ```
 
 **규칙**:
+
 > **"현재 테스트를 통과하는 최소한의 타입만 사용한다."**
 
 ---
@@ -378,6 +386,7 @@ function filterEvents<T extends Event>(
 ### 4. ❌ 타입 에러 존재 시 리팩토링
 
 **문제점**:
+
 - RED 상태에서 REFACTOR 시도
 - 에러 원인 혼재 (타입 vs 로직)
 - 디버깅 시간 낭비
@@ -388,22 +397,25 @@ function createEvent(data: EventForm): Event {
   return {
     ...data,
     id: generateId(),
-    startTime: data.startTime,  // TS Error: Type mismatch
+    startTime: data.startTime, // TS Error: Type mismatch
   };
 }
 
 // 타입 에러 무시하고 함수 추출 시도
-function extractEventData(data: EventForm) { /* ... */ }
+function extractEventData(data: EventForm) {
+  /* ... */
+}
 ```
 
 **해결 방법**:
+
 ```typescript
 // ✅ Good: 타입 에러 먼저 해결 (GREEN)
 function createEvent(data: EventForm): Event {
   return {
     ...data,
     id: generateId(),
-    startTime: data.startTime as string,  // 타입 에러 수정
+    startTime: data.startTime as string, // 타입 에러 수정
   };
 }
 
@@ -415,6 +427,7 @@ function createEvent(data: EventForm): Event {
 ```
 
 **규칙**:
+
 > **"GREEN 상태(모든 테스트 통과)에서만 REFACTOR를 수행한다."**
 
 ---
@@ -422,6 +435,7 @@ function createEvent(data: EventForm): Event {
 ### 5. ❌ ESLint/TypeScript 에러 포함 커밋
 
 **문제점**:
+
 - CI/CD 파이프라인 실패
 - 팀원의 작업 방해
 - 기술 부채 누적
@@ -438,6 +452,7 @@ $ git commit -m "feature: 반복 일정 추가"  # 에러 무시하고 커밋
 ```
 
 **해결 방법**:
+
 ```bash
 # ✅ Good: 에러 해결 후 커밋
 $ pnpm lint
@@ -453,6 +468,7 @@ $ git commit -m "feature: 반복 일정 추가"
 ```
 
 **pre-commit 훅 설정**:
+
 ```json
 // package.json
 {
@@ -465,6 +481,7 @@ $ git commit -m "feature: 반복 일정 추가"
 ```
 
 **규칙**:
+
 > **"모든 테스트 통과 + ESLint/TypeScript 에러 없음 = 커밋 가능"**
 
 ---
@@ -472,6 +489,7 @@ $ git commit -m "feature: 반복 일정 추가"
 ### 6. ❌ 큰 단위의 드문 커밋
 
 **문제점**:
+
 - 코드 히스토리 추적 어려움
 - 버그 발생 시점 파악 어려움
 - 리뷰 부담 증가
@@ -483,6 +501,7 @@ a3f5b21 feat: 일정 CRUD, 검색, 필터링, 알림, 겹침 감지 구현
 ```
 
 **해결 방법**:
+
 ```bash
 # ✅ Good: Red-Green-Refactor 사이클마다 커밋
 $ git log --oneline
@@ -493,11 +512,13 @@ b6f4a92 test: 시간 검증 테스트 추가 (시작=종료 케이스)
 ```
 
 **커밋 타이밍**:
+
 1. 🔴 RED: 테스트 작성 후 커밋 (선택)
 2. 🟢 GREEN: 구현 완료 후 커밋 (필수)
 3. 🔵 REFACTOR: 리팩토링 후 커밋 (필수)
 
 **규칙**:
+
 > **"작고 빈번한 커밋으로 변경 이력을 명확히 한다."**
 
 ---
@@ -505,18 +526,26 @@ b6f4a92 test: 시간 검증 테스트 추가 (시작=종료 케이스)
 ### 7. ❌ 모호한 테스트 이름
 
 **문제점**:
+
 - 테스트 실패 시 원인 파악 어려움
 - 문서 역할 불가
 - 유지보수 어려움
 
 ```typescript
 // ❌ Bad: 모호한 이름
-it('should work', () => { /* ... */ });
-it('test 1', () => { /* ... */ });
-it('validates input', () => { /* ... */ });
+it('should work', () => {
+  /* ... */
+});
+it('test 1', () => {
+  /* ... */
+});
+it('validates input', () => {
+  /* ... */
+});
 ```
 
 **해결 방법**:
+
 ```typescript
 // ✅ Good: 동작 설명하는 이름
 it('시작 시간이 종료 시간보다 늦으면 에러 메시지를 반환한다', () => {
@@ -533,6 +562,7 @@ it('일정 제목으로 검색 시 대소문자를 구분하지 않는다', () =
 ```
 
 **TypeScript 타입 명시**:
+
 ```typescript
 // ✅ Good: 타입 정보 포함
 it('getTimeErrorMessage는 TimeErrorResult 타입을 반환한다', () => {
@@ -542,6 +572,7 @@ it('getTimeErrorMessage는 TimeErrorResult 타입을 반환한다', () => {
 ```
 
 **규칙**:
+
 > **"테스트 이름만 읽어도 무엇을 검증하는지 명확해야 한다."**
 
 ---
@@ -549,6 +580,7 @@ it('getTimeErrorMessage는 TimeErrorResult 타입을 반환한다', () => {
 ### 8. ❌ 큰 단위 테스트
 
 **문제점**:
+
 - 실패 시 원인 파악 어려움
 - 피드백 루프 느림
 - TDD 목적 상실
@@ -575,6 +607,7 @@ it('일정 관리 시스템이 동작한다', () => {
 ```
 
 **해결 방법**:
+
 ```typescript
 // ✅ Good: 기능별로 분리
 describe('createEvent', () => {
@@ -601,12 +634,13 @@ describe('deleteEvent', () => {
 describe('searchEvents', () => {
   it('제목으로 일정을 검색한다', () => {
     const results = searchEvents('회의');
-    expect(results.every(e => e.title.includes('회의'))).toBe(true);
+    expect(results.every((e) => e.title.includes('회의'))).toBe(true);
   });
 });
 ```
 
 **React 컴포넌트 테스트**:
+
 ```typescript
 // ✅ Good: 사용자 동작별로 분리
 describe('EventForm', () => {
@@ -625,6 +659,7 @@ describe('EventForm', () => {
 ```
 
 **규칙**:
+
 > **"하나의 테스트는 하나의 동작만 검증한다."**
 
 ---
@@ -636,12 +671,7 @@ describe('EventForm', () => {
 ```typescript
 // ✅ Good: 타입 가드 사용
 function isEvent(data: unknown): data is Event {
-  return (
-    typeof data === 'object' &&
-    data !== null &&
-    'id' in data &&
-    'title' in data
-  );
+  return typeof data === 'object' && data !== null && 'id' in data && 'title' in data;
 }
 
 // ✅ Good: 유니온 타입 좁히기
@@ -672,7 +702,7 @@ function handleRepeat(type: RepeatType): void {
 const events = [
   { id: '1', title: '회의' },
   { id: '2', title: '식사' },
-];  // Event[] 자동 추론
+]; // Event[] 자동 추론
 
 // ✅ Good: const assertion
 const ERROR_CODES = {
@@ -732,6 +762,7 @@ git commit -m "feat: 동일 시간 에러 처리 추가"
 ## 요약 체크리스트
 
 ### Red-Green-Refactor
+
 - [ ] 🔴 명세 기반 테스트 작성
 - [ ] 🔴 테스트 실행 → 실패 확인
 - [ ] 🟢 최소 구현으로 테스트 통과
@@ -742,6 +773,7 @@ git commit -m "feat: 동일 시간 에러 처리 추가"
 - [ ] ✅ 작은 단위로 커밋
 
 ### 안티패턴 회피
+
 - [ ] 타입 변경과 로직 변경 분리
 - [ ] 테스트 먼저, 구현은 나중에
 - [ ] 필요한 만큼만 제네릭 사용
