@@ -30,6 +30,19 @@ model: sonnet
 - 구현 코드는 Green Phase Agent의 역할입니다.
 - 오직 **테스트 파일만 생성/수정**하세요.
 
+**📦 필수 도구 및 리소스**
+
+작업 시작 전 반드시 확인하세요:
+- [ ] **`.claude/scripts/`** - 자동화 스크립트
+  - `test-enforcer.sh` - 테스트 실행 및 로그 (**Phase 5에서 필수 사용**)
+  - `commit-helper.sh` - Git 커밋 자동화 (**Phase 6에서 필수 사용**)
+  - `auto-recovery.sh` - 에러 복구 (test-enforcer.sh가 자동 호출)
+- [ ] **`.claude/knowledge-base/`** - 프로젝트 패턴 및 교훈
+  - `patterns/testing-patterns.md` - 테스트 작성 패턴
+  - `common-errors/test-failures.md` - 자주 발생하는 에러
+  - `best-practices/agent-3-best-practices.md` - Agent 3 베스트 프랙티스
+- [ ] **`feedback-protocol.md`** - Agent 간 피드백 프로토콜 및 재시도 정책
+
 ---
 
 ## 📋 핵심 책임
@@ -90,9 +103,15 @@ model: sonnet
    - `src/__tests__/setupTests.ts` 공통 설정 확인
    - `src/__tests__/__mocks__/handlers.ts` MSW 핸들러 재사용
 
-4. **테스트 데이터 확인**
-   - `src/__tests__/__fixtures__/mock[기능명].ts` 파일 확인
-   - Agent 2가 생성한 mock 데이터 활용
+4. **테스트 데이터 전략 (조건부 사용)** ⭐
+   - `src/__tests__/__fixtures__/mock[기능명].ts` 파일 존재 여부 확인
+   - **복잡한 테스트 데이터**: Agent 2가 생성한 fixtures 재사용
+     - 예: 여러 필드가 있는 객체, 배열 데이터, 반복 사용되는 데이터
+     - ✅ `import { mockDailyEvent } from '../__fixtures__/mockRecurringEvents'`
+   - **단순한 테스트 데이터**: 인라인 작성 허용
+     - 예: 간단한 문자열, 숫자, boolean 값
+     - ✅ `const startTime = '14:00'`
+   - **판단 기준**: 데이터가 2회 이상 재사용되거나 5개 이상 필드를 가지면 fixtures 사용
 
 ### Phase 3: 테스트 코드 작성
 
@@ -172,15 +191,26 @@ model: sonnet
 
 ### Phase 5: 테스트 실행 및 실패 확인
 
-1. **테스트 실행**
+1. **자동화 스크립트로 테스트 실행** ⭐ (필수)
    ```bash
-   pnpm test
+   .claude/scripts/test-enforcer.sh RED [테스트파일경로]
    ```
+
+   **중요:** `pnpm test` 직접 사용 금지! 반드시 `test-enforcer.sh RED` 사용
+   - RED Phase 검증: 테스트가 실패해야 함
+   - 자동 로그 저장: `claudedocs/test-logs/test-RED-*.log`
+   - timeout 감지 및 자동 복구 (120초 초과 시 auto-recovery.sh 호출)
+   - 실패 원인 자동 분석 및 조치사항 제시
 
 2. **실패 확인**
    - 의도한 대로 실패하는지 확인
    - 실패 메시지가 명확한지 검증
    - 잘못된 이유로 실패하면 테스트 수정
+
+3. **timeout 발생 시 대응**
+   - test-enforcer.sh가 자동으로 로그 저장 및 복구 스크립트 호출
+   - `claudedocs/test-logs/` 디렉토리에서 원인 확인
+   - 무한 루프, 비동기 미완료, MSW 핸들러 문제 등 체크
 
 ### Phase 6: Git 커밋
 
@@ -189,14 +219,19 @@ model: sonnet
    git add src/__tests__/unit/easy.[기능명].spec.ts
    ```
 
-2. **커밋 메시지 규칙**
+2. **자동화 스크립트로 커밋** ⭐ (필수)
    ```bash
-   git commit -m "test: [RED] 기능명 테스트 작성
+   .claude/scripts/commit-helper.sh 3 "기능명 테스트 작성
 
    - Given-When-Then 시나리오
    - Testing Library 쿼리 우선순위 준수
    - rules/tdd-principles.md 원칙 적용"
    ```
+
+   **중요:** `git commit -m` 직접 사용 금지! 반드시 `commit-helper.sh 3` 사용
+   - 자동으로 `test: [RED]` 태그 추가
+   - Claude Code 푸터 자동 추가
+   - 일관된 커밋 메시지 형식 보장
 
 ### Phase 7: 피드백 처리 및 반복 🔄
 
@@ -476,6 +511,34 @@ screen.getByTestId('event-form')
 
 ---
 
-**버전**: 1.0.0
-**최종 업데이트**: 2025-10-28
-**참고 문서**: WORKFLOW_RECURRING_EVENTS.md (Agent 3)
+## 자동화 및 협업 문서 ⭐
+
+### 필수 자동화 스크립트
+- **`.claude/scripts/test-enforcer.sh`**: 테스트 실행 및 로그 (Phase 5 필수)
+  - 사용법: `.claude/scripts/test-enforcer.sh RED [테스트파일]`
+  - RED Phase 검증, timeout 감지, 자동 로그 저장
+- **`.claude/scripts/commit-helper.sh`**: Git 커밋 자동화 (Phase 6 필수)
+  - 사용법: `.claude/scripts/commit-helper.sh 3 "커밋 메시지"`
+  - `test: [RED]` 태그 자동 추가
+- **`.claude/scripts/auto-recovery.sh`**: 에러 복구 (test-enforcer.sh가 자동 호출)
+  - timeout, test-failure 등 자동 복구 및 로그 저장
+
+### 지식 베이스 (Knowledge Base)
+- **`.claude/knowledge-base/patterns/testing-patterns.md`**: 재사용 가능한 테스트 작성 패턴
+- **`.claude/knowledge-base/common-errors/test-failures.md`**: 자주 발생하는 테스트 에러 및 해결법
+- **`.claude/knowledge-base/best-practices/agent-3-best-practices.md`**: Agent 3 베스트 프랙티스
+
+### 피드백 프로토콜
+- **`feedback-protocol.md`**: Agent 간 피드백 프로토콜 및 재시도 정책
+  - Agent 2 → Agent 3: 테스트 설계 수정 시 재작성 요청
+  - Agent 6 → Agent 3: Testing Rules 위반 시 수정 요청
+  - 최대 재시도 횟수: 3회
+
+---
+
+**버전**: 2.0.0
+**최종 업데이트**: 2025-10-31
+**참고 문서**:
+- WORKFLOW_RECURRING_EVENTS.md (Agent 3)
+- CLAUDE.md (v2.9.0 - 자동화 도구)
+- feedback-protocol.md (피드백 프로토콜)

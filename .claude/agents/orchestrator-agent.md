@@ -33,6 +33,21 @@ model: sonnet
 - [ ] TypeScript 컴파일 성공 (`pnpm lint:tsc`)
 - [ ] 명세 문서 동기화 확인
 
+**📦 필수 도구 및 리소스**
+
+작업 시작 전 반드시 확인하세요:
+- [ ] **`.claude/scripts/`** - 모든 자동화 스크립트 검증
+  - `commit-helper.sh` - Agent 2-5 커밋 검증 (필수)
+  - `test-enforcer.sh` - Agent 3-5 테스트 검증 (필수)
+  - `quality-gate.sh` - Agent 5 품질 게이트 검증 (필수)
+  - `doc-generator.sh` - Agent 1-6 문서 생성 지원
+  - `final-report.sh` - 최종 리포트 자동 생성 (필수)
+  - `feedback-generator.sh` - Agent 간 피드백 템플릿 생성
+  - `auto-recovery.sh` - 에러 복구 지원
+- [ ] **`.claude/knowledge-base/`** - 프로젝트 전체 지식 베이스
+  - 모든 Agent의 베스트 프랙티스 및 패턴
+- [ ] **`feedback-protocol.md`** - Agent 간 피드백 프로토콜 및 재시도 정책
+
 ---
 
 ## 📋 핵심 책임
@@ -732,6 +747,46 @@ git log --oneline | grep "\[REFACTOR\]" | wc -l
 
 ---
 
-**버전**: 1.0.0
-**최종 업데이트**: 2025-10-28
-**참고 문서**: WORKFLOW_RECURRING_EVENTS.md (Agent 6)
+## 자동화 및 협업 문서 ⭐
+
+### 필수 자동화 스크립트 (모두 검증해야 함)
+- **`.claude/scripts/commit-helper.sh`**: Agent 2-5 커밋 자동화 검증
+  - 사용법: Git 로그에서 `test: [DESIGN]`, `test: [RED]`, `feat: [GREEN]`, `refactor: [REFACTOR]` 태그 확인
+  - 누락 시 즉시 지적 및 재실행 요청
+- **`.claude/scripts/test-enforcer.sh`**: Agent 3-5 테스트 검증
+  - 사용법: `claudedocs/test-logs/` 디렉토리에서 로그 확인
+  - RED, GREEN, REFACTOR Phase별 로그 존재 여부 검증
+- **`.claude/scripts/quality-gate.sh`**: Agent 5 품질 게이트 검증
+  - 사용법: `claudedocs/quality-logs/` 디렉토리에서 로그 확인
+  - TypeScript/ESLint/테스트 종합 검증 결과 확인
+- **`.claude/scripts/final-report.sh`**: 최종 리포트 자동 생성
+  - 사용법: `.claude/scripts/final-report.sh [기능명]`
+  - 전체 TDD 사이클 완료 후 실행하여 종합 리포트 생성
+- **`.claude/scripts/feedback-generator.sh`**: Agent 간 피드백 템플릿 생성
+  - 사용법: `.claude/scripts/feedback-generator.sh [FROM_AGENT] [TO_AGENT] [ISSUE_TYPE]`
+  - 품질 문제 발견 시 자동으로 피드백 템플릿 생성
+- **`.claude/scripts/auto-recovery.sh`**: 에러 복구 지원
+  - test-enforcer.sh, quality-gate.sh가 자동으로 호출
+  - 에러 로그 분석 및 복구 옵션 제시
+
+### 지식 베이스 (Knowledge Base)
+- **`.claude/knowledge-base/`**: 프로젝트 전체 패턴 및 교훈
+  - `patterns/`: 모든 Agent의 재사용 가능한 패턴
+  - `best-practices/`: Agent별 베스트 프랙티스 (agent-1 ~ agent-6)
+  - `lessons-learned/`: 프로젝트 교훈 및 실수 방지
+
+### 피드백 프로토콜
+- **`feedback-protocol.md`**: Agent 간 피드백 프로토콜 및 재시도 정책
+  - Agent 6 → Agent 3, 4, 5: 커밋 누락, 테스트 실패, 린트 에러 시 피드백 (최대 2회 재시도)
+  - Agent 6 → Agent 2: 테스트 구조 설계 문제 시 피드백
+  - Agent 6 → Agent 1: 명세 품질 문제 시 피드백 (Agent 2 경유)
+
+---
+
+**버전**: 2.0.0
+**최종 업데이트**: 2025-10-31
+**참고 문서**:
+- WORKFLOW_RECURRING_EVENTS.md (Agent 6)
+- CLAUDE.md (v2.9.0 - 자동화 도구 전체)
+- feedback-protocol.md (피드백 프로토콜)
+- .claude/scripts/ (모든 자동화 스크립트)

@@ -30,6 +30,17 @@ model: sonnet
 - 과도한 최적화나 불필요한 기능 추가 금지
 - 코드 개선은 Refactor Phase Agent의 역할
 
+**📦 필수 도구 및 리소스**
+
+작업 시작 전 반드시 확인하세요:
+- [ ] **`.claude/scripts/`** - 자동화 스크립트
+  - `test-enforcer.sh` - 테스트 실행 및 로그 (**Phase 4에서 필수 사용**)
+  - `commit-helper.sh` - Git 커밋 자동화 (**Phase 5에서 필수 사용**)
+- [ ] **`.claude/knowledge-base/`** - 프로젝트 패턴 및 교훈
+  - `patterns/` - 재사용 가능한 구현 패턴
+  - `best-practices/agent-4-best-practices.md` - Agent 4 베스트 프랙티스
+- [ ] **`feedback-protocol.md`** - Agent 간 피드백 프로토콜 및 재시도 정책
+
 ---
 
 ## 📋 핵심 책임
@@ -157,19 +168,27 @@ model: sonnet
 
 ### Phase 5: 테스트 실행 및 성공 확인
 
-1. **테스트 실행**
+1. **자동화 스크립트로 테스트 실행** ⭐ (필수)
    ```bash
-   pnpm test
+   .claude/scripts/test-enforcer.sh GREEN
    ```
 
+   **중요:** `pnpm test` 직접 사용 금지! 반드시 `test-enforcer.sh GREEN` 사용
+   - GREEN Phase 검증: 모든 테스트가 통과해야 함
+   - 자동 로그 저장: `claudedocs/test-logs/test-GREEN-*.log`
+   - timeout 감지 및 자동 복구 (120초 초과 시 auto-recovery.sh 호출)
+   - 테스트 실패 시 원인 자동 분석 및 조치사항 제시
+
 2. **성공 확인**
-   - 모든 테스트가 통과하는지 확인
+   - test-enforcer.sh가 모든 테스트 통과를 확인
    - 실패 시 **구현 코드를 수정** (테스트는 수정 금지!)
 
 3. **테스트 실패 시 대응**
+   - `claudedocs/test-logs/` 디렉토리에서 실패 원인 확인
    - 테스트 명세가 명확한지 확인
    - 명세가 잘못되었다면 Red Phase Agent에게 피드백
    - 구현 로직 재검토 및 수정
+   - timeout 발생 시: auto-recovery.sh가 자동으로 로그 저장 및 복구
 
 ### Phase 6: 코드 설명 제공
 
@@ -196,16 +215,23 @@ model: sonnet
 1. **스테이징**
    ```bash
    git add src/utils/[파일명].ts
+   # 또는
+   git add src/hooks/[파일명].ts
    ```
 
-2. **커밋 메시지 규칙**
+2. **자동화 스크립트로 커밋** ⭐ (필수)
    ```bash
-   git commit -m "feat: [GREEN] 기능명 최소 구현
+   .claude/scripts/commit-helper.sh 4 "기능명 최소 구현
 
    - 테스트를 통과하는 최소 구현
    - TypeScript 타입 안전성 유지
    - 프로젝트 패턴 준수"
    ```
+
+   **중요:** `git commit -m` 직접 사용 금지! 반드시 `commit-helper.sh 4` 사용
+   - 자동으로 `feat: [GREEN]` 태그 추가
+   - Claude Code 푸터 자동 추가
+   - 일관된 커밋 메시지 형식 보장
 
 ### Phase 8: 피드백 처리 및 반복 🔄
 
@@ -532,6 +558,31 @@ const [events, setEvents] = useState<Event[]>([]);
 
 ---
 
-**버전**: 1.0.0
-**최종 업데이트**: 2025-10-28
-**참고 문서**: WORKFLOW_RECURRING_EVENTS.md (Agent 4)
+## 자동화 및 협업 문서 ⭐
+
+### 필수 자동화 스크립트
+- **`.claude/scripts/test-enforcer.sh`**: 테스트 실행 및 로그 (Phase 5 필수)
+  - 사용법: `.claude/scripts/test-enforcer.sh GREEN`
+  - GREEN Phase 검증, timeout 감지, 자동 로그 저장
+- **`.claude/scripts/commit-helper.sh`**: Git 커밋 자동화 (Phase 7 필수)
+  - 사용법: `.claude/scripts/commit-helper.sh 4 "커밋 메시지"`
+  - `feat: [GREEN]` 태그 자동 추가
+
+### 지식 베이스 (Knowledge Base)
+- **`.claude/knowledge-base/patterns/`**: 재사용 가능한 구현 패턴
+- **`.claude/knowledge-base/best-practices/agent-4-best-practices.md`**: Agent 4 베스트 프랙티스
+
+### 피드백 프로토콜
+- **`feedback-protocol.md`**: Agent 간 피드백 프로토콜 및 재시도 정책
+  - Agent 3 → Agent 4: 테스트 케이스 추가 시 추가 구현 요청
+  - Agent 6 → Agent 4: 커밋 누락, 테스트 실패 시 수정 요청
+  - 최대 재시도 횟수: 2회
+
+---
+
+**버전**: 2.0.0
+**최종 업데이트**: 2025-10-31
+**참고 문서**:
+- WORKFLOW_RECURRING_EVENTS.md (Agent 4)
+- CLAUDE.md (v2.9.0 - 자동화 도구)
+- feedback-protocol.md (피드백 프로토콜)

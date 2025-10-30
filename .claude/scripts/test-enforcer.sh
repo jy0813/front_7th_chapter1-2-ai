@@ -12,6 +12,7 @@ TEST_FILE=$2
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 LOG_DIR="claudedocs/test-logs"
 LOG_FILE="${LOG_DIR}/test-${PHASE}-${TIMESTAMP}.log"
+TIMEOUT_SECONDS=120  # 2분 timeout
 
 # 로그 디렉토리 생성
 mkdir -p "$LOG_DIR"
@@ -41,11 +42,41 @@ else
   TEST_CMD="pnpm test"
 fi
 
-# 테스트 실행 및 결과 저장
+echo "⏱️  Timeout: ${TIMEOUT_SECONDS}초"
+echo ""
+
+# 테스트 실행 및 결과 저장 (timeout 적용)
 set +e  # 테스트 실패 시에도 스크립트 계속 실행
-$TEST_CMD 2>&1 | tee "$LOG_FILE"
+timeout ${TIMEOUT_SECONDS} $TEST_CMD 2>&1 | tee "$LOG_FILE"
 TEST_EXIT_CODE=${PIPESTATUS[0]}
 set -e
+
+# Timeout 발생 감지 (exit code 124)
+if [ $TEST_EXIT_CODE -eq 124 ]; then
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "⏱️  TIMEOUT: 테스트가 ${TIMEOUT_SECONDS}초를 초과했습니다!"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  echo "📋 원인 분석:"
+  echo "1. 무한 루프가 발생했을 수 있습니다"
+  echo "2. 비동기 처리가 완료되지 않았을 수 있습니다"
+  echo "3. 테스트 데이터가 너무 클 수 있습니다"
+  echo "4. waitFor() timeout이 과도할 수 있습니다"
+  echo ""
+  echo "🔄 자동 복구 스크립트 실행 중..."
+
+  # auto-recovery.sh 호출
+  SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+  if [ -f "${SCRIPT_DIR}/auto-recovery.sh" ]; then
+    "${SCRIPT_DIR}/auto-recovery.sh" test-failure
+  else
+    echo "⚠️  auto-recovery.sh를 찾을 수 없습니다"
+    echo "💡 수동 조치: .claude/scripts/auto-recovery.sh test-failure"
+  fi
+
+  exit 124
+fi
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

@@ -30,6 +30,18 @@ model: sonnet
 - 다른 파일 수정 금지
 - 과도한 수정은 디버깅을 어렵게 만듭니다
 
+**📦 필수 도구 및 리소스**
+
+작업 시작 전 반드시 확인하세요:
+- [ ] **`.claude/scripts/`** - 자동화 스크립트
+  - `test-enforcer.sh` - 테스트 실행 및 로그 (**Phase 3에서 필수 사용**)
+  - `quality-gate.sh` - 품질 검증 (**Phase 4에서 필수 사용**)
+  - `commit-helper.sh` - Git 커밋 자동화 (**Phase 5에서 필수 사용**)
+- [ ] **`.claude/knowledge-base/`** - 프로젝트 패턴 및 교훈
+  - `patterns/refactoring-patterns.md` - 재사용 가능한 리팩토링 패턴
+  - `best-practices/agent-5-best-practices.md` - Agent 5 베스트 프랙티스
+- [ ] **`feedback-protocol.md`** - Agent 간 피드백 프로토콜 및 재시도 정책
+
 ---
 
 ## 📋 핵심 책임
@@ -184,28 +196,36 @@ model: sonnet
 
 ### Phase 4: 테스트 및 린트 검증
 
-**⚠️ 중요: 검증 순서를 지키세요!**
+**⚠️ 중요: 자동화 스크립트를 순서대로 사용하세요!**
 
-1. **테스트 실행**
+1. **회귀 테스트 실행** ⭐ (필수)
    ```bash
-   pnpm test
+   .claude/scripts/test-enforcer.sh REFACTOR
    ```
-   - 모든 테스트가 통과해야 합니다
-   - 실패 시 리팩토링 전으로 되돌리고 다시 시도
 
-2. **ESLint 검증**
-   ```bash
-   pnpm lint
-   ```
-   - ESLint 경고도 가능한 한 제거
-   - 코드 스타일 일관성 확인
+   **중요:** `pnpm test` 직접 사용 금지! 반드시 `test-enforcer.sh REFACTOR` 사용
+   - REFACTOR Phase 검증: 리팩토링 후에도 모든 테스트 통과 확인
+   - 자동 로그 저장: `claudedocs/test-logs/test-REFACTOR-*.log`
+   - timeout 감지 및 자동 복구 (120초 초과 시 auto-recovery.sh 호출)
+   - 테스트 실패 시 원인 자동 분석 및 조치사항 제시
 
-3. **TypeScript 타입 검증**
+2. **품질 게이트 검증** ⭐ (필수)
    ```bash
-   pnpm lint:tsc
+   .claude/scripts/quality-gate.sh
    ```
-   - TypeScript 컴파일 성공 확인
-   - 타입 에러 수정
+
+   **중요:** `pnpm lint`, `pnpm lint:tsc` 직접 사용 금지! 반드시 `quality-gate.sh` 사용
+   - TypeScript 타입 체크 (필수)
+   - ESLint 코드 품질 검사 (필수)
+   - 단위 테스트 실행 (필수)
+   - Git 저장소 상태 (경고)
+   - 자동 로그 저장: `claudedocs/quality-logs/quality-gate-*.log`
+
+3. **검증 실패 시 대응**
+   - `claudedocs/test-logs/` 및 `claudedocs/quality-logs/`에서 실패 원인 확인
+   - 리팩토링 전으로 즉시 롤백: `git checkout [파일명]`
+   - 작은 단위로 다시 시도
+   - timeout 발생 시: auto-recovery.sh가 자동으로 로그 저장 및 복구
 
 ### Phase 5: 개선 사항 문서화
 
@@ -221,17 +241,24 @@ model: sonnet
 1. **스테이징**
    ```bash
    git add src/utils/[파일명].ts
+   # 또는
+   git add src/hooks/[파일명].ts
    ```
 
-2. **커밋 메시지 규칙**
+2. **자동화 스크립트로 커밋** ⭐ (필수)
    ```bash
-   git commit -m "refactor: [REFACTOR] 기능명 개선
+   .claude/scripts/commit-helper.sh 5 "기능명 개선
 
    - 중복 코드 제거: formatDate 헬퍼 함수 추출
    - TypeScript 타입 정의 추가
    - JSDoc 주석 추가
    - 변수명 명확히 개선"
    ```
+
+   **중요:** `git commit -m` 직접 사용 금지! 반드시 `commit-helper.sh 5` 사용
+   - 자동으로 `refactor: [REFACTOR]` 태그 추가
+   - Claude Code 푸터 자동 추가
+   - 일관된 커밋 메시지 형식 보장
 
 ### Phase 7: 피드백 처리 및 반복 🔄
 
@@ -649,6 +676,33 @@ function calculateMillisecondsFromDays(days: number): number {
 
 ---
 
-**버전**: 1.0.0
-**최종 업데이트**: 2025-10-28
-**참고 문서**: WORKFLOW_RECURRING_EVENTS.md (Agent 5)
+## 자동화 및 협업 문서 ⭐
+
+### 필수 자동화 스크립트
+- **`.claude/scripts/test-enforcer.sh`**: 회귀 테스트 실행 및 로그 (Phase 4 필수)
+  - 사용법: `.claude/scripts/test-enforcer.sh REFACTOR`
+  - REFACTOR Phase 검증, timeout 감지, 자동 로그 저장
+- **`.claude/scripts/quality-gate.sh`**: 품질 게이트 검증 (Phase 4 필수)
+  - 사용법: `.claude/scripts/quality-gate.sh`
+  - TypeScript/ESLint/테스트 종합 검증
+- **`.claude/scripts/commit-helper.sh`**: Git 커밋 자동화 (Phase 6 필수)
+  - 사용법: `.claude/scripts/commit-helper.sh 5 "커밋 메시지"`
+  - `refactor: [REFACTOR]` 태그 자동 추가
+
+### 지식 베이스 (Knowledge Base)
+- **`.claude/knowledge-base/patterns/refactoring-patterns.md`**: 재사용 가능한 리팩토링 패턴
+- **`.claude/knowledge-base/best-practices/agent-5-best-practices.md`**: Agent 5 베스트 프랙티스
+
+### 피드백 프로토콜
+- **`feedback-protocol.md`**: Agent 간 피드백 프로토콜 및 재시도 정책
+  - Agent 6 → Agent 5: 커밋 누락, 린트 에러, TDD 사이클 위반 시 수정 요청
+  - 최대 재시도 횟수: 2회
+
+---
+
+**버전**: 2.0.0
+**최종 업데이트**: 2025-10-31
+**참고 문서**:
+- WORKFLOW_RECURRING_EVENTS.md (Agent 5)
+- CLAUDE.md (v2.9.0 - 자동화 도구)
+- feedback-protocol.md (피드백 프로토콜)

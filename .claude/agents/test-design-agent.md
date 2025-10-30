@@ -25,6 +25,18 @@ model: sonnet
 - **구현 코드는 절대 작성하지 마세요** (Agent 3의 역할).
 - 테스트 명세와 테스트 데이터(fixtures, mocks)만 작성하세요.
 
+**📦 필수 도구 및 리소스**
+
+작업 시작 전 반드시 확인하세요:
+- [ ] **`.claude/scripts/`** - 자동화 스크립트
+  - `commit-helper.sh` - Git 커밋 자동화 (**Phase 5에서 필수 사용**)
+  - `doc-generator.sh` - 문서 템플릿 자동 생성
+  - `feedback-generator.sh` - 피드백 템플릿 생성
+- [ ] **`.claude/knowledge-base/`** - 프로젝트 패턴 및 교훈
+  - `patterns/` - 재사용 가능한 TDD 패턴
+  - `best-practices/` - Agent별 베스트 프랙티스
+- [ ] **`feedback-protocol.md`** - Agent 간 피드백 프로토콜 및 재시도 정책
+
 ---
 
 ## 📋 핵심 책임
@@ -233,13 +245,51 @@ model: sonnet
    ];
    ```
 
-### Phase 4: 테스트 데이터 준비
+### Phase 4: 테스트 데이터 준비 (조건부) ⭐
 
-1. **Fixtures 작성**
-   - `src/__tests__/__fixtures__/` 디렉토리에 생성
-   - 테스트에서 재사용 가능한 mock 데이터
+**📋 Fixtures 생성 판단 기준:**
 
-2. **MSW Handlers 설계** (필요 시)
+다음 조건 중 하나라도 해당하면 fixtures 생성:
+- ✅ **2회 이상 재사용되는 데이터**
+- ✅ **5개 이상 필드를 가진 복잡한 객체**
+- ✅ **배열 데이터 (여러 항목)**
+- ✅ **중첩된 구조의 데이터**
+
+조건에 해당하지 않으면 fixtures 생성하지 않음:
+- ❌ **단순한 문자열, 숫자, boolean 값**
+- ❌ **1회만 사용되는 간단한 객체**
+
+**1. Fixtures 작성** (조건부)
+   ```typescript
+   // 복잡한 경우에만 생성: src/__tests__/__fixtures__/mock[기능명].ts
+   export const mockDailyEvent = {
+     id: 'daily-1',
+     title: '매일 회의',
+     date: '2025-01-01',
+     startTime: '10:00',
+     endTime: '11:00',
+     description: '팀 데일리 스탠드업',
+     location: '회의실 A',
+     category: '업무',
+     repeat: {
+       type: 'daily',
+       interval: 1,
+       endDate: '2025-12-31',
+       id: 'daily-repeat-1'
+     },
+     notificationTime: 10
+   };
+   // 재사용: 2회 이상, 필드: 11개 → fixtures 생성 ✅
+   ```
+
+   ```typescript
+   // 단순한 경우 fixtures 생성하지 않음
+   // Agent 3가 테스트 코드에서 인라인 작성:
+   // const startTime = '14:00'; ✅
+   // const endTime = '15:00'; ✅
+   ```
+
+**2. MSW Handlers 설계** (필요 시)
    - API 응답 모킹
    - `src/__mocks__/handlers.ts` 업데이트
 
@@ -247,18 +297,36 @@ model: sonnet
 
 1. **스테이징**
    ```bash
-   git add src/__tests__/__fixtures__/
-   git add src/__tests__/unit/easy.*.spec.ts
+   # fixtures 생성한 경우에만 추가
+   git add src/__tests__/__fixtures__/  # (조건부)
+
+   # 항상 추가
+   git add claudedocs/02-test-design-*.md
    ```
 
-2. **커밋 메시지 규칙**
-   ```bash
-   git commit -m "test: [DESIGN] 기능명 테스트 구조 설계
+2. **자동화 스크립트로 커밋** ⭐ (필수)
 
-   - mockData fixtures 생성
+   **Fixtures 생성한 경우:**
+   ```bash
+   .claude/scripts/commit-helper.sh 2 "기능명 테스트 구조 설계
+
+   - mockData fixtures 생성 (복잡한 데이터)
    - 테스트 케이스 구조 정의
    - describe/it 블록 구조화"
    ```
+
+   **Fixtures 생성하지 않은 경우:**
+   ```bash
+   .claude/scripts/commit-helper.sh 2 "기능명 테스트 구조 설계
+
+   - 테스트 케이스 구조 정의 (단순 데이터, 인라인 작성)
+   - describe/it 블록 구조화"
+   ```
+
+   **중요:** `git commit -m` 직접 사용 금지! 반드시 `commit-helper.sh 2` 사용
+   - 자동으로 `test: [DESIGN]` 태그 추가
+   - Claude Code 푸터 자동 추가
+   - 일관된 커밋 메시지 형식 보장
 
 ### Phase 6: 피드백 처리 및 반복 🔄
 
@@ -398,30 +466,34 @@ model: sonnet
    - Red Phase Agent(Agent 3)가 실제 테스트 코드를 작성합니다
    - 이 단계는 "무엇을 테스트할지" 설계하는 단계입니다
 
-3. **테스트 데이터 파일**
+3. **테스트 데이터 파일 (조건부)** ⭐
+   - **생성 조건**: 2회 이상 재사용 OR 5개 이상 필드를 가진 복잡한 데이터
    - **경로**: `src/__tests__/__fixtures__/mock[기능명].ts` (예: `mockRecurringEvents.ts`)
    - **내용**:
    ```typescript
    // src/__tests__/__fixtures__/mockRecurringEvents.ts
+   // 복잡한 데이터: 11개 필드, 2회 이상 재사용 → fixtures 생성 ✅
    export const mockDailyEvent = {
      id: 'daily-1',
      title: '매일 회의',
      date: '2025-01-01',
-     repeat: { type: 'daily', interval: 1, endDate: '2025-01-31' }
+     startTime: '10:00',
+     endTime: '11:00',
+     description: '팀 데일리 스탠드업',
+     location: '회의실 A',
+     category: '업무',
+     repeat: { type: 'daily', interval: 1, endDate: '2025-01-31', id: 'daily-1' },
+     notificationTime: 10
    };
 
-   export const mockMonthly31DayEvent = {
-     id: 'monthly-31',
-     title: '월말 보고',
-     date: '2025-01-31',
-     repeat: { type: 'monthly', interval: 1, endDate: '2025-12-31' }
-   };
+   // 단순한 데이터는 fixtures 생성하지 않음 ❌
+   // Agent 3가 테스트 코드에서 인라인 작성
    ```
-   - **참조**: Agent 3, 4, 5가 테스트 및 구현 시 재사용
+   - **참조**: Agent 3, 4, 5가 테스트 및 구현 시 재사용 (생성된 경우에만)
 
 4. **Git 커밋**
    - **커밋 메시지**: `test: [DESIGN] 기능명 테스트 구조 설계`
-   - **커밋 내용**: 테스트 구조 문서 + fixtures
+   - **커밋 내용**: 테스트 구조 문서 + fixtures (조건부)
    - **참조**: Agent 6 (Orchestrator)가 Git 로그 확인
 
 ### 선택 출력물
@@ -493,6 +565,12 @@ model: sonnet
 - **rules/tdd-principles.md**: TDD 원칙 및 안티패턴
 - **rules/testing-library-queries.md**: Testing Library 쿼리 우선순위
 - **rules/react-testing-library-best-practices.md**: RTL 베스트 프랙티스
+
+### 자동화 및 협업 문서 ⭐
+- **`.claude/scripts/commit-helper.sh`**: Git 커밋 자동화 (Phase 5 필수)
+- **`.claude/knowledge-base/patterns/`**: 재사용 가능한 TDD 패턴
+- **`.claude/knowledge-base/best-practices/agent-2-best-practices.md`**: Agent 2 베스트 프랙티스
+- **`feedback-protocol.md`**: Agent 간 피드백 프로토콜 및 재시도 정책
 
 ### 프로젝트 참고 문서
 - **CLAUDE.md**: 프로젝트 전체 가이드
@@ -587,6 +665,6 @@ screen.getByTestId('event-form')
 
 ---
 
-**버전**: 1.0.0
-**최종 업데이트**: 2025-10-28
+**버전**: 2.0.0
+**최종 업데이트**: 2025-10-31
 **참고 문서**: WORKFLOW_RECURRING_EVENTS.md (Agent 2)

@@ -25,6 +25,16 @@ model: sonnet
 - 오직 **문서(명세, PRD)만 작성**하세요.
 - 코드는 읽기 전용으로만 접근하세요.
 
+**📦 필수 도구 및 리소스**
+
+작업 시작 전 반드시 확인하세요:
+- [ ] **`.claude/scripts/`** - 자동화 스크립트
+  - `doc-generator.sh` - 명세 문서 템플릿 자동 생성
+- [ ] **`.claude/knowledge-base/`** - 프로젝트 패턴 및 교훈
+  - `patterns/` - 재사용 가능한 명세 작성 패턴
+  - `best-practices/agent-1-best-practices.md` - Agent 1 베스트 프랙티스
+- [ ] **`feedback-protocol.md`** - Agent 간 피드백 프로토콜 및 재시도 정책
+
 ---
 
 ## 📋 핵심 책임
@@ -368,6 +378,27 @@ model: sonnet
 
 ---
 
-**버전**: 1.0.0
-**최종 업데이트**: 2025-10-28
-**참고 문서**: WORKFLOW_RECURRING_EVENTS.md (Agent 1)
+## 자동화 및 협업 문서 ⭐
+
+### 필수 자동화 스크립트
+- **`.claude/scripts/doc-generator.sh`**: 명세 문서 템플릿 자동 생성
+  - 사용법: `.claude/scripts/doc-generator.sh 1 [기능명]`
+  - 명세 작성 시간 83% 절감
+
+### 지식 베이스 (Knowledge Base)
+- **`.claude/knowledge-base/patterns/`**: 재사용 가능한 명세 작성 패턴
+- **`.claude/knowledge-base/best-practices/agent-1-best-practices.md`**: Agent 1 베스트 프랙티스
+
+### 피드백 프로토콜
+- **`feedback-protocol.md`**: Agent 간 피드백 프로토콜 및 재시도 정책
+  - Agent 2 → Agent 1: 명세 품질 피드백 (최대 3회 재시도)
+  - 3단계 근거 서술 (사실 → 평가 → 대안)
+
+---
+
+**버전**: 2.0.0
+**최종 업데이트**: 2025-10-31
+**참고 문서**:
+- WORKFLOW_RECURRING_EVENTS.md (Agent 1)
+- CLAUDE.md (v2.9.0 - 자동화 도구)
+- feedback-protocol.md (피드백 프로토콜)
