@@ -28,7 +28,7 @@
 
 ### 핵심 설계 원칙
 
-1. **단순성 우선**: interval = 1 고정, endDate = 없음 (무한 반복)
+1. **유연한 반복**: interval (반복 간격)과 endDate (반복 종료일)를 사용자가 설정 가능
 2. **조용한 실패**: 31일/윤년 케이스는 경고 없이 건너뜀
 3. **클라이언트 계산**: 반복 날짜 계산은 클라이언트에서 수행
 4. **일괄 전송**: POST /api/events-list로 한 번에 전송
@@ -207,48 +207,53 @@ const defaultRepeatType: RepeatType = 'daily';
 
 ### 고정 값 규칙
 
-#### RULE-REPEAT-001: interval 고정
+#### RULE-REPEAT-001: interval 설정
 
-**규칙**: 반복 간격은 항상 1로 고정
+**규칙**: 반복 간격은 사용자가 자유롭게 설정 가능
 
 - **적용 범위**: 모든 반복 유형 (daily, weekly, monthly, yearly)
 - **의미**:
   - `interval = 1` → 매일 / 매주 / 매월 / 매년
-  - 격주(`interval = 2`), 격월(`interval = 3`) 등은 구현하지 않음
-- **이유**: 복잡도 최소화, 사용자 혼란 방지
+  - `interval = 2` → 격일 / 격주 / 격월 / 격년
+  - `interval = n` → n일마다 / n주마다 / n개월마다 / n년마다
+- **기본값**: 1 (interval 미입력 시)
 
 **적용 예시**:
 
 ```typescript
-// ✅ 올바른 예시
-{ type: "daily", interval: 1 }    // 매일
-{ type: "weekly", interval: 1 }   // 매주
-{ type: "monthly", interval: 1 }  // 매월
+// ✅ interval = 1 (매일, 매주, 매월, 매년)
+{ type: "daily", interval: 1 }
+{ type: "weekly", interval: 1 }
 
-// ❌ 구현하지 않음
-{ type: "weekly", interval: 2 }   // 격주 (구현 안 함)
-{ type: "monthly", interval: 3 }  // 3개월마다 (구현 안 함)
+// ✅ interval = 2 (격일, 격주, 격월, 격년)
+{ type: "weekly", interval: 2 }   // 격주
+{ type: "monthly", interval: 3 }  // 3개월마다
+
+// ✅ interval = n (n일/주/월/년마다)
+{ type: "daily", interval: 7 }    // 7일마다
 ```
 
 ---
 
-#### RULE-REPEAT-002: endDate 없음 (무한 반복)
+#### RULE-REPEAT-002: endDate 설정
 
-**규칙**: 반복 종료 날짜는 항상 undefined (무한 반복)
+**규칙**: 반복 종료 날짜는 사용자가 선택 가능 (있거나 없거나)
 
 - **적용 범위**: 모든 반복 유형
-- **의미**: 일정은 무한히 반복됨 (종료 조건 없음)
-- **실제 생성 범위**: 클라이언트에서 1년치만 계산하여 전송
-- **이유**: UI 복잡도 최소화, MVP 범위 제한
+- **의미**:
+  - `endDate = undefined` → 무한 반복 (클라이언트에서 1년치만 생성)
+  - `endDate = "YYYY-MM-DD"` → 해당 날짜까지만 반복
+- **기본값**: undefined (endDate 미입력 시 무한 반복)
 
 **적용 예시**:
 
 ```typescript
-// ✅ 올바른 예시
-{ type: "weekly", interval: 1, endDate: undefined }  // 무한 반복
+// ✅ endDate 없음 (무한 반복, 1년치 생성)
+{ type: "weekly", interval: 1, endDate: undefined }
 
-// ❌ 구현하지 않음
-{ type: "weekly", interval: 1, endDate: "2025-12-31" }  // 종료일 지정 안 함
+// ✅ endDate 있음 (종료일까지만 반복)
+{ type: "weekly", interval: 1, endDate: "2025-12-31" }
+{ type: "monthly", interval: 2, endDate: "2026-06-30" }
 ```
 
 ---
@@ -423,7 +428,7 @@ isValidDate(2025, 2, 29); // false (2025년은 평년) → 건너뜀
 ┌─────────────────────────────────────────────────────────────────┐
 │ 3. EventForm[] 배열 생성                                         │
 │    - 각 날짜에 대해 별도 EventForm 객체 생성                       │
-│    - repeat.type = repeatType, interval = 1, endDate = undefined │
+│    - repeat.type = repeatType, interval = 사용자입력, endDate = 사용자입력 │
 └─────────────────────────────────────────────────────────────────┐
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
@@ -788,7 +793,7 @@ Then: 365개 일정이 생성됨
   And: 첫 번째 일정 date = "2025-11-01"
   And: 마지막 일정 date = "2026-10-31" (365일 후)
   And: 모든 일정의 repeat.type = "daily"
-  And: 모든 일정의 repeat.interval = 1
+  And: 모든 일정의 repeat.interval = 사용자입력값 (예: 1)
   And: 모든 일정의 repeat.id = 동일한 UUID
 ```
 
