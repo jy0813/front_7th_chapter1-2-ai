@@ -1,18 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import {
-  generateRecurringDates,
-  isLeapYear,
-  isValidMonthlyDate,
-} from '../../utils/repeatUtils';
-import {
-  createDailyRecurringEvent,
-  createWeeklyRecurringEvent,
-  createMonthlyRecurringEvent,
-  createYearlyRecurringEvent,
-  monthly31DayEvent,
-  monthly30DayEvent,
-  yearlyLeapDayEvent,
-} from '../__fixtures__/mockRecurringEvents';
+
+import { generateRecurringDates, isLeapYear, isValidMonthlyDate } from '../../utils/repeatUtils';
 
 describe('generateRecurringDates', () => {
   describe('매일 반복 (daily)', () => {
@@ -43,12 +31,7 @@ describe('generateRecurringDates', () => {
       const result = generateRecurringDates(startDate, 'daily', 2, endDate);
 
       // Then: 격일로 날짜 생성 (2025-01-06, 01-08, 01-10, 01-12)
-      expect(result).toEqual([
-        '2025-01-06',
-        '2025-01-08',
-        '2025-01-10',
-        '2025-01-12',
-      ]);
+      expect(result).toEqual(['2025-01-06', '2025-01-08', '2025-01-10', '2025-01-12']);
     });
 
     it('종료일이 없을 때 기본 종료일(1년 후)까지 생성한다', () => {
@@ -75,12 +58,7 @@ describe('generateRecurringDates', () => {
       const result = generateRecurringDates(startDate, 'weekly', 1, endDate);
 
       // Then: 매주 월요일 (2025-01-06, 01-13, 01-20, 01-27)
-      expect(result).toEqual([
-        '2025-01-06',
-        '2025-01-13',
-        '2025-01-20',
-        '2025-01-27',
-      ]);
+      expect(result).toEqual(['2025-01-06', '2025-01-13', '2025-01-20', '2025-01-27']);
     });
 
     it('간격이 2주일 때 격주로 일정을 생성한다', () => {
@@ -106,12 +84,7 @@ describe('generateRecurringDates', () => {
       const result = generateRecurringDates(startDate, 'monthly', 1, endDate);
 
       // Then: 매월 15일 (2025-01-15, 02-15, 03-15, 04-15)
-      expect(result).toEqual([
-        '2025-01-15',
-        '2025-02-15',
-        '2025-03-15',
-        '2025-04-15',
-      ]);
+      expect(result).toEqual(['2025-01-15', '2025-02-15', '2025-03-15', '2025-04-15']);
     });
 
     it('31일 매월 반복은 31일이 있는 달에만 생성한다', () => {
@@ -159,12 +132,7 @@ describe('generateRecurringDates', () => {
       const result = generateRecurringDates(startDate, 'monthly', 3, endDate);
 
       // Then: 3개월마다 (2025-01-15, 04-15, 07-15, 10-15)
-      expect(result).toEqual([
-        '2025-01-15',
-        '2025-04-15',
-        '2025-07-15',
-        '2025-10-15',
-      ]);
+      expect(result).toEqual(['2025-01-15', '2025-04-15', '2025-07-15', '2025-10-15']);
     });
   });
 
@@ -178,12 +146,7 @@ describe('generateRecurringDates', () => {
       const result = generateRecurringDates(startDate, 'yearly', 1, endDate);
 
       // Then: 매년 6월 15일 (2025-06-15, 2026-06-15, 2027-06-15, 2028-06-15)
-      expect(result).toEqual([
-        '2025-06-15',
-        '2026-06-15',
-        '2027-06-15',
-        '2028-06-15',
-      ]);
+      expect(result).toEqual(['2025-06-15', '2026-06-15', '2027-06-15', '2028-06-15']);
     });
 
     it('2월 29일 매년 반복은 윤년에만 생성한다', () => {

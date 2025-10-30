@@ -235,10 +235,7 @@ export const generateRecurringEventId = (baseId: string, index: number): string 
  * @param dates - 생성할 날짜 배열
  * @returns Event 배열
  */
-export const createRecurringEventInstances = (
-  baseEvent: Event,
-  dates: string[]
-): Event[] =>
+export const createRecurringEventInstances = (baseEvent: Event, dates: string[]): Event[] =>
   dates.map((date, index) => ({
     ...baseEvent,
     id: generateRecurringEventId(baseEvent.id, index),
