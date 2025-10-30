@@ -1,4 +1,4 @@
-import { Notifications, ChevronLeft, ChevronRight, Delete, Edit, Close } from '@mui/icons-material';
+import { Notifications, ChevronLeft, ChevronRight, Delete, Edit, Close, Repeat } from '@mui/icons-material';
 import {
   Alert,
   AlertTitle,
@@ -35,8 +35,7 @@ import { useEventForm } from './hooks/useEventForm.ts';
 import { useEventOperations } from './hooks/useEventOperations.ts';
 import { useNotifications } from './hooks/useNotifications.ts';
 import { useSearch } from './hooks/useSearch.ts';
-// import { Event, EventForm, RepeatType } from './types';
-import { Event, EventForm } from './types';
+import { Event, EventForm, RepeatType } from './types';
 import {
   formatDate,
   formatMonth,
@@ -46,6 +45,12 @@ import {
   getWeeksAtMonth,
 } from './utils/dateUtils';
 import { findOverlappingEvents } from './utils/eventOverlap';
+import {
+  generateDailyDates,
+  generateWeeklyDates,
+  generateMonthlyDates,
+  generateYearlyDates,
+} from './utils/repeatUtils';
 import { getTimeErrorMessage } from './utils/timeValidation';
 
 const categories = ['업무', '개인', '가족', '기타'];
@@ -135,13 +140,71 @@ function App() {
       notificationTime,
     };
 
-    const overlapping = findOverlappingEvents(eventData, events);
-    if (overlapping.length > 0) {
-      setOverlappingEvents(overlapping);
-      setIsOverlapDialogOpen(true);
+    // 반복 일정인 경우 일정 겹침 무시하고 여러 일정 생성
+    if (isRepeating && repeatType !== 'none') {
+      const endDate = repeatEndDate || '2025-12-31';
+      let dates: string[] = [];
+
+      if (repeatType === 'daily') {
+        dates = generateDailyDates(date, endDate);
+      } else if (repeatType === 'weekly') {
+        dates = generateWeeklyDates(date, endDate);
+      } else if (repeatType === 'monthly') {
+        dates = generateMonthlyDates(date, endDate);
+      } else if (repeatType === 'yearly') {
+        dates = generateYearlyDates(date, endDate);
+      }
+
+      // 반복 일정 ID 생성
+      const repeatId = crypto.randomUUID();
+
+      // 여러 일정 생성
+      const eventsToCreate = dates.map((d) => ({
+        title,
+        date: d,
+        startTime,
+        endTime,
+        description,
+        location,
+        category,
+        repeat: {
+          type: repeatType,
+          interval: repeatInterval,
+          endDate: repeatEndDate || undefined,
+          id: repeatId,
+        },
+        notificationTime,
+      }));
+
+      // POST /api/events-list 호출
+      try {
+        const response = await fetch('/api/events-list', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ events: eventsToCreate }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create recurring events');
+        }
+
+        await fetchEvents();
+        resetForm();
+        enqueueSnackbar('반복 일정이 추가되었습니다.', { variant: 'success' });
+      } catch (error) {
+        console.error('Error creating recurring events:', error);
+        enqueueSnackbar('반복 일정 저장 실패', { variant: 'error' });
+      }
     } else {
-      await saveEvent(eventData);
-      resetForm();
+      // 일반 일정: 겹침 체크
+      const overlapping = findOverlappingEvents(eventData, events);
+      if (overlapping.length > 0) {
+        setOverlappingEvents(overlapping);
+        setIsOverlapDialogOpen(true);
+      } else {
+        await saveEvent(eventData);
+        resetForm();
+      }
     }
   };
 
@@ -437,8 +500,7 @@ function App() {
             </Select>
           </FormControl>
 
-          {/* ! 반복은 8주차 과제에 포함됩니다. 구현하고 싶어도 참아주세요~ */}
-          {/* {isRepeating && (
+          {isRepeating && (
             <Stack spacing={2}>
               <FormControl fullWidth>
                 <FormLabel>반복 유형</FormLabel>
@@ -475,7 +537,7 @@ function App() {
                 </FormControl>
               </Stack>
             </Stack>
-          )} */}
+          )}
 
           <Button
             data-testid="event-submit-button"
@@ -541,6 +603,7 @@ function App() {
                   <Stack>
                     <Stack direction="row" spacing={1} alignItems="center">
                       {notifiedEvents.includes(event.id) && <Notifications color="error" />}
+                      {event.repeat.type !== 'none' && <Repeat fontSize="small" />}
                       <Typography
                         fontWeight={notifiedEvents.includes(event.id) ? 'bold' : 'normal'}
                         color={notifiedEvents.includes(event.id) ? 'error' : 'inherit'}
