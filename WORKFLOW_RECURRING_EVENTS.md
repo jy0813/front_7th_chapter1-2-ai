@@ -586,12 +586,13 @@ git commit -m 'test: [RED] 반복 일정 생성 로직 테스트 작성'
 
 2. **repeatUtils 함수 사용 필수**
    - ✅ 반복 일정 생성 시 `repeatUtils.ts`의 함수를 사용하여 여러 이벤트 생성
+
    ```typescript
    import {
-     generateDailyDates,    // 365개 날짜 생성
-     generateWeeklyDates,   // 52개 날짜 생성
-     generateMonthlyDates,  // 12개 날짜 생성 (31일 케이스 고려)
-     generateYearlyDates,   // 1개 날짜 생성 (윤년 케이스 고려)
+     generateDailyDates, // 365개 날짜 생성
+     generateWeeklyDates, // 52개 날짜 생성
+     generateMonthlyDates, // 12개 날짜 생성 (31일 케이스 고려)
+     generateYearlyDates, // 1개 날짜 생성 (윤년 케이스 고려)
    } from './utils/repeatUtils';
    ```
 
