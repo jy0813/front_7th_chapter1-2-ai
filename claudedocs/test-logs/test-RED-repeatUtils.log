@@ -1,0 +1,153 @@
+
+ RUN  v3.2.4 /Users/jinjaeyun/front_7th_chapter1-2
+
+ ❯ src/__tests__/unit/easy.repeatUtils.spec.ts (10 tests | 10 failed) 6ms
+   × 반복 날짜 생성 유틸리티 > generateDailyDates > > 시작일부터 365일치 매일 반복 날짜를 생성한다 1ms
+     → (0 , generateDailyDates) is not a function
+   × 반복 날짜 생성 유틸리티 > generateWeeklyDates > > 시작일부터 52주치 매주 반복 날짜를 생성한다 0ms
+     → (0 , generateWeeklyDates) is not a function
+   × 반복 날짜 생성 유틸리티 > generateWeeklyDates > > 모든 날짜가 같은 요일이다 0ms
+     → (0 , generateWeeklyDates) is not a function
+   × 반복 날짜 생성 유틸리티 > generateMonthlyDates > > 시작일부터 12개월치 매월 반복 날짜를 생성한다 1ms
+     → (0 , generateMonthlyDates) is not a function
+   × 반복 날짜 생성 유틸리티 > generateMonthlyDates > > 매월 15일 반복 시 모든 달에 생성된다 0ms
+     → (0 , generateMonthlyDates) is not a function
+   × 반복 날짜 생성 유틸리티 > generateMonthlyDates > > 엣지 케이스 > > 31일에 생성 시 31일이 없는 달은 건너뛴다 0ms
+     → (0 , generateMonthlyDates) is not a function
+   × 반복 날짜 생성 유틸리티 > generateMonthlyDates > > 엣지 케이스 > > 30일에 생성 시 2월만 건너뛴다 0ms
+     → (0 , generateMonthlyDates) is not a function
+   × 반복 날짜 생성 유틸리티 > generateYearlyDates > > 시작일부터 1년치(1개) 매년 반복 날짜를 생성한다 0ms
+     → (0 , generateYearlyDates) is not a function
+   × 반복 날짜 생성 유틸리티 > generateYearlyDates > > 엣지 케이스 > > 윤년 2/29에 생성 시 1개만 생성된다 (다음 해는 평년) 0ms
+     → (0 , generateYearlyDates) is not a function
+   × 반복 날짜 생성 유틸리티 > generateYearlyDates > > 엣지 케이스 > > 평년 2/28에 생성 시 정상적으로 생성된다 0ms
+     → (0 , generateYearlyDates) is not a function
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/unit/easy.repeatUtils.spec.ts > 반복 날짜 생성 유틸리티 > generateDailyDates > > 시작일부터 365일치 매일 반복 날짜를 생성한다
+TypeError: (0 , generateDailyDates) is not a function
+ ❯ src/__tests__/unit/easy.repeatUtils.spec.ts:16:21
+     14| 
+     15|       // When: 매일 반복 날짜 생성
+     16|       const dates = generateDailyDates(startDate);
+       |                     ^
+     17| 
+     18|       // Then: 365개 날짜 생성됨
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/__tests__/unit/easy.repeatUtils.spec.ts > 반복 날짜 생성 유틸리티 > generateWeeklyDates > > 시작일부터 52주치 매주 반복 날짜를 생성한다
+TypeError: (0 , generateWeeklyDates) is not a function
+ ❯ src/__tests__/unit/easy.repeatUtils.spec.ts:39:21
+     37| 
+     38|       // When: 매주 반복 날짜 생성
+     39|       const dates = generateWeeklyDates(startDate);
+       |                     ^
+     40| 
+     41|       // Then: 52개 날짜 생성됨
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/__tests__/unit/easy.repeatUtils.spec.ts > 반복 날짜 생성 유틸리티 > generateWeeklyDates > > 모든 날짜가 같은 요일이다
+TypeError: (0 , generateWeeklyDates) is not a function
+ ❯ src/__tests__/unit/easy.repeatUtils.spec.ts:59:21
+     57| 
+     58|       // When: 매주 반복 날짜 생성
+     59|       const dates = generateWeeklyDates(startDate);
+       |                     ^
+     60| 
+     61|       // Then: 모든 날짜가 금요일
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/__tests__/unit/easy.repeatUtils.spec.ts > 반복 날짜 생성 유틸리티 > generateMonthlyDates > > 시작일부터 12개월치 매월 반복 날짜를 생성한다
+TypeError: (0 , generateMonthlyDates) is not a function
+ ❯ src/__tests__/unit/easy.repeatUtils.spec.ts:75:21
+     73| 
+     74|       // When: 매월 반복 날짜 생성
+     75|       const dates = generateMonthlyDates(startDate);
+       |                     ^
+     76| 
+     77|       // Then: 12개 날짜 생성됨
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/__tests__/unit/easy.repeatUtils.spec.ts > 반복 날짜 생성 유틸리티 > generateMonthlyDates > > 매월 15일 반복 시 모든 달에 생성된다
+TypeError: (0 , generateMonthlyDates) is not a function
+ ❯ src/__tests__/unit/easy.repeatUtils.spec.ts:98:21
+     96| 
+     97|       // When: 매월 반복 날짜 생성
+     98|       const dates = generateMonthlyDates(startDate);
+       |                     ^
+     99| 
+    100|       // Then: 12개 날짜 생성됨 (모든 달에 15일 있음)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/__tests__/unit/easy.repeatUtils.spec.ts > 반복 날짜 생성 유틸리티 > generateMonthlyDates > > 엣지 케이스 > > 31일에 생성 시 31일이 없는 달은 건너뛴다
+TypeError: (0 , generateMonthlyDates) is not a function
+ ❯ src/__tests__/unit/easy.repeatUtils.spec.ts:116:23
+    114| 
+    115|         // When: 매월 반복 날짜 생성
+    116|         const dates = generateMonthlyDates(startDate);
+       |                       ^
+    117| 
+    118|         // Then: 7개 날짜만 생성됨 (31일이 있는 달만)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/__tests__/unit/easy.repeatUtils.spec.ts > 반복 날짜 생성 유틸리티 > generateMonthlyDates > > 엣지 케이스 > > 30일에 생성 시 2월만 건너뛴다
+TypeError: (0 , generateMonthlyDates) is not a function
+ ❯ src/__tests__/unit/easy.repeatUtils.spec.ts:146:23
+    144| 
+    145|         // When: 매월 반복 날짜 생성
+    146|         const dates = generateMonthlyDates(startDate);
+       |                       ^
+    147| 
+    148|         // Then: 11개 날짜 생성됨 (2월만 제외)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  src/__tests__/unit/easy.repeatUtils.spec.ts > 반복 날짜 생성 유틸리티 > generateYearlyDates > > 시작일부터 1년치(1개) 매년 반복 날짜를 생성한다
+TypeError: (0 , generateYearlyDates) is not a function
+ ❯ src/__tests__/unit/easy.repeatUtils.spec.ts:170:21
+    168| 
+    169|       // When: 매년 반복 날짜 생성
+    170|       const dates = generateYearlyDates(startDate);
+       |                     ^
+    171| 
+    172|       // Then: 1개 날짜만 생성됨 (1년치 = 1개)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  src/__tests__/unit/easy.repeatUtils.spec.ts > 반복 날짜 생성 유틸리티 > generateYearlyDates > > 엣지 케이스 > > 윤년 2/29에 생성 시 1개만 생성된다 (다음 해는 평년)
+TypeError: (0 , generateYearlyDates) is not a function
+ ❯ src/__tests__/unit/easy.repeatUtils.spec.ts:185:23
+    183| 
+    184|         // When: 매년 반복 날짜 생성
+    185|         const dates = generateYearlyDates(startDate);
+       |                       ^
+    186| 
+    187|         // Then: 1개 날짜만 생성됨
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  src/__tests__/unit/easy.repeatUtils.spec.ts > 반복 날짜 생성 유틸리티 > generateYearlyDates > > 엣지 케이스 > > 평년 2/28에 생성 시 정상적으로 생성된다
+TypeError: (0 , generateYearlyDates) is not a function
+ ❯ src/__tests__/unit/easy.repeatUtils.spec.ts:202:23
+    200| 
+    201|         // When: 매년 반복 날짜 생성
+    202|         const dates = generateYearlyDates(startDate);
+       |                       ^
+    203| 
+    204|         // Then: 1개 날짜 생성됨
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed (10)
+   Start at  04:23:01
+   Duration  440ms (transform 34ms, setup 74ms, collect 19ms, tests 6ms, environment 164ms, prepare 40ms)
+

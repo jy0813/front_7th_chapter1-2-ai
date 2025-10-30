@@ -1,290 +1,212 @@
 import { describe, it, expect } from 'vitest';
+import {
+  generateDailyDates,
+  generateWeeklyDates,
+  generateMonthlyDates,
+  generateYearlyDates,
+} from '../../utils/repeatUtils';
 
-import { generateRecurringDates, isLeapYear, isValidMonthlyDate } from '../../utils/repeatUtils';
+describe('반복 날짜 생성 유틸리티', () => {
+  describe('generateDailyDates >', () => {
+    it('시작일부터 365일치 매일 반복 날짜를 생성한다', () => {
+      // Given: 시작 날짜
+      const startDate = '2025-11-01';
 
-describe('generateRecurringDates', () => {
-  describe('매일 반복 (daily)', () => {
-    it('매일 반복 일정을 시작일부터 종료일까지 생성한다', () => {
-      // Given: startDate = "2025-01-06", repeatType = "daily", interval = 1, endDate = "2025-01-10"
-      const startDate = '2025-01-06';
-      const endDate = '2025-01-10';
+      // When: 매일 반복 날짜 생성
+      const dates = generateDailyDates(startDate);
 
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'daily', 1, endDate);
+      // Then: 365개 날짜 생성됨
+      expect(dates).toHaveLength(365);
 
-      // Then: 5개의 날짜 반환 (2025-01-06, 01-07, 01-08, 01-09, 01-10)
-      expect(result).toEqual([
-        '2025-01-06',
-        '2025-01-07',
-        '2025-01-08',
-        '2025-01-09',
-        '2025-01-10',
-      ]);
-    });
+      // Then: 첫 번째 날짜는 시작일
+      expect(dates[0]).toBe('2025-11-01');
 
-    it('간격이 2일 때 하루 건너뛰며 일정을 생성한다 (격일)', () => {
-      // Given: interval = 2
-      const startDate = '2025-01-06';
-      const endDate = '2025-01-12';
+      // Then: 마지막 날짜는 365일 후
+      expect(dates[364]).toBe('2026-10-31');
 
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'daily', 2, endDate);
-
-      // Then: 격일로 날짜 생성 (2025-01-06, 01-08, 01-10, 01-12)
-      expect(result).toEqual(['2025-01-06', '2025-01-08', '2025-01-10', '2025-01-12']);
-    });
-
-    it('종료일이 없을 때 기본 종료일(1년 후)까지 생성한다', () => {
-      // Given: endDate = undefined
-      const startDate = '2025-01-06';
-
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'daily', 1);
-
-      // Then: 1년 후까지 365개의 날짜 생성
-      expect(result.length).toBe(365);
-      expect(result[0]).toBe('2025-01-06');
-      expect(result[result.length - 1]).toBe('2026-01-05');
+      // Then: 각 날짜는 하루씩 증가
+      expect(dates[1]).toBe('2025-11-02');
+      expect(dates[2]).toBe('2025-11-03');
     });
   });
 
-  describe('매주 반복 (weekly)', () => {
-    it('매주 같은 요일에 일정을 생성한다', () => {
-      // Given: startDate = "2025-01-06" (월요일), repeatType = "weekly", interval = 1
-      const startDate = '2025-01-06'; // 월요일
-      const endDate = '2025-01-27';
+  describe('generateWeeklyDates >', () => {
+    it('시작일부터 52주치 매주 반복 날짜를 생성한다', () => {
+      // Given: 시작 날짜 (2025-11-03, 월요일)
+      const startDate = '2025-11-03';
 
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'weekly', 1, endDate);
+      // When: 매주 반복 날짜 생성
+      const dates = generateWeeklyDates(startDate);
 
-      // Then: 매주 월요일 (2025-01-06, 01-13, 01-20, 01-27)
-      expect(result).toEqual(['2025-01-06', '2025-01-13', '2025-01-20', '2025-01-27']);
+      // Then: 52개 날짜 생성됨
+      expect(dates).toHaveLength(52);
+
+      // Then: 첫 번째 날짜는 시작일
+      expect(dates[0]).toBe('2025-11-03');
+
+      // Then: 두 번째 날짜는 7일 후 (같은 요일)
+      expect(dates[1]).toBe('2025-11-10');
+
+      // Then: 마지막 날짜는 52주 후
+      expect(dates[51]).toBe('2026-10-26');
     });
 
-    it('간격이 2주일 때 격주로 일정을 생성한다', () => {
-      // Given: interval = 2
-      const startDate = '2025-01-06'; // 월요일
-      const endDate = '2025-02-03';
-
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'weekly', 2, endDate);
-
-      // Then: 격주 월요일 (2025-01-06, 01-20, 02-03)
-      expect(result).toEqual(['2025-01-06', '2025-01-20', '2025-02-03']);
-    });
-  });
-
-  describe('매월 반복 (monthly)', () => {
-    it('매월 같은 날짜에 일정을 생성한다', () => {
-      // Given: startDate = "2025-01-15", repeatType = "monthly", interval = 1
-      const startDate = '2025-01-15';
-      const endDate = '2025-04-15';
-
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'monthly', 1, endDate);
-
-      // Then: 매월 15일 (2025-01-15, 02-15, 03-15, 04-15)
-      expect(result).toEqual(['2025-01-15', '2025-02-15', '2025-03-15', '2025-04-15']);
-    });
-
-    it('31일 매월 반복은 31일이 있는 달에만 생성한다', () => {
-      // Given: startDate = "2025-01-31"
+    it('모든 날짜가 같은 요일이다', () => {
+      // Given: 시작 날짜 (금요일)
       const startDate = '2025-01-31';
-      const endDate = '2025-05-31';
 
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'monthly', 1, endDate);
+      // When: 매주 반복 날짜 생성
+      const dates = generateWeeklyDates(startDate);
 
-      // Then: 31일이 있는 달만 (2025-01-31, 03-31, 05-31) - 2월, 4월 건너뜀
-      expect(result).toEqual(['2025-01-31', '2025-03-31', '2025-05-31']);
+      // Then: 모든 날짜가 금요일
+      dates.forEach((dateStr) => {
+        const date = new Date(dateStr);
+        expect(date.getDay()).toBe(5); // 5 = 금요일
+      });
+    });
+  });
+
+  describe('generateMonthlyDates >', () => {
+    it('시작일부터 12개월치 매월 반복 날짜를 생성한다', () => {
+      // Given: 시작 날짜 (1일)
+      const startDate = '2025-01-01';
+
+      // When: 매월 반복 날짜 생성
+      const dates = generateMonthlyDates(startDate);
+
+      // Then: 12개 날짜 생성됨
+      expect(dates).toHaveLength(12);
+
+      // Then: 첫 번째 날짜는 시작일
+      expect(dates[0]).toBe('2025-01-01');
+
+      // Then: 각 날짜는 같은 날짜(일)를 유지
+      dates.forEach((dateStr) => {
+        const date = new Date(dateStr);
+        expect(date.getDate()).toBe(1); // 매월 1일
+      });
+
+      // Then: 마지막 날짜는 12개월 후
+      expect(dates[11]).toBe('2026-01-01');
     });
 
-    it('30일 매월 반복은 2월만 건너뛴다', () => {
-      // Given: startDate = "2025-01-30"
-      const startDate = '2025-01-30';
-      const endDate = '2025-12-30';
-
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'monthly', 1, endDate);
-
-      // Then: 2월 제외한 모든 달 (2025-01-30, 03-30, 04-30, ...)
-      expect(result).toEqual([
-        '2025-01-30',
-        '2025-03-30', // 2월 건너뜀
-        '2025-04-30',
-        '2025-05-30',
-        '2025-06-30',
-        '2025-07-30',
-        '2025-08-30',
-        '2025-09-30',
-        '2025-10-30',
-        '2025-11-30',
-        '2025-12-30',
-      ]);
-    });
-
-    it('간격이 3개월일 때 분기별로 일정을 생성한다', () => {
-      // Given: interval = 3
+    it('매월 15일 반복 시 모든 달에 생성된다', () => {
+      // Given: 시작 날짜 (15일)
       const startDate = '2025-01-15';
-      const endDate = '2025-10-15';
 
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'monthly', 3, endDate);
+      // When: 매월 반복 날짜 생성
+      const dates = generateMonthlyDates(startDate);
 
-      // Then: 3개월마다 (2025-01-15, 04-15, 07-15, 10-15)
-      expect(result).toEqual(['2025-01-15', '2025-04-15', '2025-07-15', '2025-10-15']);
+      // Then: 12개 날짜 생성됨 (모든 달에 15일 있음)
+      expect(dates).toHaveLength(12);
+
+      // Then: 모든 날짜가 15일
+      dates.forEach((dateStr) => {
+        const date = new Date(dateStr);
+        expect(date.getDate()).toBe(15);
+      });
+    });
+
+    describe('엣지 케이스 >', () => {
+      it('31일에 생성 시 31일이 없는 달은 건너뛴다', () => {
+        // Given: 시작 날짜 (1월 31일)
+        const startDate = '2025-01-31';
+
+        // When: 매월 반복 날짜 생성
+        const dates = generateMonthlyDates(startDate);
+
+        // Then: 7개 날짜만 생성됨 (31일이 있는 달만)
+        expect(dates).toHaveLength(7);
+
+        // Then: 생성된 날짜 검증
+        expect(dates).toEqual([
+          '2025-01-31', // 1월 ✅
+          '2025-03-31', // 3월 ✅
+          '2025-05-31', // 5월 ✅
+          '2025-07-31', // 7월 ✅
+          '2025-08-31', // 8월 ✅
+          '2025-10-31', // 10월 ✅
+          '2025-12-31', // 12월 ✅
+        ]);
+
+        // Then: 건너뛴 달 확인 (2, 4, 6, 9, 11월)
+        const months = dates.map((d) => new Date(d).getMonth() + 1);
+        expect(months).not.toContain(2); // 2월 없음
+        expect(months).not.toContain(4); // 4월 없음
+        expect(months).not.toContain(6); // 6월 없음
+        expect(months).not.toContain(9); // 9월 없음
+        expect(months).not.toContain(11); // 11월 없음
+      });
+
+      it('30일에 생성 시 2월만 건너뛴다', () => {
+        // Given: 시작 날짜 (1월 30일)
+        const startDate = '2025-01-30';
+
+        // When: 매월 반복 날짜 생성
+        const dates = generateMonthlyDates(startDate);
+
+        // Then: 11개 날짜 생성됨 (2월만 제외)
+        expect(dates).toHaveLength(11);
+
+        // Then: 모든 날짜가 30일
+        dates.forEach((dateStr) => {
+          const date = new Date(dateStr);
+          expect(date.getDate()).toBe(30);
+        });
+
+        // Then: 2월이 포함되지 않음
+        const months = dates.map((d) => new Date(d).getMonth() + 1);
+        expect(months).not.toContain(2);
+      });
     });
   });
 
-  describe('매년 반복 (yearly)', () => {
-    it('매년 같은 날짜에 일정을 생성한다', () => {
-      // Given: startDate = "2025-06-15", repeatType = "yearly", interval = 1
+  describe('generateYearlyDates >', () => {
+    it('시작일부터 1년치(1개) 매년 반복 날짜를 생성한다', () => {
+      // Given: 시작 날짜
       const startDate = '2025-06-15';
-      const endDate = '2028-06-15';
 
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'yearly', 1, endDate);
+      // When: 매년 반복 날짜 생성
+      const dates = generateYearlyDates(startDate);
 
-      // Then: 매년 6월 15일 (2025-06-15, 2026-06-15, 2027-06-15, 2028-06-15)
-      expect(result).toEqual(['2025-06-15', '2026-06-15', '2027-06-15', '2028-06-15']);
+      // Then: 1개 날짜만 생성됨 (1년치 = 1개)
+      expect(dates).toHaveLength(1);
+
+      // Then: 날짜는 시작일
+      expect(dates[0]).toBe('2025-06-15');
     });
 
-    it('2월 29일 매년 반복은 윤년에만 생성한다', () => {
-      // Given: startDate = "2024-02-29" (윤년)
-      const startDate = '2024-02-29';
-      const endDate = '2028-02-29';
+    describe('엣지 케이스 >', () => {
+      it('윤년 2/29에 생성 시 1개만 생성된다 (다음 해는 평년)', () => {
+        // Given: 시작 날짜 (2024년 2월 29일, 윤년)
+        const startDate = '2024-02-29';
 
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'yearly', 1, endDate);
+        // When: 매년 반복 날짜 생성
+        const dates = generateYearlyDates(startDate);
 
-      // Then: 윤년만 (2024-02-29, 2028-02-29) - 2025, 2026, 2027 건너뜀
-      expect(result).toEqual(['2024-02-29', '2028-02-29']);
+        // Then: 1개 날짜만 생성됨
+        expect(dates).toHaveLength(1);
+
+        // Then: 날짜는 2024-02-29
+        expect(dates[0]).toBe('2024-02-29');
+
+        // Then: 2025-02-29는 생성되지 않음 (평년, 2/28까지만)
+        expect(dates).not.toContain('2025-02-29');
+      });
+
+      it('평년 2/28에 생성 시 정상적으로 생성된다', () => {
+        // Given: 시작 날짜 (2월 28일)
+        const startDate = '2025-02-28';
+
+        // When: 매년 반복 날짜 생성
+        const dates = generateYearlyDates(startDate);
+
+        // Then: 1개 날짜 생성됨
+        expect(dates).toHaveLength(1);
+
+        // Then: 날짜는 2025-02-28
+        expect(dates[0]).toBe('2025-02-28');
+      });
     });
-
-    it('종료일이 없을 때 기본 종료일(10년 후)까지 생성한다', () => {
-      // Given: endDate = undefined
-      const startDate = '2025-06-15';
-
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'yearly', 1);
-
-      // Then: 10년 후까지 10개의 날짜 생성
-      expect(result.length).toBe(10);
-      expect(result[0]).toBe('2025-06-15');
-      expect(result[result.length - 1]).toBe('2034-06-15');
-    });
-  });
-
-  describe('엣지 케이스', () => {
-    it('시작일과 종료일이 같을 때 1개의 날짜만 반환한다', () => {
-      // Given: startDate = "2025-01-06", endDate = "2025-01-06"
-      const startDate = '2025-01-06';
-      const endDate = '2025-01-06';
-
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'daily', 1, endDate);
-
-      // Then: 1개의 날짜 반환 (2025-01-06)
-      expect(result).toEqual(['2025-01-06']);
-    });
-
-    it('종료일이 시작일보다 이전일 때 빈 배열을 반환한다', () => {
-      // Given: startDate = "2025-01-06", endDate = "2025-01-05"
-      const startDate = '2025-01-06';
-      const endDate = '2025-01-05';
-
-      // When: generateRecurringDates 호출
-      const result = generateRecurringDates(startDate, 'daily', 1, endDate);
-
-      // Then: 빈 배열 반환
-      expect(result).toEqual([]);
-    });
-
-    it('간격이 0 이하일 때 에러를 throw한다', () => {
-      // Given: interval = 0
-      const startDate = '2025-01-06';
-      const endDate = '2025-01-10';
-
-      // When & Then: generateRecurringDates 호출 시 Error throw
-      expect(() => {
-        generateRecurringDates(startDate, 'daily', 0, endDate);
-      }).toThrow('반복 간격은 1 이상이어야 합니다.');
-    });
-  });
-});
-
-describe('isLeapYear', () => {
-  it('윤년을 올바르게 판별한다', () => {
-    // Given: 2024년 (4로 나누어떨어지고, 100으로 나누어떨어지지 않음)
-    // When: isLeapYear(2024) 호출
-    const result = isLeapYear(2024);
-
-    // Then: true 반환
-    expect(result).toBe(true);
-  });
-
-  it('평년을 올바르게 판별한다', () => {
-    // Given: 2025년 (4로 나누어떨어지지 않음)
-    // When: isLeapYear(2025) 호출
-    const result = isLeapYear(2025);
-
-    // Then: false 반환
-    expect(result).toBe(false);
-  });
-
-  it('100으로 나누어떨어지지만 400으로 나누어떨어지는 윤년을 판별한다', () => {
-    // Given: 2000년 (400으로 나누어떨어짐)
-    // When: isLeapYear(2000) 호출
-    const result = isLeapYear(2000);
-
-    // Then: true 반환
-    expect(result).toBe(true);
-  });
-
-  it('100으로 나누어떨어지고 400으로 나누어떨어지지 않는 평년을 판별한다', () => {
-    // Given: 1900년 (100으로 나누어떨어지지만 400으로 나누어떨어지지 않음)
-    // When: isLeapYear(1900) 호출
-    const result = isLeapYear(1900);
-
-    // Then: false 반환
-    expect(result).toBe(false);
-  });
-});
-
-describe('isValidMonthlyDate', () => {
-  it('31일이 있는 달에 31일이 유효하다고 판별한다', () => {
-    // Given: year = 2025, month = 1, day = 31 (1월 31일)
-    // When: isValidMonthlyDate 호출
-    const result = isValidMonthlyDate(2025, 1, 31);
-
-    // Then: true 반환
-    expect(result).toBe(true);
-  });
-
-  it('31일이 없는 달에 31일이 유효하지 않다고 판별한다', () => {
-    // Given: year = 2025, month = 2, day = 31 (2월 31일)
-    // When: isValidMonthlyDate 호출
-    const result = isValidMonthlyDate(2025, 2, 31);
-
-    // Then: false 반환
-    expect(result).toBe(false);
-  });
-
-  it('평년 2월에 29일이 유효하지 않다고 판별한다', () => {
-    // Given: year = 2025, month = 2, day = 29 (평년 2월 29일)
-    // When: isValidMonthlyDate 호출
-    const result = isValidMonthlyDate(2025, 2, 29);
-
-    // Then: false 반환
-    expect(result).toBe(false);
-  });
-
-  it('윤년 2월에 29일이 유효하다고 판별한다', () => {
-    // Given: year = 2024, month = 2, day = 29 (윤년 2월 29일)
-    // When: isValidMonthlyDate 호출
-    const result = isValidMonthlyDate(2024, 2, 29);
-
-    // Then: true 반환
-    expect(result).toBe(true);
   });
 });
