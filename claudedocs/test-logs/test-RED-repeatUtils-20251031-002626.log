@@ -1,0 +1,32 @@
+
+> assignment@0.0.0 test /Users/jinjaeyun/front_7th_chapter1-2
+> vitest -- easy.repeatUtils.spec.ts
+
+
+ RUN  v3.2.4 /Users/jinjaeyun/front_7th_chapter1-2
+
+ ✓ src/__tests__/unit/easy.dateUtils.spec.ts (43 tests) 12ms
+ ✓ src/__tests__/unit/easy.eventUtils.spec.ts (8 tests) 15ms
+ ✓ src/__tests__/unit/easy.eventOverlap.spec.ts (11 tests) 7ms
+ ✓ src/__tests__/hooks/easy.useCalendarView.spec.ts (9 tests) 38ms
+ ✓ src/__tests__/hooks/medium.useNotifications.spec.ts (4 tests) 40ms
+ ✓ src/__tests__/hooks/easy.useSearch.spec.ts (5 tests) 25ms
+ ✓ src/__tests__/hooks/medium.useEventOperations.spec.ts (7 tests) 127ms
+ ✓ src/__tests__/unit/easy.notificationUtils.spec.ts (5 tests) 5ms
+ ✓ src/__tests__/unit/easy.fetchHolidays.spec.ts (3 tests) 4ms
+ ✓ src/__tests__/unit/easy.timeValidation.spec.ts (6 tests) 4ms
+ ✓ src/__tests__/medium.integration.spec.tsx (14 tests) 10693ms
+   ✓ 일정 CRUD 및 기본 기능 > 입력한 새로운 일정 정보에 맞춰 모든 필드가 이벤트 리스트에 정확히 저장된다.  1978ms
+   ✓ 일정 CRUD 및 기본 기능 > 기존 일정의 세부 정보를 수정하고 변경사항이 정확히 반영된다  839ms
+   ✓ 일정 뷰 > 주별 뷰 선택 후 해당 일자에 일정이 존재한다면 해당 일정이 정확히 표시된다  2110ms
+   ✓ 일정 뷰 > 월별 뷰에 일정이 정확히 표시되는지 확인한다  1944ms
+   ✓ 검색 기능 > 검색 결과가 없으면, "검색 결과가 없습니다."가 표시되어야 한다.  346ms
+   ✓ 일정 충돌 > 겹치는 시간에 새 일정을 추가할 때 경고가 표시된다  1685ms
+   ✓ 일정 충돌 > 기존 일정의 시간을 수정하여 충돌이 발생하면 경고가 노출된다  760ms
+
+ Test Files  1 failed | 11 passed (12)
+      Tests  115 passed (115)
+   Start at  00:26:26
+   Duration  13.50s (transform 271ms, setup 1.31s, collect 2.96s, tests 10.97s, environment 3.43s, prepare 870ms)
+
+ ELIFECYCLE  Test failed. See above for more details.
