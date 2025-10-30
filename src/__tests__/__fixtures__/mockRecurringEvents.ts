@@ -194,7 +194,7 @@ export const mockYearlyLeapDayEvent: EventForm = {
 };
 
 /** endDate 없이 2년 제한 테스트용 */
-export const mockEventWithout EndDate: EventForm = {
+export const mockEventWithoutEndDate: EventForm = {
   title: '장기 반복 일정',
   date: '2025-01-01',
   startTime: '09:00',
