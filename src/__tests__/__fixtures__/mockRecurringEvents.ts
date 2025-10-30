@@ -37,9 +37,9 @@ export const mock31DayMonthlyEvent: Event = {
     type: 'monthly',
     interval: 1,
     endDate: '2025-12-31',
-    id: 'monthly-31-repeat'
+    id: 'monthly-31-repeat',
   },
-  notificationTime: 10
+  notificationTime: 10,
 };
 
 /**
@@ -65,9 +65,9 @@ export const mockLeapYearEvent: Event = {
     type: 'yearly',
     interval: 1,
     endDate: '2032-12-31',
-    id: 'yearly-leap-repeat'
+    id: 'yearly-leap-repeat',
   },
-  notificationTime: 1440 // 1일 전
+  notificationTime: 1440, // 1일 전
 };
 
 /**
@@ -93,9 +93,9 @@ export const mockDailyEvent: Event = {
     type: 'daily',
     interval: 1,
     endDate: '2025-01-05',
-    id: 'daily-1-repeat'
+    id: 'daily-1-repeat',
   },
-  notificationTime: 30
+  notificationTime: 30,
 };
 
 /**
@@ -121,9 +121,9 @@ export const mockWeeklyEvent: Event = {
     type: 'weekly',
     interval: 1,
     endDate: '2025-01-27',
-    id: 'weekly-1-repeat'
+    id: 'weekly-1-repeat',
   },
-  notificationTime: 60
+  notificationTime: 60,
 };
 
 /**
@@ -149,9 +149,9 @@ export const mockRegularMonthlyEvent: Event = {
     type: 'monthly',
     interval: 1,
     endDate: '2025-04-15',
-    id: 'monthly-regular-repeat'
+    id: 'monthly-regular-repeat',
   },
-  notificationTime: 120
+  notificationTime: 120,
 };
 
 /**
@@ -177,9 +177,9 @@ export const mock30DayMonthlyEvent: Event = {
     type: 'monthly',
     interval: 1,
     endDate: '2025-04-30',
-    id: 'monthly-30-repeat'
+    id: 'monthly-30-repeat',
   },
-  notificationTime: 10
+  notificationTime: 10,
 };
 
 /**
@@ -205,9 +205,9 @@ export const mockRegularYearlyEvent: Event = {
     type: 'yearly',
     interval: 1,
     endDate: '2029-12-31',
-    id: 'yearly-regular-repeat'
+    id: 'yearly-regular-repeat',
   },
-  notificationTime: 10080 // 7일 전
+  notificationTime: 10080, // 7일 전
 };
 
 /**
@@ -228,9 +228,9 @@ export const mockExistingOverlappingEvent: Event = {
   category: '업무',
   repeat: {
     type: 'none',
-    interval: 0
+    interval: 0,
   },
-  notificationTime: 10
+  notificationTime: 10,
 };
 
 /**
@@ -257,7 +257,7 @@ export const mockOverlappingRecurringEvent: Event = {
     type: 'daily',
     interval: 1,
     endDate: '2025-01-03',
-    id: 'recurring-overlap-repeat'
+    id: 'recurring-overlap-repeat',
   },
-  notificationTime: 30
+  notificationTime: 30,
 };

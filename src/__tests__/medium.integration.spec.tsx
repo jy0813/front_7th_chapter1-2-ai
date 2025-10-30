@@ -346,7 +346,7 @@ describe('반복 일정 기능', () => {
     it('반복 설정 체크 시 반복 유형 Select 표시', async () => {
       // Given: 일정 생성 폼 렌더링
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <SnackbarProvider>

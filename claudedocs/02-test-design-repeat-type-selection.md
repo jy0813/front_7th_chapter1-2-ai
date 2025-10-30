@@ -365,11 +365,7 @@ it('31일 매월 반복 시 31일이 없는 달은 건너뛴다', () => {
   const dates = generateMonthlyDates(startDate, endDate);
 
   // Then: 3개 날짜 반환 (1월, 3월, 5월)
-  expect(dates).toEqual([
-    '2025-01-31',
-    '2025-03-31',
-    '2025-05-31'
-  ]);
+  expect(dates).toEqual(['2025-01-31', '2025-03-31', '2025-05-31']);
 });
 ```
 

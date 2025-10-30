@@ -1,0 +1,31 @@
+
+ RUN  v3.2.4 /Users/jinjaeyun/front_7th_chapter1-2
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/unit/easy.repeatUtils.spec.ts [ src/__tests__/unit/easy.repeatUtils.spec.ts ]
+Error: Failed to resolve import "../../utils/repeatUtils" from "src/__tests__/unit/easy.repeatUtils.spec.ts". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/jinjaeyun/front_7th_chapter1-2/src/__tests__/unit/easy.repeatUtils.spec.ts:8:7
+  1  |  import { describe, it, expect } from 'vitest';
+  2  |  import { generateDailyDates, generateWeeklyDates, generateMonthlyDates, generateYearlyDates, isLeapYear } from '../../utils/repeatUtils';
+     |                                                                                                                  ^
+  3  |  describe('generateDailyDates', ()=>{
+  4  |      it('시작일부터 종료일까지 매일 날짜 생성', ()=>{
+ ❯ TransformPluginContext._formatLog node_modules/.pnpm/vite@7.0.2_@types+node@22.18.8/node_modules/vite/dist/node/chunks/dep-CXCa-anf.js:31420:43
+ ❯ TransformPluginContext.error node_modules/.pnpm/vite@7.0.2_@types+node@22.18.8/node_modules/vite/dist/node/chunks/dep-CXCa-anf.js:31417:14
+ ❯ normalizeUrl node_modules/.pnpm/vite@7.0.2_@types+node@22.18.8/node_modules/vite/dist/node/chunks/dep-CXCa-anf.js:29966:18
+ ❯ node_modules/.pnpm/vite@7.0.2_@types+node@22.18.8/node_modules/vite/dist/node/chunks/dep-CXCa-anf.js:30024:32
+ ❯ TransformPluginContext.transform node_modules/.pnpm/vite@7.0.2_@types+node@22.18.8/node_modules/vite/dist/node/chunks/dep-CXCa-anf.js:29992:4
+ ❯ EnvironmentPluginContainer.transform node_modules/.pnpm/vite@7.0.2_@types+node@22.18.8/node_modules/vite/dist/node/chunks/dep-CXCa-anf.js:31234:14
+ ❯ loadAndTransform node_modules/.pnpm/vite@7.0.2_@types+node@22.18.8/node_modules/vite/dist/node/chunks/dep-CXCa-anf.js:26408:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  06:12:48
+   Duration  449ms (transform 20ms, setup 71ms, collect 0ms, tests 0ms, environment 160ms, prepare 37ms)
+

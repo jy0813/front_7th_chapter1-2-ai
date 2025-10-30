@@ -1,4 +1,12 @@
-import { Notifications, ChevronLeft, ChevronRight, Delete, Edit, Close, Repeat } from '@mui/icons-material';
+import {
+  Notifications,
+  ChevronLeft,
+  ChevronRight,
+  Delete,
+  Edit,
+  Close,
+  Repeat,
+} from '@mui/icons-material';
 import {
   Alert,
   AlertTitle,
@@ -82,11 +90,11 @@ function App() {
     isRepeating,
     setIsRepeating,
     repeatType,
-    // setRepeatType,
+    setRepeatType,
     repeatInterval,
-    // setRepeatInterval,
+    setRepeatInterval,
     repeatEndDate,
-    // setRepeatEndDate,
+    setRepeatEndDate,
     notificationTime,
     setNotificationTime,
     startTimeError,
@@ -99,8 +107,9 @@ function App() {
     editEvent,
   } = useEventForm();
 
-  const { events, saveEvent, deleteEvent } = useEventOperations(Boolean(editingEvent), () =>
-    setEditingEvent(null)
+  const { events, fetchEvents, saveEvent, deleteEvent } = useEventOperations(
+    Boolean(editingEvent),
+    () => setEditingEvent(null)
   );
 
   const { notifications, notifiedEvents, setNotifications } = useNotifications(events);
