@@ -1,6 +1,6 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { render, screen, within, act } from '@testing-library/react';
+import { render, screen, within, act, waitFor } from '@testing-library/react';
 import { UserEvent, userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { SnackbarProvider } from 'notistack';
@@ -339,4 +339,423 @@ it('notificationTime을 10으로 하면 지정 시간 10분 전 알람 텍스트
   });
 
   expect(screen.getByText('10분 후 기존 회의 일정이 시작됩니다.')).toBeInTheDocument();
+});
+
+describe('반복 일정 기능', () => {
+  describe('반복 유형 선택 UI', () => {
+    it('반복 설정 체크 시 반복 유형 Select 표시', async () => {
+      // Given: 일정 생성 폼 렌더링
+      const user = userEvent.setup();
+      const { container } = render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      // 일정 추가 버튼 클릭
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      // When: "반복 설정" 체크박스 클릭
+      // 주석: App.tsx 441-478줄이 주석 해제되어야 함
+      const repeatCheckbox = screen.getByRole('checkbox', { name: /반복 설정/i });
+      await user.click(repeatCheckbox);
+
+      // Then: 반복 유형 Select 표시
+      expect(screen.getByRole('combobox', { name: /반복 유형/i })).toBeInTheDocument();
+    });
+
+    it('반복 유형 Select에 4가지 옵션 표시', async () => {
+      // Given: 반복 설정 활성화
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+      const repeatCheckbox = screen.getByRole('checkbox', { name: /반복 설정/i });
+      await user.click(repeatCheckbox);
+
+      // When: 반복 유형 Select 클릭
+      const repeatTypeSelect = screen.getByRole('combobox', { name: /반복 유형/i });
+      await user.click(repeatTypeSelect);
+
+      // Then: 매일, 매주, 매월, 매년 옵션 표시
+      expect(screen.getByRole('option', { name: /매일/i })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: /매주/i })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: /매월/i })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: /매년/i })).toBeInTheDocument();
+    });
+
+    it('반복 설정 체크 해제 시 반복 UI 숨김', async () => {
+      // Given: 반복 설정 활성화 상태
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+      const repeatCheckbox = screen.getByRole('checkbox', { name: /반복 설정/i });
+      await user.click(repeatCheckbox);
+      expect(screen.getByRole('combobox', { name: /반복 유형/i })).toBeInTheDocument();
+
+      // When: 반복 설정 체크 해제
+      await user.click(repeatCheckbox);
+
+      // Then: 반복 유형 Select 숨김
+      expect(screen.queryByRole('combobox', { name: /반복 유형/i })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('반복 일정 생성', () => {
+    it('매일 반복 일정 생성 시 여러 이벤트 생성', async () => {
+      // Given: 2025-01-01 매일 반복 (종료: 2025-01-03)
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      // 일정 입력
+      await user.type(screen.getByLabelText(/제목/i), '매일 회의');
+      await user.type(screen.getByLabelText(/날짜/i), '2025-01-01');
+      await user.type(screen.getByLabelText(/시작 시간/i), '10:00');
+      await user.type(screen.getByLabelText(/종료 시간/i), '11:00');
+
+      // 반복 설정
+      await user.click(screen.getByRole('checkbox', { name: /반복 설정/i }));
+      await user.selectOptions(screen.getByRole('combobox', { name: /반복 유형/i }), 'daily');
+      await user.type(screen.getByLabelText(/반복 종료일/i), '2025-01-03');
+
+      // When: 일정 추가 버튼 클릭
+      await user.click(screen.getByRole('button', { name: /일정 추가/i }));
+
+      // Then: POST /api/events-list 호출 (3개 이벤트)
+      await waitFor(() => {
+        expect(screen.getByText(/매일 회의/i)).toBeInTheDocument();
+      });
+      // MSW 핸들러로 3개 이벤트 생성 확인
+    });
+
+    it('매주 반복 일정 생성', async () => {
+      // Given: 2025-01-06 (월요일) 매주 반복
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      await user.type(screen.getByLabelText(/제목/i), '주간 회의');
+      await user.type(screen.getByLabelText(/날짜/i), '2025-01-06');
+      await user.type(screen.getByLabelText(/시작 시간/i), '14:00');
+      await user.type(screen.getByLabelText(/종료 시간/i), '15:00');
+
+      await user.click(screen.getByRole('checkbox', { name: /반복 설정/i }));
+      await user.selectOptions(screen.getByRole('combobox', { name: /반복 유형/i }), 'weekly');
+      await user.type(screen.getByLabelText(/반복 종료일/i), '2025-01-27');
+
+      // When
+      await user.click(screen.getByRole('button', { name: /일정 추가/i }));
+
+      // Then: 매주 월요일 (1/6, 1/13, 1/20, 1/27) 4개 생성
+      await waitFor(() => {
+        expect(screen.getByText(/주간 회의/i)).toBeInTheDocument();
+      });
+    });
+
+    it('매월 반복 일정 생성 (일반 케이스)', async () => {
+      // Given: 2025-01-15 매월 반복
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      await user.type(screen.getByLabelText(/제목/i), '월간 리뷰');
+      await user.type(screen.getByLabelText(/날짜/i), '2025-01-15');
+      await user.type(screen.getByLabelText(/시작 시간/i), '10:00');
+      await user.type(screen.getByLabelText(/종료 시간/i), '11:00');
+
+      await user.click(screen.getByRole('checkbox', { name: /반복 설정/i }));
+      await user.selectOptions(screen.getByRole('combobox', { name: /반복 유형/i }), 'monthly');
+      await user.type(screen.getByLabelText(/반복 종료일/i), '2025-04-15');
+
+      // When
+      await user.click(screen.getByRole('button', { name: /일정 추가/i }));
+
+      // Then: 1월, 2월, 3월, 4월 (4개 생성)
+      await waitFor(() => {
+        expect(screen.getByText(/월간 리뷰/i)).toBeInTheDocument();
+      });
+    });
+
+    it('⭐️ 31일 매월 반복은 31일이 없는 달 건너뜀', async () => {
+      // Given: 2025-01-31 매월 반복
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      await user.type(screen.getByLabelText(/제목/i), '월말 보고');
+      await user.type(screen.getByLabelText(/날짜/i), '2025-01-31');
+      await user.type(screen.getByLabelText(/시작 시간/i), '17:00');
+      await user.type(screen.getByLabelText(/종료 시간/i), '18:00');
+
+      await user.click(screen.getByRole('checkbox', { name: /반복 설정/i }));
+      await user.selectOptions(screen.getByRole('combobox', { name: /반복 유형/i }), 'monthly');
+      await user.type(screen.getByLabelText(/반복 종료일/i), '2025-06-30');
+
+      // When
+      await user.click(screen.getByRole('button', { name: /일정 추가/i }));
+
+      // Then: 1월, 3월, 5월만 생성 (2월, 4월 건너뜀)
+      await waitFor(() => {
+        expect(screen.getByText(/월말 보고/i)).toBeInTheDocument();
+      });
+      // MSW 핸들러로 3개만 생성되었는지 확인
+    });
+
+    it('매년 반복 일정 생성 (일반 케이스)', async () => {
+      // Given: 2025-01-15 매년 반복
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      await user.type(screen.getByLabelText(/제목/i), '연례 행사');
+      await user.type(screen.getByLabelText(/날짜/i), '2025-01-15');
+      await user.type(screen.getByLabelText(/시작 시간/i), '09:00');
+      await user.type(screen.getByLabelText(/종료 시간/i), '10:00');
+
+      await user.click(screen.getByRole('checkbox', { name: /반복 설정/i }));
+      await user.selectOptions(screen.getByRole('combobox', { name: /반복 유형/i }), 'yearly');
+      await user.type(screen.getByLabelText(/반복 종료일/i), '2027-12-31');
+
+      // When
+      await user.click(screen.getByRole('button', { name: /일정 추가/i }));
+
+      // Then: 2025, 2026, 2027 (3개 생성)
+      await waitFor(() => {
+        expect(screen.getByText(/연례 행사/i)).toBeInTheDocument();
+      });
+    });
+
+    it('⭐️ 윤년 2월 29일 매년 반복은 평년 건너뜀', async () => {
+      // Given: 2024-02-29 매년 반복
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      await user.type(screen.getByLabelText(/제목/i), '윤년 행사');
+      await user.type(screen.getByLabelText(/날짜/i), '2024-02-29');
+      await user.type(screen.getByLabelText(/시작 시간/i), '10:00');
+      await user.type(screen.getByLabelText(/종료 시간/i), '11:00');
+
+      await user.click(screen.getByRole('checkbox', { name: /반복 설정/i }));
+      await user.selectOptions(screen.getByRole('combobox', { name: /반복 유형/i }), 'yearly');
+      await user.type(screen.getByLabelText(/반복 종료일/i), '2030-12-31');
+
+      // When
+      await user.click(screen.getByRole('button', { name: /일정 추가/i }));
+
+      // Then: 2024, 2028만 생성 (2025~2027, 2029~2030 건너뜀)
+      await waitFor(() => {
+        expect(screen.getByText(/윤년 행사/i)).toBeInTheDocument();
+      });
+    });
+
+    it('반복 간격 2로 설정 시 격주로 일정 생성', async () => {
+      // Given: 2025-01-06 매주 반복 (간격 2)
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      await user.type(screen.getByLabelText(/제목/i), '격주 회의');
+      await user.type(screen.getByLabelText(/날짜/i), '2025-01-06');
+      await user.type(screen.getByLabelText(/시작 시간/i), '14:00');
+      await user.type(screen.getByLabelText(/종료 시간/i), '15:00');
+
+      await user.click(screen.getByRole('checkbox', { name: /반복 설정/i }));
+      await user.selectOptions(screen.getByRole('combobox', { name: /반복 유형/i }), 'weekly');
+      await user.type(screen.getByLabelText(/반복 간격/i), '2');
+      await user.type(screen.getByLabelText(/반복 종료일/i), '2025-02-03');
+
+      // When
+      await user.click(screen.getByRole('button', { name: /일정 추가/i }));
+
+      // Then: 격주 월요일 (1/6, 1/20, 2/3) 3개 생성
+      await waitFor(() => {
+        expect(screen.getByText(/격주 회의/i)).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('반복 일정 표시', () => {
+    it('반복 일정에 Repeat 아이콘 표시', async () => {
+      // Given: 매일 반복 일정 생성
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      await user.type(screen.getByLabelText(/제목/i), '반복 회의');
+      await user.type(screen.getByLabelText(/날짜/i), '2025-01-01');
+      await user.type(screen.getByLabelText(/시작 시간/i), '10:00');
+      await user.type(screen.getByLabelText(/종료 시간/i), '11:00');
+
+      await user.click(screen.getByRole('checkbox', { name: /반복 설정/i }));
+      await user.selectOptions(screen.getByRole('combobox', { name: /반복 유형/i }), 'daily');
+      await user.type(screen.getByLabelText(/반복 종료일/i), '2025-01-03');
+
+      await user.click(screen.getByRole('button', { name: /일정 추가/i }));
+
+      // Then: Repeat 아이콘이 표시됨
+      await waitFor(() => {
+        const repeatIcon = screen.getByTestId('repeat-icon'); // Material-UI Repeat 아이콘
+        expect(repeatIcon).toBeInTheDocument();
+      });
+    });
+
+    it('일반 일정에는 Repeat 아이콘 표시 안함', async () => {
+      // Given: 일반 일정 (반복 없음)
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      await user.type(screen.getByLabelText(/제목/i), '일반 회의');
+      await user.type(screen.getByLabelText(/날짜/i), '2025-01-15');
+      await user.type(screen.getByLabelText(/시작 시간/i), '10:00');
+      await user.type(screen.getByLabelText(/종료 시간/i), '11:00');
+      // 반복 설정 체크 안함
+
+      await user.click(screen.getByRole('button', { name: /일정 추가/i }));
+
+      // Then: Repeat 아이콘 없음
+      await waitFor(() => {
+        expect(screen.queryByTestId('repeat-icon')).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('일정 겹침 무시', () => {
+    it('⭐️ 반복 일정 생성 시 겹침 경고 없이 즉시 생성', async () => {
+      // Given: 2025-01-01 10:00-12:00 기존 일정
+      const user = userEvent.setup();
+      render(
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </ThemeProvider>
+      );
+
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      // 기존 일정 생성
+      await user.type(screen.getByLabelText(/제목/i), '기존 회의');
+      await user.type(screen.getByLabelText(/날짜/i), '2025-01-01');
+      await user.type(screen.getByLabelText(/시작 시간/i), '10:00');
+      await user.type(screen.getByLabelText(/종료 시간/i), '12:00');
+      await user.click(screen.getByRole('button', { name: /일정 추가/i }));
+
+      // And: 2025-01-01 11:00-13:00 매일 반복 생성 (겹침)
+      await user.click(screen.getAllByText('일정 추가')[0]);
+
+      await user.type(screen.getByLabelText(/제목/i), '반복 회의');
+      await user.type(screen.getByLabelText(/날짜/i), '2025-01-01');
+      await user.type(screen.getByLabelText(/시작 시간/i), '11:00');
+      await user.type(screen.getByLabelText(/종료 시간/i), '13:00');
+
+      await user.click(screen.getByRole('checkbox', { name: /반복 설정/i }));
+      await user.selectOptions(screen.getByRole('combobox', { name: /반복 유형/i }), 'daily');
+      await user.type(screen.getByLabelText(/반복 종료일/i), '2025-01-03');
+
+      // When: 일정 추가 (겹침 있음)
+      await user.click(screen.getByRole('button', { name: /일정 추가/i }));
+
+      // Then: 겹침 경고 다이얼로그 표시 안함
+      expect(screen.queryByRole('dialog', { name: /일정 겹침 경고/i })).not.toBeInTheDocument();
+
+      // And: 즉시 반복 일정 생성
+      await waitFor(() => {
+        expect(screen.getByText(/반복 회의/i)).toBeInTheDocument();
+      });
+    });
+  });
 });
