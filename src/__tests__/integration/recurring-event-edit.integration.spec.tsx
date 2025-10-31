@@ -146,8 +146,7 @@ describe('반복 일정 수정', () => {
           if (index !== -1) {
             const existingEvent = mockEvents[index];
             // repeat를 제외한 필드들만 업데이트
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { repeat: _, ...updateFields } = requestBody;
+            const { ...updateFields } = requestBody;
             mockEvents[index] = {
               ...existingEvent,
               ...updateFields,
@@ -242,8 +241,7 @@ describe('반복 일정 수정', () => {
             const existingEvent = mockEvents[index];
             // repeat를 제외한 필드들만 업데이트
             const updateData = requestBody as Partial<Event>;
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { repeat: _, ...updateFields } = updateData;
+            const { ...updateFields } = updateData;
             mockEvents[index] = {
               ...existingEvent,
               ...updateFields,
@@ -310,7 +308,7 @@ describe('반복 일정 수정', () => {
   });
 
   describe('TC-5, TC-6: 전체 수정 ("아니오" 선택)', () => {
-    it('전체 수정 후 같은 repeat.id를 가진 모든 일정이 수정되고 repeat 정보가 유지된다', async () => {
+    it('전체 수정 후 같은 repeat.id를 가진 모든 일정이 수정되고 repeat 정보도 함께 수정된다', async () => {
       // Given: 반복 일정 시리즈가 렌더링되어 있다
       const mockEvents: Event[] = [...mockRecurringEventSeries];
       let apiCalled = false;

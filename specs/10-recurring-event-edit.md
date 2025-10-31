@@ -205,7 +205,11 @@ const recurringEvents = [
 editAllRecurringEvents(repeatId, {
   title: '업데이트된 회의',
   startTime: '14:00',
-  endTime: '15:00'
+  endTime: '15:00',
+  repeat: {
+    type: 'weekly',  // 반복 유형 변경 가능
+    interval: 1
+  }
 });
 
 // Then
@@ -214,8 +218,8 @@ updatedEvents.forEach(event => {
   expect(event.title).toBe('업데이트된 회의');
   expect(event.startTime).toBe('14:00');
   expect(event.endTime).toBe('15:00');
-  expect(event.repeat.type).toBe('daily');  // 반복 정보 유지
-  expect(event.repeat.id).toBe(repeatId);   // repeatId 유지
+  expect(event.repeat.type).toBe('weekly');  // 반복 정보도 수정됨
+  expect(event.repeat.id).toBe(repeatId);    // repeatId는 유지
 });
 ```
 
