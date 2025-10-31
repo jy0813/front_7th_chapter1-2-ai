@@ -290,12 +290,6 @@ d1c342d docs: 반복 유형 선택 명세 작성
 - **예상 소요 시간**: 2-3시간
 - **Agent**: Agent 4 (Green Phase)
 
-#### 3. 통합 테스트
-- **파일**: `src/__tests__/integration/recurring-events.spec.tsx`
-- **작업**: UI + API + 유틸 전체 통합 테스트
-- **예상 소요 시간**: 1-2시간
-- **Agent**: Agent 3 (Red Phase) → Agent 4 (Green Phase)
-
 ### 추가 개선 사항 (Phase 3)
 
 #### 1. 에러 처리 강화

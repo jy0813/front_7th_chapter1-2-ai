@@ -35,8 +35,7 @@ import { useEventForm } from './hooks/useEventForm.ts';
 import { useEventOperations } from './hooks/useEventOperations.ts';
 import { useNotifications } from './hooks/useNotifications.ts';
 import { useSearch } from './hooks/useSearch.ts';
-// import { Event, EventForm, RepeatType } from './types';
-import { Event, EventForm } from './types';
+import { Event, EventForm, RepeatType } from './types';
 import {
   formatDate,
   formatMonth,
@@ -46,6 +45,12 @@ import {
   getWeeksAtMonth,
 } from './utils/dateUtils';
 import { findOverlappingEvents } from './utils/eventOverlap';
+import {
+  generateDailyEvents,
+  generateMonthlyEvents,
+  generateWeeklyEvents,
+  generateYearlyEvents,
+} from './utils/repeatUtils';
 import { getTimeErrorMessage } from './utils/timeValidation';
 
 const categories = ['업무', '개인', '가족', '기타'];
@@ -77,11 +82,11 @@ function App() {
     isRepeating,
     setIsRepeating,
     repeatType,
-    // setRepeatType,
+    setRepeatType,
     repeatInterval,
-    // setRepeatInterval,
+    setRepeatInterval,
     repeatEndDate,
-    // setRepeatEndDate,
+    setRepeatEndDate,
     notificationTime,
     setNotificationTime,
     startTimeError,
@@ -94,8 +99,9 @@ function App() {
     editEvent,
   } = useEventForm();
 
-  const { events, saveEvent, deleteEvent } = useEventOperations(Boolean(editingEvent), () =>
-    setEditingEvent(null)
+  const { events, saveEvent, saveMultipleEvents, deleteEvent } = useEventOperations(
+    Boolean(editingEvent),
+    () => setEditingEvent(null)
   );
 
   const { notifications, notifiedEvents, setNotifications } = useNotifications(events);
@@ -106,6 +112,58 @@ function App() {
   const [overlappingEvents, setOverlappingEvents] = useState<Event[]>([]);
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const handleRecurringEventCreation = async (baseEventData: EventForm) => {
+    try {
+      // 1. 반복 유형에 따라 적절한 함수 호출
+      let generatedEvents: EventForm[] = [];
+
+      switch (baseEventData.repeat.type) {
+        case 'daily':
+          generatedEvents = generateDailyEvents(baseEventData);
+          break;
+        case 'weekly':
+          generatedEvents = generateWeeklyEvents(baseEventData);
+          break;
+        case 'monthly':
+          generatedEvents = generateMonthlyEvents(baseEventData);
+          break;
+        case 'yearly':
+          generatedEvents = generateYearlyEvents(baseEventData);
+          break;
+        default:
+          enqueueSnackbar('올바르지 않은 반복 유형입니다.', { variant: 'error' });
+          return;
+      }
+
+      // 2. 생성된 이벤트 개수 확인
+      if (generatedEvents.length === 0) {
+        enqueueSnackbar('생성할 반복 일정이 없습니다.', { variant: 'warning' });
+        return;
+      }
+
+      // 3. 사용자 확인 메시지
+      const confirmed = window.confirm(
+        `${generatedEvents.length}개의 반복 일정이 생성됩니다. 계속하시겠습니까?`
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      // 4. API 호출 (saveMultipleEvents 사용)
+      await saveMultipleEvents(generatedEvents);
+
+      enqueueSnackbar(`${generatedEvents.length}개의 반복 일정이 생성되었습니다.`, {
+        variant: 'success',
+      });
+
+      resetForm();
+    } catch (error) {
+      console.error('Error creating recurring events:', error);
+      enqueueSnackbar('반복 일정 생성 실패', { variant: 'error' });
+    }
+  };
 
   const addOrUpdateEvent = async () => {
     if (!title || !date || !startTime || !endTime) {
@@ -118,8 +176,8 @@ function App() {
       return;
     }
 
-    const eventData: Event | EventForm = {
-      id: editingEvent ? editingEvent.id : undefined,
+    // 기본 이벤트 데이터 생성
+    const baseEventData: EventForm = {
       title,
       date,
       startTime,
@@ -135,13 +193,25 @@ function App() {
       notificationTime,
     };
 
-    const overlapping = findOverlappingEvents(eventData, events);
-    if (overlapping.length > 0) {
-      setOverlappingEvents(overlapping);
-      setIsOverlapDialogOpen(true);
+    // 반복 일정 여부에 따라 분기
+    if (isRepeating && repeatType !== 'none' && !editingEvent) {
+      // 반복 일정 생성
+      await handleRecurringEventCreation(baseEventData);
     } else {
-      await saveEvent(eventData);
-      resetForm();
+      // 단일 일정 생성/수정 (기존 로직)
+      const eventData: Event | EventForm = {
+        id: editingEvent ? editingEvent.id : undefined,
+        ...baseEventData,
+      };
+
+      const overlapping = findOverlappingEvents(eventData, events);
+      if (overlapping.length > 0) {
+        setOverlappingEvents(overlapping);
+        setIsOverlapDialogOpen(true);
+      } else {
+        await saveEvent(eventData);
+        resetForm();
+      }
     }
   };
 
@@ -437,8 +507,7 @@ function App() {
             </Select>
           </FormControl>
 
-          {/* ! 반복은 8주차 과제에 포함됩니다. 구현하고 싶어도 참아주세요~ */}
-          {/* {isRepeating && (
+          {isRepeating && (
             <Stack spacing={2}>
               <FormControl fullWidth>
                 <FormLabel>반복 유형</FormLabel>
@@ -475,7 +544,7 @@ function App() {
                 </FormControl>
               </Stack>
             </Stack>
-          )} */}
+          )}
 
           <Button
             data-testid="event-submit-button"

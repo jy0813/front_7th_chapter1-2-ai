@@ -53,6 +53,28 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     }
   };
 
+  const saveMultipleEvents = async (eventsData: EventForm[]) => {
+    try {
+      const response = await fetch('/api/events-list', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ events: eventsData }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save multiple events');
+      }
+
+      await fetchEvents();
+      onSave?.();
+
+      return true;
+    } catch (error) {
+      console.error('Error saving multiple events:', error);
+      throw error; // 상위에서 에러 처리
+    }
+  };
+
   const deleteEvent = async (id: string) => {
     try {
       const response = await fetch(`/api/events/${id}`, { method: 'DELETE' });
@@ -79,5 +101,5 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { events, fetchEvents, saveEvent, deleteEvent };
+  return { events, fetchEvents, saveEvent, saveMultipleEvents, deleteEvent };
 };
