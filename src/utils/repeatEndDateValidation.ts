@@ -6,6 +6,16 @@
  */
 
 /**
+ * 반복 종료 날짜 최대 제한 (2025-12-31)
+ */
+const MAX_REPEAT_END_DATE = '2025-12-31';
+
+/**
+ * 날짜 형식 검증 정규식 (YYYY-MM-DD)
+ */
+const DATE_FORMAT_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
  * 반복 종료 날짜 통합 검증
  *
  * @param startDate - 일정 시작 날짜 (YYYY-MM-DD)
@@ -28,8 +38,7 @@ export function validateRepeatEndDate(startDate: string, endDate?: string): stri
   }
 
   // 2. 날짜 형식 검증
-  const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
-  if (!dateFormatRegex.test(endDate) || isNaN(Date.parse(endDate))) {
+  if (!DATE_FORMAT_REGEX.test(endDate) || isNaN(Date.parse(endDate))) {
     return '올바른 날짜 형식이 아닙니다 (YYYY-MM-DD)';
   }
 
@@ -40,10 +49,10 @@ export function validateRepeatEndDate(startDate: string, endDate?: string): stri
     return `반복 종료일은 시작일(${startDate}) 이후여야 합니다`;
   }
 
-  // 4. 최대 날짜 제한 검증 (2025-12-31)
-  const maxDate = new Date('2025-12-31');
+  // 4. 최대 날짜 제한 검증
+  const maxDate = new Date(MAX_REPEAT_END_DATE);
   if (end > maxDate) {
-    return '반복 종료일은 2025-12-31까지만 설정할 수 있습니다';
+    return `반복 종료일은 ${MAX_REPEAT_END_DATE}까지만 설정할 수 있습니다`;
   }
 
   return '';
