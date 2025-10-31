@@ -113,6 +113,24 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     }
   };
 
+  const deleteRecurringSeries = async (repeatId: string) => {
+    try {
+      const response = await fetch(`/api/recurring-events/${repeatId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete recurring series');
+      }
+
+      await fetchEvents();
+      enqueueSnackbar('반복 일정 시리즈가 삭제되었습니다.', { variant: 'info' });
+    } catch (error) {
+      console.error('Error deleting recurring series:', error);
+      enqueueSnackbar('반복 일정 삭제 실패', { variant: 'error' });
+    }
+  };
+
   async function init() {
     await fetchEvents();
     enqueueSnackbar('일정 로딩 완료!', { variant: 'info' });
@@ -130,5 +148,6 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     saveMultipleEvents,
     deleteEvent,
     updateRecurringSeries,
+    deleteRecurringSeries,
   };
 };

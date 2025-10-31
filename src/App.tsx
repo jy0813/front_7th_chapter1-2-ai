@@ -108,8 +108,14 @@ function App() {
     editEvent,
   } = useEventForm();
 
-  const { events, saveEvent, saveMultipleEvents, deleteEvent, updateRecurringSeries } =
-    useEventOperations(Boolean(editingEvent), () => setEditingEvent(null));
+  const {
+    events,
+    saveEvent,
+    saveMultipleEvents,
+    deleteEvent,
+    updateRecurringSeries,
+    deleteRecurringSeries,
+  } = useEventOperations(Boolean(editingEvent), () => setEditingEvent(null));
 
   const { notifications, notifiedEvents, setNotifications } = useNotifications(events);
   const { view, setView, currentDate, holidays, navigate } = useCalendarView();
@@ -119,6 +125,8 @@ function App() {
   const [overlappingEvents, setOverlappingEvents] = useState<Event[]>([]);
   const [isRecurringEditDialogOpen, setIsRecurringEditDialogOpen] = useState(false);
   const [pendingEditEvent, setPendingEditEvent] = useState<Event | null>(null);
+  const [isRecurringDeleteDialogOpen, setIsRecurringDeleteDialogOpen] = useState(false);
+  const [pendingDeleteEvent, setPendingDeleteEvent] = useState<Event | null>(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -168,6 +176,42 @@ function App() {
   const handleCancelRecurringEdit = () => {
     setIsRecurringEditDialogOpen(false);
     setPendingEditEvent(null);
+  };
+
+  // 반복 일정 삭제 핸들러: 다이얼로그 표시 여부 결정
+  const handleDeleteEvent = (event: Event) => {
+    if (event.repeat.type !== 'none' && event.repeat.id) {
+      // 반복 일정인 경우: 다이얼로그 표시
+      setPendingDeleteEvent(event);
+      setIsRecurringDeleteDialogOpen(true);
+    } else {
+      // 일반 일정인 경우: 바로 삭제
+      deleteEvent(event.id);
+    }
+  };
+
+  // 단일 일정 삭제
+  const handleDeleteSingle = () => {
+    if (pendingDeleteEvent) {
+      deleteEvent(pendingDeleteEvent.id);
+      setIsRecurringDeleteDialogOpen(false);
+      setPendingDeleteEvent(null);
+    }
+  };
+
+  // 전체 반복 일정 삭제
+  const handleDeleteSeries = () => {
+    if (pendingDeleteEvent && pendingDeleteEvent.repeat.id) {
+      deleteRecurringSeries(pendingDeleteEvent.repeat.id);
+      setIsRecurringDeleteDialogOpen(false);
+      setPendingDeleteEvent(null);
+    }
+  };
+
+  // 삭제 다이얼로그 취소
+  const handleCancelDelete = () => {
+    setIsRecurringDeleteDialogOpen(false);
+    setPendingDeleteEvent(null);
   };
 
   const handleRecurringEventCreation = async (baseEventData: EventForm) => {
@@ -729,7 +773,7 @@ function App() {
                     <IconButton aria-label="수정" onClick={() => handleEditEvent(event)}>
                       <Edit />
                     </IconButton>
-                    <IconButton aria-label="삭제" onClick={() => deleteEvent(event.id)}>
+                    <IconButton aria-label="삭제" onClick={() => handleDeleteEvent(event)}>
                       <Delete />
                     </IconButton>
                   </Stack>
@@ -792,6 +836,21 @@ function App() {
           <Button onClick={handleCancelRecurringEdit}>취소</Button>
           <Button onClick={handleEditAllRecurring}>아니오</Button>
           <Button onClick={handleEditSingleRecurring} color="primary">
+            예
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* 반복 일정 삭제 다이얼로그 */}
+      <Dialog open={isRecurringDeleteDialogOpen} onClose={handleCancelDelete}>
+        <DialogTitle>반복 일정 삭제</DialogTitle>
+        <DialogContent>
+          <DialogContentText>해당 일정만 삭제하시겠어요?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete}>취소</Button>
+          <Button onClick={handleDeleteSeries}>아니오</Button>
+          <Button onClick={handleDeleteSingle} color="primary">
             예
           </Button>
         </DialogActions>
