@@ -1,7 +1,11 @@
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { describe, expect, it, beforeEach } from 'vitest';
+import { SnackbarProvider } from 'notistack';
+import { ReactElement } from 'react';
+import { describe, expect, it } from 'vitest';
 
 import App from '../../App';
 import { server } from '../../setupTests';
@@ -10,10 +14,24 @@ import {
   mockRecurringEventSeries,
   mockSingleRecurringEvent,
   mockNormalEvent,
-  mockSingleEditedEvent,
-  mockAllEditedEvents,
   mockApiResponses,
 } from '../__fixtures__/mockRecurringEventEdit';
+
+const theme = createTheme();
+
+const setup = (element: ReactElement) => {
+  const user = userEvent.setup();
+
+  return {
+    ...render(
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <SnackbarProvider>{element}</SnackbarProvider>
+      </ThemeProvider>
+    ),
+    user,
+  };
+};
 
 describe('반복 일정 수정', () => {
   describe('TC-1: 다이얼로그 표시 (반복 일정 감지)', () => {
@@ -29,35 +47,38 @@ describe('반복 일정 수정', () => {
       render(<App />);
       const user = userEvent.setup();
 
-      // 캘린더에서 일정 표시 대기
-      await waitFor(() => {
-        expect(screen.getByText('매일 회의')).toBeInTheDocument();
-      });
+      // event-list에서 일정 표시 대기
+      const eventList = await screen.findByTestId('event-list');
+
+      // event-list 내에서 일정이 렌더링될 때까지 대기
+      await waitFor(
+        () => {
+          const eventTitle = within(eventList).getByText('매일 회의');
+          expect(eventTitle).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
 
       // When: 사용자가 해당 일정의 수정 버튼을 클릭한다
-      const eventCell = screen.getByText('매일 회의').closest('div');
-      const editButton = within(eventCell!).getByRole('button', {
+      // "매일 회의" 텍스트가 포함된 이벤트의 수정 버튼 찾기
+      const eventTitleElements = within(eventList).getAllByText('매일 회의');
+      const firstEventTitle = eventTitleElements[0];
+      const eventContainer = firstEventTitle.closest('[class*="MuiBox-root"]');
+      const editButton = within(eventContainer! as HTMLElement).getByRole('button', {
         name: /수정/i,
       });
+
       await user.click(editButton);
 
       // Then: 다이얼로그가 표시됨
       await waitFor(() => {
-        expect(
-          screen.getByText('해당 일정만 수정하시겠어요?')
-        ).toBeInTheDocument();
+        expect(screen.getByText('해당 일정만 수정하시겠어요?')).toBeInTheDocument();
       });
 
       // "예", "아니오", "취소" 버튼 존재 확인
-      expect(
-        screen.getByRole('button', { name: /^예$/ })
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: /^아니오$/ })
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: /취소/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^예$/ })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^아니오$/ })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /취소/i })).toBeInTheDocument();
     });
   });
 
@@ -74,27 +95,33 @@ describe('반복 일정 수정', () => {
       render(<App />);
       const user = userEvent.setup();
 
-      // 캘린더에서 일정 표시 대기
-      await waitFor(() => {
-        expect(screen.getByText('일반 회의')).toBeInTheDocument();
-      });
+      // event-list에서 일정 표시 대기
+      const eventList = await screen.findByTestId('event-list');
+
+      await waitFor(
+        () => {
+          const eventTitles = within(eventList).getAllByText('일반 회의');
+          expect(eventTitles[0]).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
 
       // When: 사용자가 해당 일정의 수정 버튼을 클릭한다
-      const eventCell = screen.getByText('일반 회의').closest('div');
-      const editButton = within(eventCell!).getByRole('button', {
+      const eventTitleElements = within(eventList).getAllByText('일반 회의');
+      const firstEventTitle = eventTitleElements[0];
+      const eventContainer = firstEventTitle.closest('[class*="MuiBox-root"]');
+      const editButton = within(eventContainer! as HTMLElement).getByRole('button', {
         name: /수정/i,
       });
       await user.click(editButton);
 
       // Then: 다이얼로그가 표시되지 않음
       await waitFor(() => {
-        expect(
-          screen.queryByText('해당 일정만 수정하시겠어요?')
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText('해당 일정만 수정하시겠어요?')).not.toBeInTheDocument();
       });
 
-      // 바로 수정 모드로 진입 (일정 추가 다이얼로그 표시)
-      expect(screen.getByText('일정 추가')).toBeInTheDocument();
+      // 바로 수정 모드로 진입 (일정 수정 폼 표시)
+      expect(screen.getByRole('heading', { name: '일정 수정' })).toBeInTheDocument();
     });
   });
 
@@ -103,7 +130,7 @@ describe('반복 일정 수정', () => {
       // Given: 반복 일정 시리즈가 렌더링되어 있다
       const mockEvents: Event[] = [...mockRecurringEventSeries];
       let apiCalled = false;
-      let requestBody: any = null;
+      let requestBody: Partial<Event> | null = null;
 
       server.use(
         http.get('/api/events', () => {
@@ -112,14 +139,18 @@ describe('반복 일정 수정', () => {
         http.put('/api/events/:id', async ({ params, request }) => {
           const { id } = params;
           apiCalled = true;
-          requestBody = await request.json();
+          requestBody = (await request.json()) as Partial<Event>;
 
           // 단일 수정: repeat.type을 'none'으로 변경
           const index = mockEvents.findIndex((e) => e.id === id);
           if (index !== -1) {
+            const existingEvent = mockEvents[index];
+            // repeat를 제외한 필드들만 업데이트
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { repeat: _omitted, ...updateFields } = requestBody;
             mockEvents[index] = {
-              ...mockEvents[index],
-              ...requestBody,
+              ...existingEvent,
+              ...updateFields,
               repeat: { type: 'none', interval: 0 },
             };
           }
@@ -131,22 +162,28 @@ describe('반복 일정 수정', () => {
       render(<App />);
       const user = userEvent.setup();
 
-      // 첫 번째 일정 클릭하여 수정 다이얼로그 열기
-      await waitFor(() => {
-        expect(screen.getByText('매일 회의')).toBeInTheDocument();
-      });
+      // event-list 내에서 첫 번째 일정 클릭하여 수정 다이얼로그 열기
+      const eventList = await screen.findByTestId('event-list');
 
-      const firstEventCell = screen.getAllByText('매일 회의')[0].closest('div');
-      const editButton = within(firstEventCell!).getByRole('button', {
+      await waitFor(
+        () => {
+          const eventTitles = within(eventList).getAllByText('매일 회의');
+          expect(eventTitles[0]).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      const eventTitleElements = within(eventList).getAllByText('매일 회의');
+      const firstEventTitle = eventTitleElements[0];
+      const eventContainer = firstEventTitle.closest('[class*="MuiBox-root"]');
+      const editButton = within(eventContainer! as HTMLElement).getByRole('button', {
         name: /수정/i,
       });
       await user.click(editButton);
 
       // 반복 일정 수정 다이얼로그 대기
       await waitFor(() => {
-        expect(
-          screen.getByText('해당 일정만 수정하시겠어요?')
-        ).toBeInTheDocument();
+        expect(screen.getByText('해당 일정만 수정하시겠어요?')).toBeInTheDocument();
       });
 
       // When: "예" 버튼을 클릭한다
@@ -163,7 +200,7 @@ describe('반복 일정 수정', () => {
       await user.clear(titleInput);
       await user.type(titleInput, '특별 회의');
 
-      const saveButton = screen.getByRole('button', { name: /저장/i });
+      const saveButton = screen.getByRole('button', { name: /일정 수정/i });
       await user.click(saveButton);
 
       // Then: API 호출 확인
@@ -172,16 +209,19 @@ describe('반복 일정 수정', () => {
       });
 
       // repeat.type이 'none'으로 설정되었는지 확인
-      expect(requestBody.repeat.type).toBe('none');
-      expect(requestBody.repeat.interval).toBe(0);
+      expect(requestBody).not.toBeNull();
+      expect(requestBody!.repeat?.type).toBe('none');
+      expect(requestBody!.repeat?.interval).toBe(0);
 
       // 해당 일정만 제목이 변경됨
       await waitFor(() => {
-        expect(screen.getByText('특별 회의')).toBeInTheDocument();
+        const updatedEventList = screen.getByTestId('event-list');
+        expect(within(updatedEventList).getByText('특별 회의')).toBeInTheDocument();
       });
 
       // 다른 일정은 여전히 "매일 회의"
-      const remainingEvents = screen.getAllByText('매일 회의');
+      const updatedEventList = screen.getByTestId('event-list');
+      const remainingEvents = within(updatedEventList).getAllByText('매일 회의');
       expect(remainingEvents.length).toBe(2); // 원래 3개 중 1개만 변경
     });
 
@@ -199,9 +239,14 @@ describe('반복 일정 수정', () => {
 
           const index = mockEvents.findIndex((e) => e.id === id);
           if (index !== -1) {
+            const existingEvent = mockEvents[index];
+            // repeat를 제외한 필드들만 업데이트
+            const updateData = requestBody as Partial<Event>;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { repeat: _omitted, ...updateFields } = updateData;
             mockEvents[index] = {
-              ...mockEvents[index],
-              ...requestBody,
+              ...existingEvent,
+              ...updateFields,
               repeat: { type: 'none', interval: 0 },
             };
           }
@@ -220,16 +265,26 @@ describe('반복 일정 수정', () => {
       });
 
       // 첫 번째 일정 수정
-      const firstEventCell = screen.getAllByText('매일 회의')[0].closest('div');
-      const editButton = within(firstEventCell!).getByRole('button', {
+      const eventList = await screen.findByTestId('event-list');
+
+      await waitFor(
+        () => {
+          const eventTitles = within(eventList).getAllByText('매일 회의');
+          expect(eventTitles[0]).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      const eventTitleElements = within(eventList).getAllByText('매일 회의');
+      const firstEventTitle = eventTitleElements[0];
+      const eventContainer = firstEventTitle.closest('[class*="MuiBox-root"]');
+      const editButton = within(eventContainer! as HTMLElement).getByRole('button', {
         name: /수정/i,
       });
       await user.click(editButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText('해당 일정만 수정하시겠어요?')
-        ).toBeInTheDocument();
+        expect(screen.getByText('해당 일정만 수정하시겠어요?')).toBeInTheDocument();
       });
 
       const yesButton = screen.getByRole('button', { name: /^예$/ });
@@ -243,7 +298,7 @@ describe('반복 일정 수정', () => {
       await user.clear(titleInput);
       await user.type(titleInput, '특별 회의');
 
-      const saveButton = screen.getByRole('button', { name: /저장/i });
+      const saveButton = screen.getByRole('button', { name: /일정 수정/i });
       await user.click(saveButton);
 
       // Then: Repeat 아이콘이 2개로 감소
@@ -259,62 +314,63 @@ describe('반복 일정 수정', () => {
       // Given: 반복 일정 시리즈가 렌더링되어 있다
       const mockEvents: Event[] = [...mockRecurringEventSeries];
       let apiCalled = false;
-      let requestBody: any = null;
+      let requestBody: Partial<Event> | null = null;
 
       server.use(
         http.get('/api/events', () => {
           return HttpResponse.json({ events: mockEvents });
         }),
-        http.put(
-          '/api/recurring-events/:repeatId',
-          async ({ params, request }) => {
-            const { repeatId } = params;
-            apiCalled = true;
-            requestBody = await request.json();
+        http.put('/api/recurring-events/:repeatId', async ({ params, request }) => {
+          const { repeatId } = params;
+          apiCalled = true;
+          requestBody = (await request.json()) as Partial<Event>;
 
-            // 같은 repeat.id를 가진 모든 일정 수정
-            mockEvents.forEach((event, index) => {
-              if (event.repeat.id === repeatId) {
-                mockEvents[index] = {
-                  ...event,
-                  ...requestBody,
-                  // date는 제외 (각 일정의 날짜 유지)
-                  date: event.date,
-                  // repeat는 유지
-                  repeat: event.repeat,
-                };
-              }
-            });
+          // 같은 repeat.id를 가진 모든 일정 수정
+          mockEvents.forEach((event, index) => {
+            if (event.repeat.id === repeatId) {
+              mockEvents[index] = {
+                ...event,
+                ...requestBody,
+                // date는 제외 (각 일정의 날짜 유지)
+                date: event.date,
+                // repeat는 유지
+                repeat: event.repeat,
+              };
+            }
+          });
 
-            const updatedEvents = mockEvents.filter(
-              (e) => e.repeat.id === repeatId
-            );
+          const updatedEvents = mockEvents.filter((e) => e.repeat.id === repeatId);
 
-            return HttpResponse.json({
-              updatedCount: updatedEvents.length,
-              events: updatedEvents,
-            });
-          }
-        )
+          return HttpResponse.json({
+            updatedCount: updatedEvents.length,
+            events: updatedEvents,
+          });
+        })
       );
 
       render(<App />);
       const user = userEvent.setup();
 
-      await waitFor(() => {
-        expect(screen.getByText('매일 회의')).toBeInTheDocument();
-      });
+      const eventList = await screen.findByTestId('event-list');
 
-      const firstEventCell = screen.getAllByText('매일 회의')[0].closest('div');
-      const editButton = within(firstEventCell!).getByRole('button', {
+      await waitFor(
+        () => {
+          const eventTitles = within(eventList).getAllByText('매일 회의');
+          expect(eventTitles[0]).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      const eventTitleElements = within(eventList).getAllByText('매일 회의');
+      const firstEventTitle = eventTitleElements[0];
+      const eventContainer = firstEventTitle.closest('[class*="MuiBox-root"]');
+      const editButton = within(eventContainer! as HTMLElement).getByRole('button', {
         name: /수정/i,
       });
       await user.click(editButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText('해당 일정만 수정하시겠어요?')
-        ).toBeInTheDocument();
+        expect(screen.getByText('해당 일정만 수정하시겠어요?')).toBeInTheDocument();
       });
 
       // When: "아니오" 버튼을 클릭한다
@@ -330,7 +386,7 @@ describe('반복 일정 수정', () => {
       await user.clear(titleInput);
       await user.type(titleInput, '업데이트된 회의');
 
-      const saveButton = screen.getByRole('button', { name: /저장/i });
+      const saveButton = screen.getByRole('button', { name: /일정 수정/i });
       await user.click(saveButton);
 
       // Then: API 호출 확인
@@ -339,12 +395,14 @@ describe('반복 일정 수정', () => {
       });
 
       // 요청 body에 date, repeat가 제외되었는지 확인
-      expect(requestBody.date).toBeUndefined();
-      expect(requestBody.repeat).toBeUndefined();
+      expect(requestBody).not.toBeNull();
+      expect(requestBody!.date).toBeUndefined();
+      expect(requestBody!.repeat).toBeUndefined();
 
       // 모든 일정의 제목이 "업데이트된 회의"로 변경됨
       await waitFor(() => {
-        const updatedEvents = screen.getAllByText('업데이트된 회의');
+        const eventList = screen.getByTestId('event-list');
+        const updatedEvents = within(eventList).getAllByText('업데이트된 회의');
         expect(updatedEvents.length).toBe(3);
       });
     });
@@ -357,33 +415,28 @@ describe('반복 일정 수정', () => {
         http.get('/api/events', () => {
           return HttpResponse.json({ events: mockEvents });
         }),
-        http.put(
-          '/api/recurring-events/:repeatId',
-          async ({ params, request }) => {
-            const { repeatId } = params;
-            const requestBody = await request.json();
+        http.put('/api/recurring-events/:repeatId', async ({ params, request }) => {
+          const { repeatId } = params;
+          const requestBody = (await request.json()) as Partial<Event>;
 
-            mockEvents.forEach((event, index) => {
-              if (event.repeat.id === repeatId) {
-                mockEvents[index] = {
-                  ...event,
-                  ...requestBody,
-                  date: event.date,
-                  repeat: event.repeat,
-                };
-              }
-            });
+          mockEvents.forEach((event, index) => {
+            if (event.repeat.id === repeatId) {
+              mockEvents[index] = {
+                ...event,
+                ...requestBody,
+                date: event.date,
+                repeat: event.repeat,
+              };
+            }
+          });
 
-            const updatedEvents = mockEvents.filter(
-              (e) => e.repeat.id === repeatId
-            );
+          const updatedEvents = mockEvents.filter((e) => e.repeat.id === repeatId);
 
-            return HttpResponse.json({
-              updatedCount: updatedEvents.length,
-              events: updatedEvents,
-            });
-          }
-        )
+          return HttpResponse.json({
+            updatedCount: updatedEvents.length,
+            events: updatedEvents,
+          });
+        })
       );
 
       render(<App />);
@@ -395,16 +448,17 @@ describe('반복 일정 수정', () => {
         expect(initialIcons.length).toBe(3);
       });
 
-      const firstEventCell = screen.getAllByText('매일 회의')[0].closest('div');
-      const editButton = within(firstEventCell!).getByRole('button', {
+      const eventList = await screen.findByTestId('event-list');
+      const eventTitleElements = within(eventList).getAllByText('매일 회의');
+      const firstEventTitle = eventTitleElements[0];
+      const eventContainer = firstEventTitle.closest('[class*="MuiBox-root"]');
+      const editButton = within(eventContainer! as HTMLElement).getByRole('button', {
         name: /수정/i,
       });
       await user.click(editButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText('해당 일정만 수정하시겠어요?')
-        ).toBeInTheDocument();
+        expect(screen.getByText('해당 일정만 수정하시겠어요?')).toBeInTheDocument();
       });
 
       const noButton = screen.getByRole('button', { name: /^아니오$/ });
@@ -418,7 +472,7 @@ describe('반복 일정 수정', () => {
       await user.clear(titleInput);
       await user.type(titleInput, '업데이트된 회의');
 
-      const saveButton = screen.getByRole('button', { name: /저장/i });
+      const saveButton = screen.getByRole('button', { name: /일정 수정/i });
       await user.click(saveButton);
 
       // Then: Repeat 아이콘이 여전히 3개
@@ -452,20 +506,25 @@ describe('반복 일정 수정', () => {
       render(<App />);
       const user = userEvent.setup();
 
-      await waitFor(() => {
-        expect(screen.getByText('매일 회의')).toBeInTheDocument();
-      });
+      const eventList = await screen.findByTestId('event-list');
 
-      const eventCell = screen.getByText('매일 회의').closest('div');
-      const editButton = within(eventCell!).getByRole('button', {
+      await waitFor(
+        () => {
+          const eventTitle = within(eventList).getByText('매일 회의');
+          expect(eventTitle).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      const eventTitle = within(eventList).getByText('매일 회의');
+      const eventContainer = eventTitle.closest('[class*="MuiBox-root"]');
+      const editButton = within(eventContainer! as HTMLElement).getByRole('button', {
         name: /수정/i,
       });
       await user.click(editButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText('해당 일정만 수정하시겠어요?')
-        ).toBeInTheDocument();
+        expect(screen.getByText('해당 일정만 수정하시겠어요?')).toBeInTheDocument();
       });
 
       // When: "취소" 버튼을 클릭한다
@@ -474,9 +533,7 @@ describe('반복 일정 수정', () => {
 
       // Then: 다이얼로그가 닫힘
       await waitFor(() => {
-        expect(
-          screen.queryByText('해당 일정만 수정하시겠어요?')
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText('해당 일정만 수정하시겠어요?')).not.toBeInTheDocument();
       });
 
       // API 호출이 발생하지 않음
@@ -501,23 +558,27 @@ describe('반복 일정 수정', () => {
         })
       );
 
-      render(<App />);
-      const user = userEvent.setup();
+      const { user } = setup(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByText('매일 회의')).toBeInTheDocument();
-      });
+      const eventList = await screen.findByTestId('event-list');
 
-      const eventCell = screen.getByText('매일 회의').closest('div');
-      const editButton = within(eventCell!).getByRole('button', {
+      await waitFor(
+        () => {
+          const eventTitle = within(eventList).getByText('매일 회의');
+          expect(eventTitle).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      const eventTitle = within(eventList).getByText('매일 회의');
+      const eventContainer = eventTitle.closest('[class*="MuiBox-root"]');
+      const editButton = within(eventContainer! as HTMLElement).getByRole('button', {
         name: /수정/i,
       });
       await user.click(editButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText('해당 일정만 수정하시겠어요?')
-        ).toBeInTheDocument();
+        expect(screen.getByText('해당 일정만 수정하시겠어요?')).toBeInTheDocument();
       });
 
       const yesButton = screen.getByRole('button', { name: /^예$/ });
@@ -531,16 +592,17 @@ describe('반복 일정 수정', () => {
       await user.clear(titleInput);
       await user.type(titleInput, '특별 회의');
 
-      const saveButton = screen.getByRole('button', { name: /저장/i });
+      const saveButton = screen.getByRole('button', { name: /일정 수정/i });
       await user.click(saveButton);
 
       // Then: 에러 메시지가 표시됨
-      await waitFor(() => {
-        expect(
-          screen.getByText('일정 수정에 실패했습니다')
-        ).toBeInTheDocument();
-      });
-    });
+      await waitFor(
+        () => {
+          expect(screen.getByText('일정 수정에 실패했습니다')).toBeInTheDocument();
+        },
+        { timeout: 5000 }
+      );
+    }, 10000);
 
     it('전체 수정 API 실패 시 "반복 일정 수정에 실패했습니다" 메시지가 표시된다', async () => {
       // Given: 반복 일정이 렌더링되어 있고, API가 실패한다
@@ -558,23 +620,27 @@ describe('반복 일정 수정', () => {
         })
       );
 
-      render(<App />);
-      const user = userEvent.setup();
+      const { user } = setup(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByText('매일 회의')).toBeInTheDocument();
-      });
+      const eventList = await screen.findByTestId('event-list');
 
-      const eventCell = screen.getByText('매일 회의').closest('div');
-      const editButton = within(eventCell!).getByRole('button', {
+      await waitFor(
+        () => {
+          const eventTitle = within(eventList).getByText('매일 회의');
+          expect(eventTitle).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      const eventTitle = within(eventList).getByText('매일 회의');
+      const eventContainer = eventTitle.closest('[class*="MuiBox-root"]');
+      const editButton = within(eventContainer! as HTMLElement).getByRole('button', {
         name: /수정/i,
       });
       await user.click(editButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText('해당 일정만 수정하시겠어요?')
-        ).toBeInTheDocument();
+        expect(screen.getByText('해당 일정만 수정하시겠어요?')).toBeInTheDocument();
       });
 
       const noButton = screen.getByRole('button', { name: /^아니오$/ });
@@ -588,15 +654,16 @@ describe('반복 일정 수정', () => {
       await user.clear(titleInput);
       await user.type(titleInput, '업데이트된 회의');
 
-      const saveButton = screen.getByRole('button', { name: /저장/i });
+      const saveButton = screen.getByRole('button', { name: /일정 수정/i });
       await user.click(saveButton);
 
       // Then: 에러 메시지가 표시됨
-      await waitFor(() => {
-        expect(
-          screen.getByText('반복 일정 수정에 실패했습니다')
-        ).toBeInTheDocument();
-      });
+      await waitFor(
+        () => {
+          expect(screen.getByText('반복 일정 수정에 실패했습니다')).toBeInTheDocument();
+        },
+        { timeout: 5000 }
+      );
     });
   });
 });

@@ -111,14 +111,12 @@ export const mockSingleEditedEvent: Event = {
  * - 같은 repeat.id를 가진 모든 일정의 제목 변경
  * - repeat 정보는 유지됨
  */
-export const mockAllEditedEvents: Event[] = mockRecurringEventSeries.map(
-  (event) => ({
-    ...event,
-    title: '업데이트된 회의',
-    startTime: '14:00',
-    endTime: '15:00',
-  })
-);
+export const mockAllEditedEvents: Event[] = mockRecurringEventSeries.map((event) => ({
+  ...event,
+  title: '업데이트된 회의',
+  startTime: '14:00',
+  endTime: '15:00',
+}));
 
 /**
  * API 응답 Mock 데이터

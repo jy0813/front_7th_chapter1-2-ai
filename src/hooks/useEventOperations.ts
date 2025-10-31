@@ -47,9 +47,11 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
       enqueueSnackbar(editing ? '일정이 수정되었습니다.' : '일정이 추가되었습니다.', {
         variant: 'success',
       });
+      return true;
     } catch (error) {
       console.error('Error saving event:', error);
-      enqueueSnackbar('일정 저장 실패', { variant: 'error' });
+      enqueueSnackbar(editing ? '일정 수정에 실패했습니다' : '일정 저장 실패', { variant: 'error' });
+      return false;
     }
   };
 
@@ -91,6 +93,28 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     }
   };
 
+  const updateRecurringSeries = async (repeatId: string, updateData: Partial<EventForm>) => {
+    try {
+      const response = await fetch(`/api/recurring-events/${repeatId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update recurring series');
+      }
+
+      await fetchEvents();
+      enqueueSnackbar('반복 일정 시리즈가 수정되었습니다.', { variant: 'success' });
+      return true;
+    } catch (error) {
+      console.error('Error updating recurring series:', error);
+      enqueueSnackbar('반복 일정 수정에 실패했습니다', { variant: 'error' });
+      return false;
+    }
+  };
+
   async function init() {
     await fetchEvents();
     enqueueSnackbar('일정 로딩 완료!', { variant: 'info' });
@@ -101,5 +125,12 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { events, fetchEvents, saveEvent, saveMultipleEvents, deleteEvent };
+  return {
+    events,
+    fetchEvents,
+    saveEvent,
+    saveMultipleEvents,
+    deleteEvent,
+    updateRecurringSeries,
+  };
 };
