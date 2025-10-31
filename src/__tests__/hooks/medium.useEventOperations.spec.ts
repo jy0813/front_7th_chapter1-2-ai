@@ -149,7 +149,7 @@ it("존재하지 않는 이벤트 수정 시 '일정 저장 실패'라는 토스
     await result.current.saveEvent(nonExistentEvent);
   });
 
-  expect(enqueueSnackbarFn).toHaveBeenCalledWith('일정 저장 실패', { variant: 'error' });
+  expect(enqueueSnackbarFn).toHaveBeenCalledWith('일정 수정에 실패했습니다', { variant: 'error' });
 });
 
 it("네트워크 오류 시 '일정 삭제 실패'라는 텍스트가 노출되며 이벤트 삭제가 실패해야 한다", async () => {
