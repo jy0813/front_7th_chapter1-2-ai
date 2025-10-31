@@ -11,7 +11,6 @@ import App from '../../App';
 import { server } from '../../setupTests';
 import {
   mockSingleDeleteSuccessResponse,
-  mockSeriesDeleteSuccessResponse,
   tc1Scenario,
   tc2Scenario,
   tc3Scenario,
