@@ -394,10 +394,15 @@ describe('반복 일정 수정', () => {
         expect(apiCalled).toBe(true);
       });
 
-      // 요청 body에 date, repeat가 제외되었는지 확인
+      // 요청 body에 date는 제외되고 repeat는 포함되었는지 확인
       expect(requestBody).not.toBeNull();
       expect(requestBody!.date).toBeUndefined();
-      expect(requestBody!.repeat).toBeUndefined();
+      expect(requestBody!.repeat).toBeDefined();
+      expect(requestBody!.repeat).toEqual({
+        type: 'daily',
+        interval: 1,
+        endDate: '2025-10-31',
+      });
 
       // 모든 일정의 제목이 "업데이트된 회의"로 변경됨
       await waitFor(() => {
