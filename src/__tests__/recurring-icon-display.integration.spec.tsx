@@ -28,7 +28,7 @@ describe('반복 일정 아이콘 표시', () => {
     // When: App 렌더링
     render(<App />);
 
-    // Then: 반복 아이콘이 DOM에 존재함
+    // Then: 반복 아이콘이 캘린더 뷰에 존재함
     const repeatIcon = await screen.findByTestId('RepeatIcon');
     expect(repeatIcon).toBeInTheDocument();
   });
@@ -41,7 +41,7 @@ describe('반복 일정 아이콘 표시', () => {
     // When: App 렌더링
     render(<App />);
 
-    // Then: 반복 아이콘이 DOM에 존재함
+    // Then: 반복 아이콘이 캘린더 뷰에 존재함
     const repeatIcon = await screen.findByTestId('RepeatIcon');
     expect(repeatIcon).toBeInTheDocument();
   });
@@ -54,7 +54,7 @@ describe('반복 일정 아이콘 표시', () => {
     // When: App 렌더링
     render(<App />);
 
-    // Then: 반복 아이콘이 DOM에 존재함
+    // Then: 반복 아이콘이 캘린더 뷰에 존재함
     const repeatIcon = await screen.findByTestId('RepeatIcon');
     expect(repeatIcon).toBeInTheDocument();
   });
@@ -67,7 +67,7 @@ describe('반복 일정 아이콘 표시', () => {
     // When: App 렌더링
     render(<App />);
 
-    // Then: 반복 아이콘이 DOM에 존재함
+    // Then: 반복 아이콘이 캘린더 뷰에 존재함
     const repeatIcon = await screen.findByTestId('RepeatIcon');
     expect(repeatIcon).toBeInTheDocument();
   });
