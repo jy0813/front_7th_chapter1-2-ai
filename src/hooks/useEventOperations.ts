@@ -23,20 +23,14 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
 
   const saveEvent = async (eventData: Event | EventForm) => {
     try {
-      let response;
-      if (editing) {
-        response = await fetch(`/api/events/${(eventData as Event).id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(eventData),
-        });
-      } else {
-        response = await fetch('/api/events', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(eventData),
-        });
-      }
+      const url = editing ? `/api/events/${(eventData as Event).id}` : '/api/events';
+      const method = editing ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(eventData),
+      });
 
       if (!response.ok) {
         throw new Error('Failed to save event');
@@ -44,13 +38,17 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
 
       await fetchEvents();
       onSave?.();
-      enqueueSnackbar(editing ? '일정이 수정되었습니다.' : '일정이 추가되었습니다.', {
-        variant: 'success',
-      });
+
+      const successMessage = editing ? '일정이 수정되었습니다.' : '일정이 추가되었습니다.';
+      enqueueSnackbar(successMessage, { variant: 'success' });
+
       return true;
     } catch (error) {
       console.error('Error saving event:', error);
-      enqueueSnackbar(editing ? '일정 수정에 실패했습니다' : '일정 저장 실패', { variant: 'error' });
+
+      const errorMessage = editing ? '일정 수정에 실패했습니다' : '일정 저장 실패';
+      enqueueSnackbar(errorMessage, { variant: 'error' });
+
       return false;
     }
   };

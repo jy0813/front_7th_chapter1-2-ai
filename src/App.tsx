@@ -258,7 +258,7 @@ function App() {
       // 반복 일정 시리즈 전체 수정 (repeat.id가 있는 경우)
       // date와 repeat는 제외하고 나머지 필드만 업데이트
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { date: _omittedDate, repeat: _omittedRepeat, ...updateFields } = baseEventData;
+      const { date: _, repeat: __, ...updateFields } = baseEventData;
       const success = await updateRecurringSeries(editingEvent.repeat.id, updateFields);
       if (success) {
         resetForm();

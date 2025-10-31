@@ -147,7 +147,7 @@ describe('반복 일정 수정', () => {
             const existingEvent = mockEvents[index];
             // repeat를 제외한 필드들만 업데이트
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { repeat: _omitted, ...updateFields } = requestBody;
+            const { repeat: _, ...updateFields } = requestBody;
             mockEvents[index] = {
               ...existingEvent,
               ...updateFields,
@@ -243,7 +243,7 @@ describe('반복 일정 수정', () => {
             // repeat를 제외한 필드들만 업데이트
             const updateData = requestBody as Partial<Event>;
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { repeat: _omitted, ...updateFields } = updateData;
+            const { repeat: _, ...updateFields } = updateData;
             mockEvents[index] = {
               ...existingEvent,
               ...updateFields,
