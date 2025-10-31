@@ -53,6 +53,7 @@ import {
   getWeeksAtMonth,
 } from './utils/dateUtils';
 import { findOverlappingEvents } from './utils/eventOverlap';
+import { validateRepeatEndDate } from './utils/repeatEndDateValidation';
 import {
   generateDailyEvents,
   generateMonthlyEvents,
@@ -551,6 +552,14 @@ function App() {
                     type="date"
                     value={repeatEndDate}
                     onChange={(e) => setRepeatEndDate(e.target.value)}
+                    slotProps={{
+                      htmlInput: {
+                        max: '2025-12-31',
+                        min: date,
+                      },
+                    }}
+                    error={!!validateRepeatEndDate(date, repeatEndDate)}
+                    helperText={validateRepeatEndDate(date, repeatEndDate)}
                   />
                 </FormControl>
               </Stack>
