@@ -6,6 +6,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
+
 import {
   generateDailyEvents,
   generateWeeklyEvents,
@@ -25,7 +26,6 @@ import {
   mockYearlyEvent,
   mockYearlyLeapDayEvent,
   mockEventWithoutEndDate,
-  mockEventWithLongEndDate,
 } from '../__fixtures__/mockRecurringEvents';
 
 describe('generateDailyEvents', () => {
